@@ -393,8 +393,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/cms/settings/:key", authMiddleware, async (req, res) => {
     try {
       const { value, valueBn } = req.body;
-      if (!value && value !== "") {
-        return res.status(400).json({ error: "Value is required" });
+      // Allow updates with either value or valueBn (or both)
+      if (value === undefined && valueBn === undefined) {
+        return res.status(400).json({ error: "At least one value (English or Bangla) is required" });
       }
       const setting = await storage.updateSiteSetting(req.params.key, value, valueBn);
       if (!setting) {

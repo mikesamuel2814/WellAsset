@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -159,34 +160,48 @@ export default function AdminCMS() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {contactSettings.map((setting) => (
-              <form key={setting.id} onSubmit={handleSettingSubmit} className="space-y-3">
-                <input type="hidden" name="key" value={setting.key} />
-                <Label htmlFor={setting.key}>{setting.label}</Label>
-                <Tabs defaultValue="en" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
-                    <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="en" className="space-y-2">
-                    <Input
-                      id={setting.key}
-                      name="value"
-                      defaultValue={setting.value}
-                      placeholder={`${setting.label} (English)`}
-                      data-testid={`input-${setting.key}-en`}
-                    />
-                  </TabsContent>
-                  <TabsContent value="bn" className="space-y-2">
-                    <Input
-                      id={`${setting.key}-bn`}
-                      name="valueBn"
-                      defaultValue={setting.valueBn || ""}
-                      placeholder={`${setting.label} (বাংলা)`}
-                      data-testid={`input-${setting.key}-bn`}
-                    />
-                  </TabsContent>
-                </Tabs>
+            {contactSettings.map((setting) => {
+              const [enValue, setEnValue] = useState(setting.value);
+              const [bnValue, setBnValue] = useState(setting.valueBn || "");
+              
+              return (
+                <form 
+                  key={setting.id} 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    updateSettingMutation.mutate({ 
+                      key: setting.key, 
+                      value: enValue, 
+                      valueBn: bnValue 
+                    });
+                  }} 
+                  className="space-y-3"
+                >
+                  <Label htmlFor={setting.key}>{setting.label}</Label>
+                  <Tabs defaultValue="en" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
+                      <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="en" className="space-y-2">
+                      <Input
+                        id={setting.key}
+                        value={enValue}
+                        onChange={(e) => setEnValue(e.target.value)}
+                        placeholder={`${setting.label} (English)`}
+                        data-testid={`input-${setting.key}-en`}
+                      />
+                    </TabsContent>
+                    <TabsContent value="bn" className="space-y-2">
+                      <Input
+                        id={`${setting.key}-bn`}
+                        value={bnValue}
+                        onChange={(e) => setBnValue(e.target.value)}
+                        placeholder={`${setting.label} (বাংলা)`}
+                        data-testid={`input-${setting.key}-bn`}
+                      />
+                    </TabsContent>
+                  </Tabs>
                 <Button 
                   type="submit" 
                   disabled={updateSettingMutation.isPending}
@@ -200,7 +215,8 @@ export default function AdminCMS() {
                   )}
                 </Button>
               </form>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
 
@@ -215,32 +231,46 @@ export default function AdminCMS() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {aboutSettings.map((setting) => (
-              <form key={setting.id} onSubmit={handleSettingSubmit} className="space-y-3">
-                <input type="hidden" name="key" value={setting.key} />
-                <Label htmlFor={setting.key}>{setting.label}</Label>
-                <Tabs defaultValue="en" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
-                    <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="en" className="space-y-2">
-                    <Input
-                      id={setting.key}
-                      name="value"
-                      defaultValue={setting.value}
-                      placeholder={`${setting.label} (English)`}
-                      data-testid={`input-${setting.key}-en`}
-                    />
-                  </TabsContent>
-                  <TabsContent value="bn" className="space-y-2">
-                    <Input
-                      id={`${setting.key}-bn`}
-                      name="valueBn"
-                      defaultValue={setting.valueBn || ""}
-                      placeholder={`${setting.label} (বাংলা)`}
-                      data-testid={`input-${setting.key}-bn`}
-                    />
+            {aboutSettings.map((setting) => {
+              const [enValue, setEnValue] = useState(setting.value);
+              const [bnValue, setBnValue] = useState(setting.valueBn || "");
+              
+              return (
+                <form 
+                  key={setting.id} 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    updateSettingMutation.mutate({ 
+                      key: setting.key, 
+                      value: enValue, 
+                      valueBn: bnValue 
+                    });
+                  }} 
+                  className="space-y-3"
+                >
+                  <Label htmlFor={setting.key}>{setting.label}</Label>
+                  <Tabs defaultValue="en" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
+                      <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="en" className="space-y-2">
+                      <Input
+                        id={setting.key}
+                        value={enValue}
+                        onChange={(e) => setEnValue(e.target.value)}
+                        placeholder={`${setting.label} (English)`}
+                        data-testid={`input-${setting.key}-en`}
+                      />
+                    </TabsContent>
+                    <TabsContent value="bn" className="space-y-2">
+                      <Input
+                        id={`${setting.key}-bn`}
+                        value={bnValue}
+                        onChange={(e) => setBnValue(e.target.value)}
+                        placeholder={`${setting.label} (বাংলা)`}
+                        data-testid={`input-${setting.key}-bn`}
+                      />
                   </TabsContent>
                 </Tabs>
                 <Button 
@@ -256,7 +286,8 @@ export default function AdminCMS() {
                   )}
                 </Button>
               </form>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       </div>
