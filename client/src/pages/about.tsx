@@ -1,5 +1,6 @@
 import { Building2, Target, Users, Award } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { SEOHead } from "@/components/seo-head";
 import { useI18n } from "@/lib/i18n";
 
 export default function About() {
@@ -7,6 +8,11 @@ export default function About() {
   
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="About Us - Luxury Real Estate in Dhaka"
+        description="Learn about Well Asset Development Co., Ltd, a leading real estate company in Dhaka, Bangladesh. Discover our mission, values, and commitment to excellence in luxury property development."
+        keywords="Well Asset Development, real estate company Dhaka, property development Bangladesh, luxury real estate"
+      />
       <div className="bg-card border-b">
         <div className="max-w-6xl mx-auto px-6 py-16 text-center">
           <h1 className="font-display font-bold text-4xl md:text-5xl mb-4 tracking-tight" data-testid="text-page-title">

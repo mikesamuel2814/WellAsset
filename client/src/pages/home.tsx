@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { ParticlesBackground } from "@/components/particles-background";
+import { SEOHead } from "@/components/seo-head";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useI18n, usePropertyText } from "@/lib/i18n";
 import type { Property } from "@shared/schema";
@@ -23,6 +24,22 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Luxury Real Estate in Dhaka"
+        description="Discover premium properties in Dhaka, Bangladesh with Well Asset Development Co., Ltd. Browse luxury apartments, penthouses, and commercial spaces in Gulshan, Banani, and Dhanmondi."
+        keywords="luxury real estate Dhaka, premium properties Bangladesh, apartments Gulshan, Banani properties, Dhanmondi real estate"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "name": "Well Asset Development Co., Ltd",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Dhaka",
+            "addressCountry": "Bangladesh"
+          },
+          "url": typeof window !== "undefined" ? window.location.origin : "https://wellasset.com"
+        }}
+      />
       <div className="relative">
         <ParticlesBackground />
         {!isLoading && <HeroCarousel properties={featuredProperties} />}

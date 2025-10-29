@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PropertyMediaSlider } from "@/components/property-media-slider";
 import { PropertyMap } from "@/components/property-map";
+import { SEOHead } from "@/components/seo-head";
 import { insertInquirySchema } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useI18n, usePropertyText } from "@/lib/i18n";
@@ -125,6 +126,41 @@ export default function PropertyDetails() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title={`${title} - ${location}`}
+        description={`${description.substring(0, 155)}... | ${property.bedrooms} Bed, ${property.bathrooms} Bath, ${property.area} sqft | BDT ${price.toLocaleString('en-BD')}`}
+        keywords={`${title}, ${location}, ${property.type} Dhaka, luxury property Bangladesh`}
+        ogImage={images[0] || "/default-property.jpg"}
+        ogType="article"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "RealEstateListing",
+          "name": title,
+          "description": description,
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": location,
+            "addressCountry": "Bangladesh"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "23.8103",
+            "longitude": "90.4125"
+          },
+          "price": {
+            "@type": "PriceSpecification",
+            "price": price,
+            "priceCurrency": "BDT"
+          },
+          "numberOfRooms": property.bedrooms,
+          "floorSize": {
+            "@type": "QuantitativeValue",
+            "value": property.area,
+            "unitCode": "SQF"
+          },
+          "image": images
+        }}
+      />
       <div className="bg-card border-b">
         <div className="max-w-6xl mx-auto px-6 py-6">
           <Link href="/properties">

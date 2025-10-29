@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SEOHead } from "@/components/seo-head";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -55,6 +56,11 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Contact Us - Well Asset Development"
+        description="Get in touch with Well Asset Development Co., Ltd for luxury real estate inquiries in Dhaka, Bangladesh. Call us, email us, or visit our office in Dhaka."
+        keywords="contact Well Asset, real estate inquiries Dhaka, property contact Bangladesh"
+      />
       <div className="bg-card border-b">
         <div className="max-w-6xl mx-auto px-6 py-16 text-center">
           <h1 className="font-display font-bold text-4xl md:text-5xl mb-4 tracking-tight" data-testid="text-page-title">
