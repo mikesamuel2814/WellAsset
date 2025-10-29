@@ -46,7 +46,7 @@ export interface IStorage {
   
   getAllSiteSettings(): Promise<SiteSetting[]>;
   getSiteSetting(key: string): Promise<SiteSetting | undefined>;
-  updateSiteSetting(key: string, value: string): Promise<SiteSetting | undefined>;
+  updateSiteSetting(key: string, value: string, valueBn?: string): Promise<SiteSetting | undefined>;
   
   getAllSocialMedia(): Promise<SocialMedia[]>;
   getSocialMediaItem(id: string): Promise<SocialMedia | undefined>;
@@ -166,10 +166,14 @@ export class DatabaseStorage implements IStorage {
     return setting || undefined;
   }
 
-  async updateSiteSetting(key: string, value: string): Promise<SiteSetting | undefined> {
+  async updateSiteSetting(key: string, value: string, valueBn?: string): Promise<SiteSetting | undefined> {
+    const updateData: any = { value, updatedAt: new Date() };
+    if (valueBn !== undefined) {
+      updateData.valueBn = valueBn;
+    }
     const [setting] = await db
       .update(siteSettings)
-      .set({ value, updatedAt: new Date() })
+      .set(updateData)
       .where(eq(siteSettings.key, key))
       .returning();
     return setting || undefined;

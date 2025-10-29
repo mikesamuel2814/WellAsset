@@ -56,6 +56,7 @@ export const siteSettings = pgTable("site_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   key: text("key").notNull().unique(),
   value: text("value").notNull(),
+  valueBn: text("value_bn"),
   category: text("category").notNull(), // 'contact', 'about', 'general'
   updatedAt: timestamp("updated_at").defaultNow(),
 });

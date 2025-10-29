@@ -3,6 +3,9 @@ import { createServer, type Server } from "http";
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import multer from "multer";
+import path from "path";
+import { promises as fs } from "fs";
 import { storage } from "./storage";
 import { 
   insertUserSchema,
@@ -38,6 +41,49 @@ function authMiddleware(req: express.Request, res: express.Response, next: expre
     return res.status(401).json({ error: "Invalid token" });
   }
 }
+
+// Configure multer for file uploads
+const uploadDir = path.join(import.meta.dirname, '..', 'uploads');
+
+// Create uploads directory if it doesn't exist
+async function ensureUploadDir() {
+  try {
+    await fs.access(uploadDir);
+  } catch {
+    await fs.mkdir(uploadDir, { recursive: true });
+  }
+}
+
+const uploadStorage = multer.diskStorage({
+  destination: async (_req, _file, cb) => {
+    await ensureUploadDir();
+    cb(null, uploadDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    const name = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '-');
+    cb(null, name + '-' + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({
+  storage: uploadStorage,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|mp4|mov|avi|webm/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only image and video files are allowed!'));
+    }
+  }
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(express.json());
@@ -328,11 +374,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/cms/settings/:key", authMiddleware, async (req, res) => {
     try {
-      const { value } = req.body;
+      const { value, valueBn } = req.body;
       if (!value && value !== "") {
         return res.status(400).json({ error: "Value is required" });
       }
-      const setting = await storage.updateSiteSetting(req.params.key, value);
+      const setting = await storage.updateSiteSetting(req.params.key, value, valueBn);
       if (!setting) {
         return res.status(404).json({ error: "Setting not found" });
       }
@@ -366,6 +412,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to update social media" });
     }
   });
+
+  // File upload endpoint for property images and videos
+  app.post("/api/upload", authMiddleware, upload.array('files', 10), async (req, res) => {
+    try {
+      if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+        return res.status(400).json({ error: "No files uploaded" });
+      }
+
+      const fileUrls = req.files.map(file => `/uploads/${file.filename}`);
+      res.json({ urls: fileUrls });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to upload files" });
+    }
+  });
+
+  // Serve uploaded files as static
+  app.use('/uploads', express.static(uploadDir));
 
   const httpServer = createServer(app);
 
