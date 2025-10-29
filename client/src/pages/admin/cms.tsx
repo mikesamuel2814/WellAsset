@@ -25,6 +25,72 @@ type SocialMedia = {
   icon: string;
 };
 
+// Separate component to handle individual setting with its own state
+function SettingItem({ 
+  setting, 
+  onUpdate, 
+  isPending 
+}: { 
+  setting: SiteSetting; 
+  onUpdate: (data: { key: string; value: string; valueBn?: string }) => void;
+  isPending: boolean;
+}) {
+  const [enValue, setEnValue] = useState(setting.value);
+  const [bnValue, setBnValue] = useState(setting.valueBn || "");
+
+  return (
+    <form 
+      onSubmit={(e) => {
+        e.preventDefault();
+        onUpdate({ 
+          key: setting.key, 
+          value: enValue, 
+          valueBn: bnValue 
+        });
+      }} 
+      className="space-y-3"
+    >
+      <Label htmlFor={setting.key}>{setting.label}</Label>
+      <Tabs defaultValue="en" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
+          <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
+        </TabsList>
+        <TabsContent value="en" className="space-y-2">
+          <Input
+            id={setting.key}
+            value={enValue}
+            onChange={(e) => setEnValue(e.target.value)}
+            placeholder={`${setting.label} (English)`}
+            data-testid={`input-${setting.key}-en`}
+          />
+        </TabsContent>
+        <TabsContent value="bn" className="space-y-2">
+          <Input
+            id={`${setting.key}-bn`}
+            value={bnValue}
+            onChange={(e) => setBnValue(e.target.value)}
+            placeholder={`${setting.label} (বাংলা)`}
+            data-testid={`input-${setting.key}-bn`}
+          />
+        </TabsContent>
+      </Tabs>
+      <Button 
+        type="submit" 
+        disabled={isPending}
+        data-testid={`button-update-${setting.key}`}
+        className="w-full"
+      >
+        {isPending ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          "Update"
+        )}
+      </Button>
+    </form>
+  );
+}
+
 export default function AdminCMS() {
   const { toast } = useToast();
   const { token } = useAuth();
@@ -160,63 +226,14 @@ export default function AdminCMS() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {contactSettings.map((setting) => {
-              const [enValue, setEnValue] = useState(setting.value);
-              const [bnValue, setBnValue] = useState(setting.valueBn || "");
-              
-              return (
-                <form 
-                  key={setting.id} 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    updateSettingMutation.mutate({ 
-                      key: setting.key, 
-                      value: enValue, 
-                      valueBn: bnValue 
-                    });
-                  }} 
-                  className="space-y-3"
-                >
-                  <Label htmlFor={setting.key}>{setting.label}</Label>
-                  <Tabs defaultValue="en" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
-                      <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="en" className="space-y-2">
-                      <Input
-                        id={setting.key}
-                        value={enValue}
-                        onChange={(e) => setEnValue(e.target.value)}
-                        placeholder={`${setting.label} (English)`}
-                        data-testid={`input-${setting.key}-en`}
-                      />
-                    </TabsContent>
-                    <TabsContent value="bn" className="space-y-2">
-                      <Input
-                        id={`${setting.key}-bn`}
-                        value={bnValue}
-                        onChange={(e) => setBnValue(e.target.value)}
-                        placeholder={`${setting.label} (বাংলা)`}
-                        data-testid={`input-${setting.key}-bn`}
-                      />
-                    </TabsContent>
-                  </Tabs>
-                <Button 
-                  type="submit" 
-                  disabled={updateSettingMutation.isPending}
-                  data-testid={`button-update-${setting.key}`}
-                  className="w-full"
-                >
-                  {updateSettingMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Update"
-                  )}
-                </Button>
-              </form>
-              );
-            })}
+            {contactSettings.map((setting) => (
+              <SettingItem 
+                key={setting.id}
+                setting={setting}
+                onUpdate={(data) => updateSettingMutation.mutate(data)}
+                isPending={updateSettingMutation.isPending}
+              />
+            ))}
           </CardContent>
         </Card>
 
@@ -231,63 +248,14 @@ export default function AdminCMS() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {aboutSettings.map((setting) => {
-              const [enValue, setEnValue] = useState(setting.value);
-              const [bnValue, setBnValue] = useState(setting.valueBn || "");
-              
-              return (
-                <form 
-                  key={setting.id} 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    updateSettingMutation.mutate({ 
-                      key: setting.key, 
-                      value: enValue, 
-                      valueBn: bnValue 
-                    });
-                  }} 
-                  className="space-y-3"
-                >
-                  <Label htmlFor={setting.key}>{setting.label}</Label>
-                  <Tabs defaultValue="en" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
-                      <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="en" className="space-y-2">
-                      <Input
-                        id={setting.key}
-                        value={enValue}
-                        onChange={(e) => setEnValue(e.target.value)}
-                        placeholder={`${setting.label} (English)`}
-                        data-testid={`input-${setting.key}-en`}
-                      />
-                    </TabsContent>
-                    <TabsContent value="bn" className="space-y-2">
-                      <Input
-                        id={`${setting.key}-bn`}
-                        value={bnValue}
-                        onChange={(e) => setBnValue(e.target.value)}
-                        placeholder={`${setting.label} (বাংলা)`}
-                        data-testid={`input-${setting.key}-bn`}
-                      />
-                  </TabsContent>
-                </Tabs>
-                <Button 
-                  type="submit" 
-                  disabled={updateSettingMutation.isPending}
-                  data-testid={`button-update-${setting.key}`}
-                  className="w-full"
-                >
-                  {updateSettingMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Update"
-                  )}
-                </Button>
-              </form>
-              );
-            })}
+            {aboutSettings.map((setting) => (
+              <SettingItem 
+                key={setting.id}
+                setting={setting}
+                onUpdate={(data) => updateSettingMutation.mutate(data)}
+                isPending={updateSettingMutation.isPending}
+              />
+            ))}
           </CardContent>
         </Card>
       </div>
