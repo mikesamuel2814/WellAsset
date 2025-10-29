@@ -245,6 +245,9 @@ export default function PropertyDetails() {
             <Card className="sticky top-6">
               <CardHeader>
                 <CardTitle className="font-display">Interested in this property?</CardTitle>
+                <p className="text-sm text-muted-foreground mt-2">
+                  All fields are required
+                </p>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
@@ -254,15 +257,18 @@ export default function PropertyDetails() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            Name <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input 
                               placeholder="Your full name" 
                               {...field} 
                               data-testid="input-inquiry-name"
+                              className={form.formState.errors.name ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -272,16 +278,19 @@ export default function PropertyDetails() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            Email <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input 
                               type="email" 
                               placeholder="your@email.com" 
                               {...field} 
                               data-testid="input-inquiry-email"
+                              className={form.formState.errors.email ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -291,16 +300,19 @@ export default function PropertyDetails() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            Phone <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input 
                               type="tel" 
-                              placeholder="+1 (555) 000-0000" 
+                              placeholder="+880 1XXX-XXXXXX" 
                               {...field} 
                               data-testid="input-inquiry-phone"
+                              className={form.formState.errors.phone ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -310,16 +322,19 @@ export default function PropertyDetails() {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Message</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            Message <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Tell us about your requirements..."
+                              placeholder="Tell us about your requirements... (min 10 characters)"
                               rows={4}
                               {...field}
                               data-testid="textarea-inquiry-message"
+                              className={form.formState.errors.message ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -327,7 +342,7 @@ export default function PropertyDetails() {
                     <Button 
                       type="submit" 
                       className="w-full font-display tracking-wide" 
-                      disabled={mutation.isPending}
+                      disabled={mutation.isPending || !form.formState.isValid}
                       data-testid="button-submit-inquiry"
                     >
                       {mutation.isPending ? "Sending..." : "SEND INQUIRY"}

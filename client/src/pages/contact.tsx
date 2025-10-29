@@ -123,6 +123,9 @@ export default function Contact() {
             
             <Card>
               <CardContent className="p-8">
+                <p className="text-sm text-muted-foreground mb-6">
+                  All fields are required
+                </p>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
@@ -130,15 +133,18 @@ export default function Contact() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.fullName")}</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            {t("contact.fullName")} <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input 
                               placeholder={t("contact.fullNamePlaceholder")}
                               {...field} 
                               data-testid="input-contact-name"
+                              className={form.formState.errors.name ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -148,16 +154,19 @@ export default function Contact() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.emailLabel")}</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            {t("contact.emailLabel")} <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input 
                               type="email" 
                               placeholder={t("contact.emailPlaceholder")}
                               {...field} 
                               data-testid="input-contact-email"
+                              className={form.formState.errors.email ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -167,16 +176,19 @@ export default function Contact() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.phoneLabel")}</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            {t("contact.phoneLabel")} <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Input 
                               type="tel" 
                               placeholder={t("contact.phonePlaceholder")}
                               {...field} 
                               data-testid="input-contact-phone"
+                              className={form.formState.errors.phone ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -186,16 +198,19 @@ export default function Contact() {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("contact.messageLabel")}</FormLabel>
+                          <FormLabel className="flex items-center gap-1">
+                            {t("contact.messageLabel")} <span className="text-destructive">*</span>
+                          </FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder={t("contact.messagePlaceholder")}
                               rows={6}
                               {...field}
                               data-testid="textarea-contact-message"
+                              className={form.formState.errors.message ? "border-destructive" : ""}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
@@ -204,7 +219,7 @@ export default function Contact() {
                       type="submit" 
                       className="w-full font-display text-base tracking-wide" 
                       size="lg"
-                      disabled={mutation.isPending}
+                      disabled={mutation.isPending || !form.formState.isValid}
                       data-testid="button-submit-contact"
                     >
                       {mutation.isPending ? (

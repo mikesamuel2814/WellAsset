@@ -91,6 +91,11 @@ export const insertInquirySchema = createInsertSchema(inquiries).omit({
   id: true,
   createdAt: true,
   status: true,
+}).extend({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name is too long"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits").max(20, "Phone number is too long"),
+  message: z.string().min(10, "Message must be at least 10 characters").max(1000, "Message is too long"),
 });
 
 export const insertSiteSettingSchema = createInsertSchema(siteSettings).omit({
