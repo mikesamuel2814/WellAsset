@@ -1,16 +1,16 @@
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { MapPin, Bed, Bath, Maximize, ArrowLeft, Mail, Phone, User, Check } from "lucide-react";
+import { MapPin, Bed, Bath, Maximize, ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { PropertyMediaSlider } from "@/components/property-media-slider";
+import { PropertyMap } from "@/components/property-map";
 import { insertInquirySchema } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useI18n, usePropertyText } from "@/lib/i18n";
@@ -20,7 +20,6 @@ import type { z } from "zod";
 export default function PropertyDetails() {
   const [, params] = useRoute("/properties/:id");
   const propertyId = params?.id;
-  const [selectedImage, setSelectedImage] = useState(0);
   const { toast } = useToast();
   const { t } = useI18n();
 
@@ -118,6 +117,7 @@ export default function PropertyDetails() {
 
   const price = parseFloat(property.price as any);
   const images = property.images || [];
+  const videos = property.videos || [];
   const title = usePropertyText(property, 'title');
   const location = usePropertyText(property, 'location');
   const description = usePropertyText(property, 'description');
@@ -137,38 +137,7 @@ export default function PropertyDetails() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-12">
-        {images.length > 0 && (
-          <div className="mb-12">
-            <div className="rounded-lg overflow-hidden mb-4">
-              <img
-                src={images[selectedImage]}
-                alt={title}
-                className="w-full h-96 object-cover"
-                data-testid="img-property-main"
-              />
-            </div>
-            {images.length > 1 && (
-              <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
-                {images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedImage(idx)}
-                    className={`rounded-md overflow-hidden hover-elevate transition-all ${
-                      selectedImage === idx ? "ring-2 ring-primary" : ""
-                    }`}
-                    data-testid={`button-thumbnail-${idx}`}
-                  >
-                    <img
-                      src={img}
-                      alt={`${title} ${idx + 1}`}
-                      className="w-full h-20 object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <PropertyMediaSlider videos={videos} images={images} title={title} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
@@ -232,13 +201,7 @@ export default function PropertyDetails() {
 
             <div>
               <h2 className="font-display font-semibold text-2xl mb-4">{t("propertyDetails.location")}</h2>
-              <div className="bg-muted rounded-lg h-96 flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <MapPin className="w-12 h-12 mx-auto mb-2" />
-                  <p className="text-sm">{t("propertyDetails.mapAvailable")}</p>
-                  <p className="text-xs mt-1">{location}</p>
-                </div>
-              </div>
+              <PropertyMap location={location} title={title} />
             </div>
           </div>
 
