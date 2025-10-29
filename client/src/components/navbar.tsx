@@ -3,6 +3,7 @@ import { Building2, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { useI18n } from "@/lib/i18n";
 
 export function Navbar() {
@@ -49,6 +50,7 @@ export function Navbar() {
                 </Link>
               ))}
             </nav>
+            <ThemeToggle />
             <LanguageSwitcher />
           </div>
 
@@ -76,7 +78,8 @@ export function Navbar() {
                 </Button>
               </Link>
             ))}
-            <div className="pt-2 border-t flex justify-center">
+            <div className="pt-2 border-t flex justify-center gap-2">
+              <ThemeToggle />
               <LanguageSwitcher />
             </div>
           </nav>

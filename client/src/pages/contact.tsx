@@ -10,10 +10,12 @@ import { insertInquirySchema } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useI18n } from "@/lib/i18n";
 import type { z } from "zod";
 
 export default function Contact() {
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const form = useForm<z.infer<typeof insertInquirySchema>>({
     resolver: zodResolver(insertInquirySchema.extend({
@@ -32,16 +34,16 @@ export default function Contact() {
       apiRequest("POST", "/api/inquiries", data),
     onSuccess: () => {
       toast({
-        title: "Message sent successfully!",
-        description: "We'll get back to you as soon as possible.",
+        title: t("contact.successTitle"),
+        description: t("contact.successDesc"),
       });
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["/api/inquiries"] });
     },
     onError: () => {
       toast({
-        title: "Error sending message",
-        description: "Please try again later.",
+        title: t("contact.errorTitle"),
+        description: t("contact.errorDesc"),
         variant: "destructive",
       });
     },
@@ -56,10 +58,10 @@ export default function Contact() {
       <div className="bg-card border-b">
         <div className="max-w-6xl mx-auto px-6 py-16 text-center">
           <h1 className="font-display font-bold text-4xl md:text-5xl mb-4 tracking-tight" data-testid="text-page-title">
-            Contact Us
+            {t("contact.title")}
           </h1>
           <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
-            Get in touch with our team. We're here to help you find your perfect property.
+            {t("contact.subtitle")}
           </p>
         </div>
       </div>
@@ -71,10 +73,10 @@ export default function Contact() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Phone className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="font-display font-semibold text-lg mb-2">Phone</h3>
-              <p className="text-muted-foreground mb-2">Available Mon-Fri, 9AM-6PM</p>
-              <a href="tel:+1234567890" className="text-primary hover:underline">
-                +1 (234) 567-890
+              <h3 className="font-display font-semibold text-lg mb-2">{t("contact.phone")}</h3>
+              <p className="text-muted-foreground mb-2">{t("contact.phoneAvailable")}</p>
+              <a href={`tel:${t("contact.phoneNumber").replace(/\s/g, '')}`} className="text-primary hover:underline">
+                {t("contact.phoneNumber")}
               </a>
             </CardContent>
           </Card>
@@ -84,10 +86,10 @@ export default function Contact() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="font-display font-semibold text-lg mb-2">Email</h3>
-              <p className="text-muted-foreground mb-2">We'll respond within 24 hours</p>
-              <a href="mailto:info@wellasset.com" className="text-primary hover:underline">
-                info@wellasset.com
+              <h3 className="font-display font-semibold text-lg mb-2">{t("contact.email")}</h3>
+              <p className="text-muted-foreground mb-2">{t("contact.emailResponse")}</p>
+              <a href={`mailto:${t("contact.emailAddress")}`} className="text-primary hover:underline">
+                {t("contact.emailAddress")}
               </a>
             </CardContent>
           </Card>
@@ -97,10 +99,10 @@ export default function Contact() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="font-display font-semibold text-lg mb-2">Office</h3>
-              <p className="text-muted-foreground mb-2">Visit us at our main office</p>
-              <p className="text-primary">
-                123 Business District<br />Bangkok, Thailand
+              <h3 className="font-display font-semibold text-lg mb-2">{t("contact.office")}</h3>
+              <p className="text-muted-foreground mb-2">{t("contact.officeVisit")}</p>
+              <p className="text-primary whitespace-pre-line">
+                {t("contact.officeAddress")}
               </p>
             </CardContent>
           </Card>
@@ -108,10 +110,9 @@ export default function Contact() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <div>
-            <h2 className="font-display font-semibold text-3xl mb-6 tracking-tight">Send us a message</h2>
+            <h2 className="font-display font-semibold text-3xl mb-6 tracking-tight">{t("contact.formTitle")}</h2>
             <p className="text-muted-foreground mb-8">
-              Fill out the form below and our team will get back to you promptly. Whether you're looking 
-              for information about a specific property or have general inquiries, we're here to help.
+              {t("contact.formDesc")}
             </p>
             
             <Card>
@@ -123,10 +124,10 @@ export default function Contact() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>{t("contact.fullName")}</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="John Doe" 
+                              placeholder={t("contact.fullNamePlaceholder")}
                               {...field} 
                               data-testid="input-contact-name"
                             />
@@ -141,11 +142,11 @@ export default function Contact() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address</FormLabel>
+                          <FormLabel>{t("contact.emailLabel")}</FormLabel>
                           <FormControl>
                             <Input 
                               type="email" 
-                              placeholder="john@example.com" 
+                              placeholder={t("contact.emailPlaceholder")}
                               {...field} 
                               data-testid="input-contact-email"
                             />
@@ -160,11 +161,11 @@ export default function Contact() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
+                          <FormLabel>{t("contact.phoneLabel")}</FormLabel>
                           <FormControl>
                             <Input 
                               type="tel" 
-                              placeholder="+1 (555) 000-0000" 
+                              placeholder={t("contact.phonePlaceholder")}
                               {...field} 
                               data-testid="input-contact-phone"
                             />
@@ -179,10 +180,10 @@ export default function Contact() {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Your Message</FormLabel>
+                          <FormLabel>{t("contact.messageLabel")}</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Tell us how we can help you..."
+                              placeholder={t("contact.messagePlaceholder")}
                               rows={6}
                               {...field}
                               data-testid="textarea-contact-message"
@@ -201,11 +202,11 @@ export default function Contact() {
                       data-testid="button-submit-contact"
                     >
                       {mutation.isPending ? (
-                        "SENDING..."
+                        t("contact.sending")
                       ) : (
                         <>
                           <Send className="w-4 h-4 mr-2" />
-                          SEND MESSAGE
+                          {t("contact.sendMessage")}
                         </>
                       )}
                     </Button>
@@ -216,30 +217,30 @@ export default function Contact() {
           </div>
 
           <div>
-            <h2 className="font-display font-semibold text-3xl mb-6 tracking-tight">Visit our office</h2>
+            <h2 className="font-display font-semibold text-3xl mb-6 tracking-tight">{t("contact.visitOffice")}</h2>
             <div className="bg-muted rounded-lg h-96 flex items-center justify-center mb-6">
               <div className="text-center text-muted-foreground">
                 <MapPin className="w-16 h-16 mx-auto mb-3" />
-                <p className="text-sm">Map integration available</p>
-                <p className="text-xs mt-2">123 Business District, Bangkok, Thailand</p>
+                <p className="text-sm">{t("contact.mapAvailable")}</p>
+                <p className="text-xs mt-2 whitespace-pre-line">{t("contact.mapLocation")}</p>
               </div>
             </div>
             <Card>
               <CardHeader>
-                <CardTitle className="font-display">Office Hours</CardTitle>
+                <CardTitle className="font-display">{t("contact.officeHours")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Monday - Friday</span>
-                  <span className="font-medium">9:00 AM - 6:00 PM</span>
+                  <span className="text-muted-foreground">{t("contact.mondayFriday")}</span>
+                  <span className="font-medium">{t("contact.mondayFridayTime")}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Saturday</span>
-                  <span className="font-medium">10:00 AM - 4:00 PM</span>
+                  <span className="text-muted-foreground">{t("contact.saturday")}</span>
+                  <span className="font-medium">{t("contact.saturdayTime")}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Sunday</span>
-                  <span className="font-medium">Closed</span>
+                  <span className="text-muted-foreground">{t("contact.sunday")}</span>
+                  <span className="font-medium">{t("contact.sundayClosed")}</span>
                 </div>
               </CardContent>
             </Card>
