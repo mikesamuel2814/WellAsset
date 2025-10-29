@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,7 +19,48 @@ import AdminAgents from "@/pages/admin/agents";
 import AdminInquiries from "@/pages/admin/inquiries";
 import NotFound from "@/pages/not-found";
 
-function PublicRouter() {
+function Router() {
+  const [location] = useLocation();
+  const isAdminRoute = location.startsWith("/admin");
+  const isAdminLogin = location === "/admin/login";
+
+  const sidebarStyle = {
+    "--sidebar-width": "16rem",
+    "--sidebar-width-icon": "3rem",
+  };
+
+  if (isAdminRoute) {
+    if (isAdminLogin) {
+      return (
+        <Switch>
+          <Route path="/admin/login" component={AdminLogin} />
+        </Switch>
+      );
+    }
+
+    return (
+      <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+        <div className="flex h-screen w-full">
+          <AdminSidebar />
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <header className="flex items-center gap-4 px-6 py-4 border-b">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
+            </header>
+            <main className="flex-1 overflow-auto">
+              <Switch>
+                <Route path="/admin/dashboard" component={AdminDashboard} />
+                <Route path="/admin/properties" component={AdminProperties} />
+                <Route path="/admin/agents" component={AdminAgents} />
+                <Route path="/admin/inquiries" component={AdminInquiries} />
+                <Route component={NotFound} />
+              </Switch>
+            </main>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
+
   return (
     <>
       <Navbar />
@@ -36,48 +77,11 @@ function PublicRouter() {
   );
 }
 
-function AdminRouter() {
-  return (
-    <Switch>
-      <Route path="/admin/login" component={AdminLogin} />
-      <Route path="/admin/dashboard" component={AdminDashboard} />
-      <Route path="/admin/properties" component={AdminProperties} />
-      <Route path="/admin/agents" component={AdminAgents} />
-      <Route path="/admin/inquiries" component={AdminInquiries} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
 function App() {
-  const isAdminRoute = window.location.pathname.startsWith("/admin");
-  const isAdminLogin = window.location.pathname === "/admin/login";
-
-  const sidebarStyle = {
-    "--sidebar-width": "16rem",
-    "--sidebar-width-icon": "3rem",
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {isAdminRoute && !isAdminLogin ? (
-          <SidebarProvider style={sidebarStyle as React.CSSProperties}>
-            <div className="flex h-screen w-full">
-              <AdminSidebar />
-              <div className="flex flex-col flex-1 overflow-hidden">
-                <header className="flex items-center gap-4 px-6 py-4 border-b">
-                  <SidebarTrigger data-testid="button-sidebar-toggle" />
-                </header>
-                <main className="flex-1 overflow-auto">
-                  <AdminRouter />
-                </main>
-              </div>
-            </div>
-          </SidebarProvider>
-        ) : (
-          <PublicRouter />
-        )}
+        <Router />
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
