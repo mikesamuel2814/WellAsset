@@ -3,10 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Building2, MapPin, Bed, Bath, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { HeroCarousel } from "@/components/hero-carousel";
+import { motion } from "framer-motion";
+import { useI18n, usePropertyText } from "@/lib/i18n";
 import type { Property } from "@shared/schema";
-import heroImage from "@assets/generated_images/Luxury_villa_hero_image_a5b9ac3f.png";
 
 export default function Home() {
+  const { t } = useI18n();
   const { data: properties, isLoading } = useQuery<Property[]>({
     queryKey: ["/api/properties"],
   });
@@ -16,67 +19,27 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <section 
-        className="relative min-h-screen flex items-center justify-center"
-        style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(28, 28, 28, 0.7), rgba(28, 28, 28, 0.4)), url(${heroImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="text-center text-white px-6 max-w-5xl mx-auto">
-          <h1 
-            className="font-display font-bold text-5xl md:text-6xl lg:text-7xl mb-6 tracking-tight"
-            data-testid="text-hero-title"
-          >
-            Discover Your Dream Property
-          </h1>
-          <p className="text-lg md:text-xl mb-8 leading-relaxed text-white/90 max-w-3xl mx-auto">
-            Well Asset Development Co., Ltd presents exclusive luxury real estate with unparalleled elegance and sophistication
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/properties">
-              <Button 
-                size="lg"
-                variant="default"
-                className="font-display text-base tracking-wide"
-                data-testid="button-browse-properties"
-              >
-                BROWSE PROPERTIES
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button 
-                size="lg"
-                variant="outline"
-                className="font-display text-base tracking-wide backdrop-blur-md bg-white/10 border-white/30 text-white hover:bg-white/20"
-                data-testid="button-contact-us"
-              >
-                CONTACT US
-              </Button>
-            </Link>
-          </div>
-        </div>
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center p-2">
-            <div className="w-1 h-3 bg-white/70 rounded-full"></div>
-          </div>
-        </div>
-      </section>
+      {!isLoading && <HeroCarousel properties={featuredProperties} />}
 
       <section className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 
               className="font-display font-semibold text-4xl md:text-5xl mb-4 tracking-tight"
               data-testid="text-featured-title"
             >
-              Featured Properties
+              {t("home.featured")}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Handpicked selection of our most prestigious properties
+              {t("home.featuredDesc")}
             </p>
-          </div>
+          </motion.div>
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -94,12 +57,20 @@ export default function Home() {
           ) : featuredProperties.length === 0 ? (
             <div className="text-center py-16">
               <Building2 className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground text-lg">No featured properties available at the moment</p>
+              <p className="text-muted-foreground text-lg">{t("home.noProperties")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProperties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+              {featuredProperties.map((property, index) => (
+                <motion.div
+                  key={property.id}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <PropertyCard property={property} />
+                </motion.div>
               ))}
             </div>
           )}
@@ -107,38 +78,55 @@ export default function Home() {
       </section>
 
       <section className="py-24 bg-card">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <motion.div 
+          className="max-w-4xl mx-auto px-6 text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
           <h2 className="font-display font-semibold text-3xl md:text-4xl mb-6 tracking-tight">
-            Excellence in Real Estate Development
+            {t("home.excellence")}
           </h2>
           <p className="text-foreground/80 text-lg leading-relaxed mb-8">
-            For over a decade, Well Asset Development Co., Ltd has been at the forefront of luxury real estate, 
-            creating exceptional properties that redefine modern living. Our commitment to quality, innovation, 
-            and customer satisfaction has made us a trusted name in premium property development.
+            {t("home.excellenceDesc")}
           </p>
-          <Link href="/about">
-            <Button 
-              variant="default"
-              size="lg"
-              className="font-display tracking-wide"
-              data-testid="button-learn-more"
-            >
-              LEARN MORE ABOUT US
-            </Button>
-          </Link>
-        </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Link href="/about">
+              <Button 
+                variant="default"
+                size="lg"
+                className="font-display tracking-wide hover:scale-105 transition-transform duration-300"
+                data-testid="button-learn-more"
+              >
+                {t("home.learnMore")}
+              </Button>
+            </Link>
+          </motion.div>
+        </motion.div>
       </section>
 
       <section className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 className="font-display font-semibold text-4xl md:text-5xl mb-4 tracking-tight">
-              Latest Listings
+              {t("home.latest")}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Discover our newest luxury properties now available
+              {t("home.latestDesc")}
             </p>
-          </div>
+          </motion.div>
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -174,7 +162,7 @@ export default function Home() {
                 className="font-display tracking-wide"
                 data-testid="button-view-all-properties"
               >
-                VIEW ALL PROPERTIES
+                {t("home.viewAll")}
               </Button>
             </Link>
           </div>
@@ -184,10 +172,10 @@ export default function Home() {
       <section className="py-24 bg-primary text-primary-foreground">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="font-display font-bold text-3xl md:text-4xl mb-6 tracking-tight">
-            Ready to Find Your Perfect Property?
+            {t("home.ready")}
           </h2>
           <p className="text-lg mb-8 opacity-95">
-            Let our expert team guide you to your dream home or investment opportunity
+            {t("home.readyDesc")}
           </p>
           <Link href="/contact">
             <Button 
@@ -196,7 +184,7 @@ export default function Home() {
               className="font-display text-base tracking-wide"
               data-testid="button-cta-contact"
             >
-              GET IN TOUCH TODAY
+              {t("home.getInTouch")}
             </Button>
           </Link>
         </div>
@@ -208,6 +196,8 @@ export default function Home() {
 function PropertyCard({ property }: { property: Property }) {
   const imageUrl = property.images?.[0] || "";
   const price = parseFloat(property.price as any);
+  const title = usePropertyText(property, 'title');
+  const location = usePropertyText(property, 'location');
 
   return (
     <Link href={`/properties/${property.id}`}>
@@ -218,18 +208,18 @@ function PropertyCard({ property }: { property: Property }) {
         <div className="relative h-64 overflow-hidden">
           <img
             src={imageUrl}
-            alt={property.title}
+            alt={title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
         <CardContent className="p-6">
           <h3 className="font-display font-medium text-xl mb-2 line-clamp-1" data-testid={`text-property-title-${property.id}`}>
-            {property.title}
+            {title}
           </h3>
           <div className="flex items-center text-muted-foreground mb-4">
             <MapPin className="w-4 h-4 mr-1" />
-            <span className="text-sm line-clamp-1">{property.location}</span>
+            <span className="text-sm line-clamp-1">{location}</span>
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-1">
@@ -242,11 +232,11 @@ function PropertyCard({ property }: { property: Property }) {
             </div>
             <div className="flex items-center gap-1">
               <Maximize className="w-4 h-4" />
-              <span>{property.area} sqm</span>
+              <span>{property.area} sqft</span>
             </div>
           </div>
           <p className="text-primary font-display font-semibold text-2xl" data-testid={`text-property-price-${property.id}`}>
-            ${price.toLocaleString()}
+            ৳{price.toLocaleString('en-BD')}
           </p>
         </CardContent>
       </Card>

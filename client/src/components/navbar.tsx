@@ -2,18 +2,21 @@ import { Link, useLocation } from "wouter";
 import { Building2, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useI18n } from "@/lib/i18n";
 
 export function Navbar() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useI18n();
 
   const isActive = (path: string) => location === path;
 
   const navLinks = [
-    { path: "/", label: "Home" },
-    { path: "/properties", label: "Properties" },
-    { path: "/about", label: "About" },
-    { path: "/contact", label: "Contact" },
+    { path: "/", label: t("nav.home") },
+    { path: "/properties", label: t("nav.properties") },
+    { path: "/about", label: t("nav.about") },
+    { path: "/contact", label: t("nav.contact") },
   ];
 
   return (
@@ -32,24 +35,22 @@ export function Navbar() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link key={link.path} href={link.path}>
-                <Button
-                  variant={isActive(link.path) ? "secondary" : "ghost"}
-                  className="font-medium"
-                  data-testid={`nav-link-${link.label.toLowerCase()}`}
-                >
-                  {link.label}
-                </Button>
-              </Link>
-            ))}
-            <Link href="/admin/login">
-              <Button variant="default" className="ml-4 font-display tracking-wide" data-testid="nav-link-admin">
-                ADMIN
-              </Button>
-            </Link>
-          </nav>
+          <div className="hidden md:flex items-center gap-1">
+            <nav className="flex items-center gap-1">
+              {navLinks.map((link) => (
+                <Link key={link.path} href={link.path}>
+                  <Button
+                    variant={isActive(link.path) ? "secondary" : "ghost"}
+                    className="font-medium"
+                    data-testid={`nav-link-${link.path}`}
+                  >
+                    {link.label}
+                  </Button>
+                </Link>
+              ))}
+            </nav>
+            <LanguageSwitcher />
+          </div>
 
           <button
             className="md:hidden p-2 hover-elevate rounded-md"
@@ -69,22 +70,15 @@ export function Navbar() {
                   variant={isActive(link.path) ? "secondary" : "ghost"}
                   className="w-full justify-start font-medium"
                   onClick={() => setMobileMenuOpen(false)}
-                  data-testid={`mobile-nav-link-${link.label.toLowerCase()}`}
+                  data-testid={`mobile-nav-link-${link.path}`}
                 >
                   {link.label}
                 </Button>
               </Link>
             ))}
-            <Link href="/admin/login">
-              <Button 
-                variant="default" 
-                className="w-full font-display tracking-wide"
-                onClick={() => setMobileMenuOpen(false)}
-                data-testid="mobile-nav-link-admin"
-              >
-                ADMIN LOGIN
-              </Button>
-            </Link>
+            <div className="pt-2 border-t flex justify-center">
+              <LanguageSwitcher />
+            </div>
           </nav>
         )}
       </div>
