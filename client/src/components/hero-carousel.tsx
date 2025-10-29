@@ -68,9 +68,9 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
   }
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden h-screen">
       <ParticlesBackground />
-      <div className="embla" ref={emblaRef}>
+      <div className="embla h-full" ref={emblaRef}>
         <div className="embla__container flex">
           {displayProperties.map((property, index) => {
             const imageUrl = property.images?.[0] || "";
