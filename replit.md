@@ -13,12 +13,20 @@ A luxury real estate web platform with modern white/gold/dark gray design. Featu
   - Implemented admin pages: Login, Dashboard, Properties Management, Agents Management, Inquiries Management
   - Created responsive navbar and footer components
   - Set up admin sidebar navigation with proper routing
-  - Implemented complete backend with JWT auth, CRUD operations, and in-memory storage
+  - Implemented complete backend with JWT auth, CRUD operations
+  - **Database Migration to PostgreSQL**:
+    - Migrated from in-memory storage to PostgreSQL with Drizzle ORM
+    - Created server/db.ts using standard pg driver (node-postgres)
+    - Implemented DatabaseStorage with all CRUD operations
+    - Created database tables: users, properties, agents, inquiries
+    - Seeded database with 6 sample luxury properties
+    - All data now persists across server restarts
   - **Bug Fixes**:
     - Fixed property details page to use custom queryFn for single property fetch
     - Added comprehensive data-testid attributes to all interactive elements
     - Added proper error handling to property details page
     - Enhanced loading and error states across all pages
+    - Fixed routing to properly handle admin login page
 
 ## Project Architecture
 

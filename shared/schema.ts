@@ -24,6 +24,7 @@ export const properties = pgTable("properties", {
   features: text("features").array().notNull(),
   status: text("status").notNull().default("active"),
   images: text("images").array().notNull(),
+  videos: text("videos").array(),
   agentId: varchar("agent_id"),
   createdAt: timestamp("created_at").defaultNow(),
 });
