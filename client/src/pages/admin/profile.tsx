@@ -167,7 +167,7 @@ export default function AdminProfile() {
                   </Button>
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => form.reset()}
                     disabled={mutation.isPending}
                     data-testid="button-reset-form"

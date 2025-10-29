@@ -508,7 +508,7 @@ export default function AdminProperties() {
                     />
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="secondary"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploading}
                       className="w-full"
@@ -591,7 +591,7 @@ export default function AdminProperties() {
                 />
 
                 <div className="flex gap-3 justify-end pt-4">
-                  <Button type="button" variant="outline" onClick={handleDialogClose}>
+                  <Button type="button" variant="secondary" onClick={handleDialogClose}>
                     Cancel
                   </Button>
                   <Button 

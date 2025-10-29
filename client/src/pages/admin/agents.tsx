@@ -177,7 +177,7 @@ export default function AdminAgents() {
                 />
 
                 <div className="flex gap-3 justify-end pt-4">
-                  <Button type="button" variant="outline" onClick={handleDialogClose}>
+                  <Button type="button" variant="secondary" onClick={handleDialogClose}>
                     Cancel
                   </Button>
                   <Button 

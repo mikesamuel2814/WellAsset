@@ -95,7 +95,7 @@ export function ParticlesBackground() {
         id="tsparticles"
         particlesLoaded={particlesLoaded}
         options={options}
-        className="absolute inset-0 -z-10"
+        className="absolute inset-0 z-10 pointer-events-none"
       />
     );
   }

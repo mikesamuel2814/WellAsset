@@ -178,8 +178,8 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
                             <Link href="/contact">
                               <Button
                                 size="lg"
-                                variant="outline"
-                                className="font-display text-base tracking-wide backdrop-blur-md bg-white/10 border-white/30 text-white hover:bg-white/20 shadow-xl"
+                                variant="secondary"
+                                className="font-display text-base tracking-wide backdrop-blur-md shadow-xl"
                               >
                                 {t("hero.contact")}
                               </Button>

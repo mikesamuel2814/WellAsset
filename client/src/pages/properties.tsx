@@ -132,7 +132,7 @@ export default function Properties() {
                 </div>
 
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   className="w-full"
                   onClick={() => {
                     setSearchQuery("");
@@ -169,7 +169,7 @@ export default function Properties() {
                 <h3 className="font-display font-semibold text-2xl mb-3">No properties found</h3>
                 <p className="text-muted-foreground mb-6">Try adjusting your filters to see more results</p>
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => {
                     setSearchQuery("");
                     setFilterType("all");

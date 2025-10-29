@@ -80,6 +80,7 @@ function Router() {
             </header>
             <main className="flex-1 overflow-auto">
               <Switch>
+                <Route path="/admin" component={() => <Redirect to="/admin/dashboard" />} />
                 <Route path="/admin/dashboard" component={AdminDashboard} />
                 <Route path="/admin/properties" component={AdminProperties} />
                 <Route path="/admin/agents" component={AdminAgents} />

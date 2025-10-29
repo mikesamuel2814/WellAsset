@@ -109,7 +109,7 @@ export default function AdminInquiries() {
                   {inquiry.status === "unread" && (
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="secondary"
                       onClick={() => handleMarkAsRead(inquiry.id)}
                       disabled={updateStatusMutation.isPending}
                       data-testid={`button-mark-read-${inquiry.id}`}

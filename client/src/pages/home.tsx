@@ -181,7 +181,6 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link href="/properties">
               <Button 
-                variant="outline"
                 size="lg"
                 className="font-display tracking-wide"
                 data-testid="button-view-all-properties"
