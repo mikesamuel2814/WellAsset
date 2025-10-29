@@ -73,14 +73,32 @@ const upload = multer({
     fileSize: 50 * 1024 * 1024, // 50MB limit
   },
   fileFilter: (_req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|mp4|mov|avi|webm/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
+    // Allowed image and video MIME types
+    const allowedMimeTypes = [
+      // Images
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      // Videos
+      'video/mp4',
+      'video/webm',
+      'video/quicktime', // .mov files
+      'video/x-msvideo', // .avi files
+      'video/mpeg',
+      'video/ogg'
+    ];
     
-    if (mimetype && extname) {
+    // Also check file extension as a backup
+    const allowedExtensions = /\.(jpeg|jpg|png|gif|webp|mp4|mov|avi|webm|mpeg|ogg)$/i;
+    const extname = allowedExtensions.test(file.originalname.toLowerCase());
+    const mimetypeAllowed = allowedMimeTypes.includes(file.mimetype);
+    
+    if (mimetypeAllowed && extname) {
       return cb(null, true);
     } else {
-      cb(new Error('Only image and video files are allowed!'));
+      cb(new Error('Only image files (JPG, PNG, GIF, WEBP) and video files (MP4, MOV, AVI, WEBM) are allowed!'));
     }
   }
 });
