@@ -117,6 +117,15 @@ const translations = {
     "common.sold": "Sold",
     "common.pending": "Pending",
     "common.loading": "Loading...",
+    "common.backToProperties": "Back to Properties",
+    "common.bedrooms": "Bedrooms",
+    "common.bathrooms": "Bathrooms",
+    
+    // Property Details Page
+    "propertyDetails.description": "Description",
+    "propertyDetails.features": "Key Features",
+    "propertyDetails.location": "Location",
+    "propertyDetails.mapAvailable": "Map integration available",
   },
   bn: {
     // Navbar
@@ -224,6 +233,15 @@ const translations = {
     "common.sold": "বিক্রিত",
     "common.pending": "মুলতুবি",
     "common.loading": "লোড হচ্ছে...",
+    "common.backToProperties": "সম্পত্তিতে ফিরে যান",
+    "common.bedrooms": "বেডরুম",
+    "common.bathrooms": "বাথরুম",
+    
+    // Property Details Page
+    "propertyDetails.description": "বিবরণ",
+    "propertyDetails.features": "মূল বৈশিষ্ট্য",
+    "propertyDetails.location": "অবস্থান",
+    "propertyDetails.mapAvailable": "ম্যাপ ইন্টিগ্রেশন উপলব্ধ",
   },
 };
 

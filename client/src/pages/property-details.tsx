@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { insertInquirySchema } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useI18n, usePropertyText } from "@/lib/i18n";
 import type { Property } from "@shared/schema";
 import type { z } from "zod";
 
@@ -21,6 +22,7 @@ export default function PropertyDetails() {
   const propertyId = params?.id;
   const [selectedImage, setSelectedImage] = useState(0);
   const { toast } = useToast();
+  const { t } = useI18n();
 
   const { data: property, isLoading, error } = useQuery<Property>({
     queryKey: ["/api/properties", propertyId],
@@ -116,6 +118,10 @@ export default function PropertyDetails() {
 
   const price = parseFloat(property.price as any);
   const images = property.images || [];
+  const title = usePropertyText(property, 'title');
+  const location = usePropertyText(property, 'location');
+  const description = usePropertyText(property, 'description');
+  const features = usePropertyText(property, 'features');
 
   return (
     <div className="min-h-screen bg-background">
@@ -124,7 +130,7 @@ export default function PropertyDetails() {
           <Link href="/properties">
             <Button variant="ghost" className="hover-elevate" data-testid="button-back">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Properties
+              {t("common.backToProperties")}
             </Button>
           </Link>
         </div>
@@ -136,7 +142,7 @@ export default function PropertyDetails() {
             <div className="rounded-lg overflow-hidden mb-4">
               <img
                 src={images[selectedImage]}
-                alt={property.title}
+                alt={title}
                 className="w-full h-96 object-cover"
                 data-testid="img-property-main"
               />
@@ -154,7 +160,7 @@ export default function PropertyDetails() {
                   >
                     <img
                       src={img}
-                      alt={`${property.title} ${idx + 1}`}
+                      alt={`${title} ${idx + 1}`}
                       className="w-full h-20 object-cover"
                     />
                   </button>
@@ -170,16 +176,16 @@ export default function PropertyDetails() {
               <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
                 <div>
                   <h1 className="font-display font-bold text-3xl md:text-4xl mb-2 tracking-tight" data-testid="text-property-title">
-                    {property.title}
+                    {title}
                   </h1>
                   <div className="flex items-center text-muted-foreground">
                     <MapPin className="w-5 h-5 mr-2" />
-                    <span className="text-lg">{property.location}</span>
+                    <span className="text-lg">{location}</span>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-primary font-display font-bold text-3xl md:text-4xl" data-testid="text-property-price">
-                    ${price.toLocaleString()}
+                    ৳{price.toLocaleString('en-BD')}
                   </p>
                   <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-md text-sm font-medium mt-2">
                     {property.type}
@@ -190,31 +196,31 @@ export default function PropertyDetails() {
               <div className="flex items-center gap-8 py-6 border-y">
                 <div className="flex items-center gap-2">
                   <Bed className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{property.bedrooms} Bedrooms</span>
+                  <span className="font-medium">{property.bedrooms} {t("common.bedrooms")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Bath className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{property.bathrooms} Bathrooms</span>
+                  <span className="font-medium">{property.bathrooms} {t("common.bathrooms")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Maximize className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{property.area} sqm</span>
+                  <span className="font-medium">{property.area} {t("common.sqft")}</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h2 className="font-display font-semibold text-2xl mb-4">Description</h2>
+              <h2 className="font-display font-semibold text-2xl mb-4">{t("propertyDetails.description")}</h2>
               <p className="text-foreground/80 leading-relaxed whitespace-pre-line">
-                {property.description}
+                {description}
               </p>
             </div>
 
-            {property.features && property.features.length > 0 && (
+            {features && features.length > 0 && (
               <div>
-                <h2 className="font-display font-semibold text-2xl mb-4">Key Features</h2>
+                <h2 className="font-display font-semibold text-2xl mb-4">{t("propertyDetails.features")}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {property.features.map((feature, idx) => (
+                  {features.map((feature: string, idx: number) => (
                     <div key={idx} className="flex items-start gap-2">
                       <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                       <span className="text-foreground/80">{feature}</span>
@@ -225,12 +231,12 @@ export default function PropertyDetails() {
             )}
 
             <div>
-              <h2 className="font-display font-semibold text-2xl mb-4">Location</h2>
+              <h2 className="font-display font-semibold text-2xl mb-4">{t("propertyDetails.location")}</h2>
               <div className="bg-muted rounded-lg h-96 flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
                   <MapPin className="w-12 h-12 mx-auto mb-2" />
-                  <p className="text-sm">Map integration available</p>
-                  <p className="text-xs mt-1">{property.location}</p>
+                  <p className="text-sm">{t("propertyDetails.mapAvailable")}</p>
+                  <p className="text-xs mt-1">{location}</p>
                 </div>
               </div>
             </div>

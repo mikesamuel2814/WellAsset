@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useI18n, usePropertyText } from "@/lib/i18n";
 import type { Property } from "@shared/schema";
 
 export default function Properties() {
@@ -205,6 +206,8 @@ export default function Properties() {
 function PropertyCard({ property }: { property: Property }) {
   const imageUrl = property.images?.[0] || "";
   const price = parseFloat(property.price as any);
+  const title = usePropertyText(property, 'title');
+  const location = usePropertyText(property, 'location');
 
   return (
     <Link href={`/properties/${property.id}`}>
@@ -215,7 +218,7 @@ function PropertyCard({ property }: { property: Property }) {
         <div className="relative h-56 overflow-hidden">
           <img
             src={imageUrl}
-            alt={property.title}
+            alt={title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute top-3 right-3">
@@ -227,11 +230,11 @@ function PropertyCard({ property }: { property: Property }) {
         </div>
         <CardContent className="p-6">
           <h3 className="font-display font-medium text-xl mb-2 line-clamp-1" data-testid={`text-property-title-${property.id}`}>
-            {property.title}
+            {title}
           </h3>
           <div className="flex items-center text-muted-foreground mb-4">
             <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-            <span className="text-sm line-clamp-1">{property.location}</span>
+            <span className="text-sm line-clamp-1">{location}</span>
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-1">
@@ -244,11 +247,11 @@ function PropertyCard({ property }: { property: Property }) {
             </div>
             <div className="flex items-center gap-1">
               <Maximize className="w-4 h-4" />
-              <span>{property.area} sqm</span>
+              <span>{property.area} sqft</span>
             </div>
           </div>
           <p className="text-primary font-display font-semibold text-2xl" data-testid={`text-property-price-${property.id}`}>
-            ${price.toLocaleString()}
+            ৳{price.toLocaleString('en-BD')}
           </p>
         </CardContent>
       </Card>
