@@ -1,0 +1,161 @@
+Project Title:
+Well Asset Development Co., Ltd – Real Estate Website & Admin Dashboard
+
+🧭 Overview
+
+Create a complete real estate web platform for Well Asset Development Co., Ltd, built with a modern, luxury-style user interface and a powerful admin dashboard.
+The platform should allow visitors to browse properties with photos, videos, filters, and details, while the admin panel enables property, agent, and inquiry management.
+
+⚙️ Tech Stack
+
+Frontend: Vite + React + TypeScript + TailwindCSS
+
+Backend: Node.js (Express)
+
+Database: MySQL (using mysql2 driver)
+
+Auth: JWT (JSON Web Token)
+
+File Uploads: Multer (for property photo/video uploads)
+
+API Type: RESTful
+
+💎 Frontend (Client Website)
+
+Built with Vite + React + TailwindCSS for a fast, responsive UI.
+
+Home Page:
+
+Full-width hero banner (photo/video background).
+
+Featured and latest property sections.
+
+Call-to-action to browse listings or contact the company.
+
+Property Listings Page:
+
+Filter by property type, price range, bedrooms, and location.
+
+Search bar with instant results.
+
+Grid layout with image/video previews and hover effects.
+
+Property Details Page:
+
+Image gallery & embedded video player.
+
+Price, address, Google Maps location, key features, description.
+
+Contact form for inquiries (stored in the backend).
+
+About & Contact Pages:
+
+About the company, mission, and development projects.
+
+Contact form integrated with the backend API.
+
+Responsive Design: Works beautifully on desktop, tablet, and mobile.
+
+Theme: White, gold, and dark gray — luxury-inspired style with smooth animations.
+
+🧑‍💼 Admin Dashboard (Backend UI)
+
+Accessible via /admin and protected by login (JWT authentication).
+
+Admin Features
+
+Login Page
+
+Secure authentication with JWT & bcrypt-hashed passwords.
+
+Roles: Admin, Editor.
+
+Dashboard Home
+
+Overview of total properties, active listings, and recent inquiries.
+
+Property Management
+
+Add new property with title, type, price, location, description, features.
+
+Upload multiple photos/videos (store file paths in MySQL).
+
+Edit and delete existing listings.
+
+Agent Management
+
+Create and manage agents with name, email, phone, and profile photo.
+
+Assign properties to agents.
+
+Inquiry Management
+
+View all messages submitted through the contact form.
+
+Mark inquiries as read/resolved.
+
+Site Settings
+
+Update company contact info, social media links, and site branding.
+
+🗄️ Database Schema (Example Tables)
+
+users → id, name, email, password_hash, role
+
+properties → id, title, price, type, location, description, features, status
+
+property_media → id, property_id, file_type (image/video), file_path
+
+agents → id, name, email, phone, profile_image
+
+inquiries → id, name, email, phone, message, property_id
+
+🚀 Backend API Endpoints (Examples)
+Method	Endpoint	Description
+POST	/api/auth/login	Admin login
+GET	/api/properties	List all properties
+POST	/api/properties	Add new property
+PUT	/api/properties/:id	Update property
+DELETE	/api/properties/:id	Delete property
+GET	/api/agents	List all agents
+POST	/api/inquiries	Submit contact form
+GET	/api/inquiries	View inquiries (admin)
+🎨 Design & Branding
+
+Font: Inter / Poppins
+
+Color Palette:
+
+White #FFFFFF
+
+Gold #D4AF37
+
+Dark Gray #1C1C1C
+
+Layout Style: Elegant, minimal, grid-based
+
+Animations: Smooth hover effects, fade-in transitions
+
+🎯 Final Output
+
+A production-ready full-stack real estate website that includes:
+
+Frontend website (Vite + TailwindCSS)
+
+Backend API (Node.js + Express + MySQL)
+
+Secure admin dashboard (/admin)
+
+Full CRUD property management
+
+JWT authentication system
+
+Media uploads (photos/videos)
+
+Modern UI/UX design
+
+Deployed easily on Replit
+
+🏁 Goal
+
+Deliver a professional, modern, and unique real estate web platform that represents Well Asset Development Co., Ltd. as a high-end property developer, offering a luxurious user experience for clients and an efficient admin experience for the company’s staff.
