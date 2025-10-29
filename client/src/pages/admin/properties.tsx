@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Building2 } from "lucide-react";
+import { Plus, Edit, Trash2, Building2, Upload, X, Image as ImageIcon, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -41,6 +41,9 @@ const defaultImages = [penthouseImg, beachfrontImg, townhouseImg, mansionImg, of
 export default function AdminProperties() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const { data: properties, isLoading } = useQuery<Property[]>({
@@ -95,9 +98,54 @@ export default function AdminProperties() {
     },
   });
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    Array.from(files).forEach(file => {
+      formData.append('files', file);
+    });
+
+    try {
+      const response = await apiRequest("POST", "/api/upload", formData) as unknown as { urls: string[] };
+      const { urls } = response;
+      setUploadedFiles(prev => [...prev, ...urls]);
+      toast({ title: "Files uploaded successfully" });
+    } catch (error) {
+      toast({ 
+        title: "Upload failed", 
+        description: "Failed to upload files",
+        variant: "destructive" 
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const removeFile = (urlToRemove: string) => {
+    setUploadedFiles(prev => prev.filter(url => url !== urlToRemove));
+  };
+
   const onSubmit = (data: z.infer<typeof insertPropertySchema>) => {
-    const randomImages = [defaultImages[Math.floor(Math.random() * defaultImages.length)]];
-    const propertyData = { ...data, images: randomImages };
+    const images = uploadedFiles.filter(url => 
+      /\.(jpg|jpeg|png|gif|webp)$/i.test(url)
+    );
+    const videos = uploadedFiles.filter(url => 
+      /\.(mp4|mov|avi|webm)$/i.test(url)
+    );
+
+    // Use uploaded files or fallback to default images if none uploaded
+    const finalImages = images.length > 0 ? images : [defaultImages[Math.floor(Math.random() * defaultImages.length)]];
+    const propertyData = { 
+      ...data, 
+      images: finalImages,
+      videos: videos.length > 0 ? videos : undefined
+    };
 
     if (editingProperty) {
       updateMutation.mutate({ id: editingProperty.id, data: propertyData });
@@ -108,6 +156,11 @@ export default function AdminProperties() {
 
   const handleEdit = (property: Property) => {
     setEditingProperty(property);
+    const allFiles = [
+      ...(property.images || []),
+      ...(property.videos || [])
+    ];
+    setUploadedFiles(allFiles);
     form.reset({
       title: property.title,
       price: property.price as string,
@@ -134,6 +187,7 @@ export default function AdminProperties() {
   const handleDialogClose = () => {
     setIsDialogOpen(false);
     setEditingProperty(null);
+    setUploadedFiles([]);
     form.reset();
   };
 
@@ -329,6 +383,79 @@ export default function AdminProperties() {
                     </FormItem>
                   )}
                 />
+
+                <div className="space-y-3">
+                  <Label>Images & Videos</Label>
+                  <div className="space-y-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept="image/*,video/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      data-testid="input-file-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="w-full"
+                      data-testid="button-upload-files"
+                    >
+                      {isUploading ? (
+                        <>
+                          <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent"></div>
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4 mr-2" />
+                          Upload Images & Videos
+                        </>
+                      )}
+                    </Button>
+
+                    {uploadedFiles.length > 0 && (
+                      <div className="grid grid-cols-3 gap-3">
+                        {uploadedFiles.map((url, index) => {
+                          const isVideo = /\.(mp4|mov|avi|webm)$/i.test(url);
+                          return (
+                            <div key={index} className="relative group">
+                              <div className="aspect-square rounded-md border bg-muted overflow-hidden">
+                                {isVideo ? (
+                                  <div className="w-full h-full flex items-center justify-center bg-muted">
+                                    <Video className="w-8 h-8 text-muted-foreground" />
+                                  </div>
+                                ) : (
+                                  <img
+                                    src={url}
+                                    alt={`Upload ${index + 1}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                )}
+                              </div>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute top-1 right-1 h-6 w-6"
+                                onClick={() => removeFile(url)}
+                                data-testid={`button-remove-file-${index}`}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <p className="text-sm text-muted-foreground">
+                      Upload images (JPG, PNG, GIF) and videos (MP4, MOV, AVI, WEBM). Maximum 50MB per file.
+                    </p>
+                  </div>
+                </div>
 
                 <FormField
                   control={form.control}

@@ -50,7 +50,7 @@ export interface IStorage {
   
   getAllSocialMedia(): Promise<SocialMedia[]>;
   getSocialMediaItem(id: string): Promise<SocialMedia | undefined>;
-  updateSocialMedia(id: string, data: InsertSocialMedia): Promise<SocialMedia | undefined>;
+  updateSocialMedia(id: string, data: Partial<InsertSocialMedia>): Promise<SocialMedia | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -188,7 +188,7 @@ export class DatabaseStorage implements IStorage {
     return item || undefined;
   }
 
-  async updateSocialMedia(id: string, data: InsertSocialMedia): Promise<SocialMedia | undefined> {
+  async updateSocialMedia(id: string, data: Partial<InsertSocialMedia>): Promise<SocialMedia | undefined> {
     const [item] = await db
       .update(socialMedia)
       .set(data)
