@@ -4,7 +4,6 @@ import { Building2, MapPin, Bed, Bath, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroCarousel } from "@/components/hero-carousel";
-import { ParticlesBackground } from "@/components/particles-background";
 import { SEOHead } from "@/components/seo-head";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useI18n, usePropertyText } from "@/lib/i18n";
@@ -40,10 +39,7 @@ export default function Home() {
           "url": typeof window !== "undefined" ? window.location.origin : "https://wellasset.com"
         }}
       />
-      <div className="relative">
-        <ParticlesBackground />
-        {!isLoading && <HeroCarousel properties={featuredProperties} />}
-      </div>
+      {!isLoading && <HeroCarousel properties={featuredProperties} />}
 
       <section className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-6">

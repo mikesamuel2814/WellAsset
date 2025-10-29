@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useI18n, usePropertyText } from "@/lib/i18n";
+import { ParticlesBackground } from "@/components/particles-background";
 import type { Property } from "@shared/schema";
 
 interface HeroCarouselProps {
@@ -68,6 +69,7 @@ export function HeroCarousel({ properties }: HeroCarouselProps) {
 
   return (
     <section className="relative overflow-hidden">
+      <ParticlesBackground />
       <div className="embla" ref={emblaRef}>
         <div className="embla__container flex">
           {displayProperties.map((property, index) => {
