@@ -3,6 +3,12 @@
 ## Overview
 A luxury real estate web platform with a modern white/gold/dark gray design. It enables property browsing with filters, detailed property pages, and inquiry submission. The platform includes a comprehensive admin dashboard for managing properties, agents, and inquiries. The project's ambition is to cater specifically to the Bangladesh/Dhaka real estate market, offering a bilingual (English/Bangla) and localized user experience.
 
+## Admin Credentials
+**Email:** `testadmin@wellasset.com`  
+**Password:** `admin123`
+
+Access the admin panel at: `/admin/login`
+
 ## User Preferences
 - **Target Market**: Bangladesh/Dhaka real estate market
 - **Currency**: Bangladeshi Taka (৳ BDT) - displayed everywhere
@@ -41,6 +47,7 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 - **Dashboard**: Overview statistics, recent inquiries feed.
 - **Management**: CRUD operations for Properties, Agents, and Inquiries.
 - **CMS**: Admin interface for managing site settings and social media links.
+- **Profile**: Admin profile page with password update functionality (min 8 characters, validation, bcrypt hashing).
 
 ## External Dependencies
 - **Database**: PostgreSQL (managed with Drizzle ORM)
