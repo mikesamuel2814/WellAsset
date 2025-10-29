@@ -4,14 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Loader2, Globe, Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 type SiteSetting = {
   id: string;
   key: string;
   value: string;
+  valueBn?: string;
   label: string;
 };
 
@@ -35,17 +37,8 @@ export default function AdminCMS() {
   });
 
   const updateSettingMutation = useMutation({
-    mutationFn: async ({ key, value }: { key: string; value: string }) => {
-      const res = await fetch(`/api/cms/settings/${key}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ value }),
-      });
-      if (!res.ok) throw new Error("Failed to update setting");
-      return res.json();
+    mutationFn: async ({ key, value, valueBn }: { key: string; value: string; valueBn?: string }) => {
+      return await apiRequest("PUT", `/api/cms/settings/${key}`, { value, valueBn });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cms/settings"] });
@@ -97,7 +90,8 @@ export default function AdminCMS() {
     const formData = new FormData(e.currentTarget);
     const key = formData.get("key") as string;
     const value = formData.get("value") as string;
-    updateSettingMutation.mutate({ key, value });
+    const valueBn = formData.get("valueBn") as string;
+    updateSettingMutation.mutate({ key, value, valueBn });
   };
 
   const handleSocialSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -166,29 +160,45 @@ export default function AdminCMS() {
           </CardHeader>
           <CardContent className="space-y-4">
             {contactSettings.map((setting) => (
-              <form key={setting.id} onSubmit={handleSettingSubmit} className="space-y-2">
+              <form key={setting.id} onSubmit={handleSettingSubmit} className="space-y-3">
                 <input type="hidden" name="key" value={setting.key} />
                 <Label htmlFor={setting.key}>{setting.label}</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id={setting.key}
-                    name="value"
-                    defaultValue={setting.value}
-                    placeholder={setting.label}
-                    data-testid={`input-${setting.key}`}
-                  />
-                  <Button 
-                    type="submit" 
-                    disabled={updateSettingMutation.isPending}
-                    data-testid={`button-update-${setting.key}`}
-                  >
-                    {updateSettingMutation.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      "Update"
-                    )}
-                  </Button>
-                </div>
+                <Tabs defaultValue="en" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
+                    <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="en" className="space-y-2">
+                    <Input
+                      id={setting.key}
+                      name="value"
+                      defaultValue={setting.value}
+                      placeholder={`${setting.label} (English)`}
+                      data-testid={`input-${setting.key}-en`}
+                    />
+                  </TabsContent>
+                  <TabsContent value="bn" className="space-y-2">
+                    <Input
+                      id={`${setting.key}-bn`}
+                      name="valueBn"
+                      defaultValue={setting.valueBn || ""}
+                      placeholder={`${setting.label} (বাংলা)`}
+                      data-testid={`input-${setting.key}-bn`}
+                    />
+                  </TabsContent>
+                </Tabs>
+                <Button 
+                  type="submit" 
+                  disabled={updateSettingMutation.isPending}
+                  data-testid={`button-update-${setting.key}`}
+                  className="w-full"
+                >
+                  {updateSettingMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Update"
+                  )}
+                </Button>
               </form>
             ))}
           </CardContent>
@@ -206,29 +216,45 @@ export default function AdminCMS() {
           </CardHeader>
           <CardContent className="space-y-4">
             {aboutSettings.map((setting) => (
-              <form key={setting.id} onSubmit={handleSettingSubmit} className="space-y-2">
+              <form key={setting.id} onSubmit={handleSettingSubmit} className="space-y-3">
                 <input type="hidden" name="key" value={setting.key} />
                 <Label htmlFor={setting.key}>{setting.label}</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id={setting.key}
-                    name="value"
-                    defaultValue={setting.value}
-                    placeholder={setting.label}
-                    data-testid={`input-${setting.key}`}
-                  />
-                  <Button 
-                    type="submit" 
-                    disabled={updateSettingMutation.isPending}
-                    data-testid={`button-update-${setting.key}`}
-                  >
-                    {updateSettingMutation.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      "Update"
-                    )}
-                  </Button>
-                </div>
+                <Tabs defaultValue="en" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
+                    <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="en" className="space-y-2">
+                    <Input
+                      id={setting.key}
+                      name="value"
+                      defaultValue={setting.value}
+                      placeholder={`${setting.label} (English)`}
+                      data-testid={`input-${setting.key}-en`}
+                    />
+                  </TabsContent>
+                  <TabsContent value="bn" className="space-y-2">
+                    <Input
+                      id={`${setting.key}-bn`}
+                      name="valueBn"
+                      defaultValue={setting.valueBn || ""}
+                      placeholder={`${setting.label} (বাংলা)`}
+                      data-testid={`input-${setting.key}-bn`}
+                    />
+                  </TabsContent>
+                </Tabs>
+                <Button 
+                  type="submit" 
+                  disabled={updateSettingMutation.isPending}
+                  data-testid={`button-update-${setting.key}`}
+                  className="w-full"
+                >
+                  {updateSettingMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Update"
+                  )}
+                </Button>
               </form>
             ))}
           </CardContent>
