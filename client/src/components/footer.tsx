@@ -1,0 +1,119 @@
+import { Link } from "wouter";
+import { Building2, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+
+export function Footer() {
+  return (
+    <footer className="bg-card border-t">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-lg leading-tight">Well Asset</h3>
+                <p className="text-xs text-muted-foreground">Development Co., Ltd</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Creating exceptional living spaces and investment opportunities since 2010.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-display font-semibold mb-4">Quick Links</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/">
+                  <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-home">Home</a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/properties">
+                  <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-properties">Properties</a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/about">
+                  <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-about">About Us</a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact">
+                  <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-contact">Contact</a>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display font-semibold mb-4">Contact Info</h4>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-start gap-2 text-muted-foreground">
+                <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span data-testid="text-office-address">123 Business District<br />Bangkok, Thailand</span>
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <Phone className="w-4 h-4 flex-shrink-0" />
+                <a href="tel:+1234567890" className="hover:text-primary transition-colors" data-testid="link-phone">
+                  +1 (234) 567-890
+                </a>
+              </li>
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <Mail className="w-4 h-4 flex-shrink-0" />
+                <a href="mailto:info@wellasset.com" className="hover:text-primary transition-colors" data-testid="link-email">
+                  info@wellasset.com
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display font-semibold mb-4">Follow Us</h4>
+            <div className="flex gap-3">
+              <a
+                href="#"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                aria-label="Facebook"
+                data-testid="link-social-facebook"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                aria-label="Twitter"
+                data-testid="link-social-twitter"
+              >
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                aria-label="Instagram"
+                data-testid="link-social-instagram"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                aria-label="LinkedIn"
+                data-testid="link-social-linkedin"
+              >
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-primary/20 pt-8">
+          <p className="text-center text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Well Asset Development Co., Ltd. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
