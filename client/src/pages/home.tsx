@@ -4,7 +4,8 @@ import { Building2, MapPin, Bed, Bath, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroCarousel } from "@/components/hero-carousel";
-import { motion } from "framer-motion";
+import { ParticlesBackground } from "@/components/particles-background";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useI18n, usePropertyText } from "@/lib/i18n";
 import type { Property } from "@shared/schema";
 
@@ -13,13 +14,19 @@ export default function Home() {
   const { data: properties, isLoading } = useQuery<Property[]>({
     queryKey: ["/api/properties"],
   });
+  
+  const { scrollY } = useScroll();
+  const parallaxY = useTransform(scrollY, [0, 500], [0, 150]);
 
   const featuredProperties = properties?.filter(p => p.status === "active").slice(0, 6) || [];
   const latestProperties = properties?.filter(p => p.status === "active").slice(0, 9) || [];
 
   return (
     <div className="min-h-screen">
-      {!isLoading && <HeroCarousel properties={featuredProperties} />}
+      <div className="relative">
+        <ParticlesBackground />
+        {!isLoading && <HeroCarousel properties={featuredProperties} />}
+      </div>
 
       <section className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-6">
@@ -201,18 +208,29 @@ function PropertyCard({ property }: { property: Property }) {
 
   return (
     <Link href={`/properties/${property.id}`}>
-      <Card 
-        className="overflow-hidden hover-elevate active-elevate-2 transition-transform duration-200 cursor-pointer group"
-        data-testid={`card-property-${property.id}`}
+      <motion.div
+        whileHover={{ y: -8 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        <div className="relative h-64 overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        </div>
+        <Card 
+          className="overflow-hidden hover-elevate active-elevate-2 cursor-pointer group"
+          data-testid={`card-property-${property.id}`}
+        >
+          <div className="relative h-64 overflow-hidden">
+            <motion.img
+              src={imageUrl}
+              alt={title}
+              className="w-full h-full object-cover"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.4 }}
+            />
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
         <CardContent className="p-6">
           <h3 className="font-display font-medium text-xl mb-2 line-clamp-1" data-testid={`text-property-title-${property.id}`}>
             {title}
@@ -240,6 +258,7 @@ function PropertyCard({ property }: { property: Property }) {
           </p>
         </CardContent>
       </Card>
+      </motion.div>
     </Link>
   );
 }

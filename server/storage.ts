@@ -7,10 +7,16 @@ import {
   type InsertAgent,
   type Inquiry,
   type InsertInquiry,
+  type SiteSetting,
+  type InsertSiteSetting,
+  type SocialMedia,
+  type InsertSocialMedia,
   users,
   properties,
   agents,
-  inquiries
+  inquiries,
+  siteSettings,
+  socialMedia
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -36,6 +42,14 @@ export interface IStorage {
   getInquiry(id: string): Promise<Inquiry | undefined>;
   createInquiry(inquiry: InsertInquiry): Promise<Inquiry>;
   updateInquiryStatus(id: string, status: string): Promise<Inquiry | undefined>;
+  
+  getAllSiteSettings(): Promise<SiteSetting[]>;
+  getSiteSetting(key: string): Promise<SiteSetting | undefined>;
+  updateSiteSetting(key: string, value: string): Promise<SiteSetting | undefined>;
+  
+  getAllSocialMedia(): Promise<SocialMedia[]>;
+  getSocialMediaItem(id: string): Promise<SocialMedia | undefined>;
+  updateSocialMedia(id: string, data: InsertSocialMedia): Promise<SocialMedia | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -131,6 +145,42 @@ export class DatabaseStorage implements IStorage {
       .where(eq(inquiries.id, id))
       .returning();
     return inquiry || undefined;
+  }
+
+  async getAllSiteSettings(): Promise<SiteSetting[]> {
+    return await db.select().from(siteSettings);
+  }
+
+  async getSiteSetting(key: string): Promise<SiteSetting | undefined> {
+    const [setting] = await db.select().from(siteSettings).where(eq(siteSettings.key, key));
+    return setting || undefined;
+  }
+
+  async updateSiteSetting(key: string, value: string): Promise<SiteSetting | undefined> {
+    const [setting] = await db
+      .update(siteSettings)
+      .set({ value, updatedAt: new Date() })
+      .where(eq(siteSettings.key, key))
+      .returning();
+    return setting || undefined;
+  }
+
+  async getAllSocialMedia(): Promise<SocialMedia[]> {
+    return await db.select().from(socialMedia);
+  }
+
+  async getSocialMediaItem(id: string): Promise<SocialMedia | undefined> {
+    const [item] = await db.select().from(socialMedia).where(eq(socialMedia.id, id));
+    return item || undefined;
+  }
+
+  async updateSocialMedia(id: string, data: InsertSocialMedia): Promise<SocialMedia | undefined> {
+    const [item] = await db
+      .update(socialMedia)
+      .set(data)
+      .where(eq(socialMedia.id, id))
+      .returning();
+    return item || undefined;
   }
 }
 

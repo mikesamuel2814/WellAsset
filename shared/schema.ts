@@ -52,6 +52,23 @@ export const inquiries = pgTable("inquiries", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const siteSettings = pgTable("site_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  category: text("category").notNull(), // 'contact', 'about', 'general'
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const socialMedia = pgTable("social_media", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  platform: text("platform").notNull(), // 'facebook', 'instagram', 'linkedin', 'twitter'
+  url: text("url").notNull(),
+  icon: text("icon"), // icon name from lucide-react
+  isActive: boolean("is_active").notNull().default(true),
+  order: integer("order").notNull().default(0),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
 });
@@ -76,6 +93,15 @@ export const insertInquirySchema = createInsertSchema(inquiries).omit({
   status: true,
 });
 
+export const insertSiteSettingSchema = createInsertSchema(siteSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertSocialMediaSchema = createInsertSchema(socialMedia).omit({
+  id: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
@@ -87,3 +113,9 @@ export type Agent = typeof agents.$inferSelect;
 
 export type InsertInquiry = z.infer<typeof insertInquirySchema>;
 export type Inquiry = typeof inquiries.$inferSelect;
+
+export type InsertSiteSetting = z.infer<typeof insertSiteSettingSchema>;
+export type SiteSetting = typeof siteSettings.$inferSelect;
+
+export type InsertSocialMedia = z.infer<typeof insertSocialMediaSchema>;
+export type SocialMedia = typeof socialMedia.$inferSelect;
