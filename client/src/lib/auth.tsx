@@ -12,6 +12,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  authHydrated: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
   checkAuth: () => boolean;
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [authHydrated, setAuthHydrated] = useState(false);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
@@ -38,6 +40,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("user");
       }
     }
+    
+    setAuthHydrated(true);
   }, []);
 
   const login = (newToken: string, newUser: User) => {
@@ -65,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         token,
         isAuthenticated: checkAuth(),
+        authHydrated,
         login,
         logout,
         checkAuth,

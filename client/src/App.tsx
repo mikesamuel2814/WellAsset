@@ -25,7 +25,7 @@ import { useEffect } from "react";
 
 function Router() {
   const [location, setLocation] = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, authHydrated } = useAuth();
   const isAdminRoute = location.startsWith("/admin");
   const isAdminLogin = location === "/admin/login";
 
@@ -35,12 +35,22 @@ function Router() {
   };
 
   useEffect(() => {
+    if (!authHydrated) return;
+    
     if (isAdminRoute && !isAdminLogin && !isAuthenticated) {
       setLocation("/admin/login");
     } else if (isAdminLogin && isAuthenticated) {
       setLocation("/admin/dashboard");
     }
-  }, [location, isAuthenticated, isAdminRoute, isAdminLogin, setLocation]);
+  }, [location, isAuthenticated, authHydrated, isAdminRoute, isAdminLogin, setLocation]);
+
+  if (isAdminRoute && !authHydrated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" data-testid="loading-spinner"></div>
+      </div>
+    );
+  }
 
   if (isAdminRoute) {
     if (isAdminLogin) {

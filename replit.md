@@ -4,53 +4,80 @@
 A luxury real estate web platform with modern white/gold/dark gray design. Features property browsing with filters, detailed property pages, inquiry submission, and a complete admin dashboard for managing properties, agents, and inquiries.
 
 ## Recent Changes
-- **2025-01-29**: Complete implementation with multi-language support and Bangladesh localization
-  - **UI Refresh & Color Scheme**:
-    - Implemented modern teal/coral color scheme (Primary: teal #14b8a6, Accent: coral #f97316)
-    - Updated design system for both light and dark modes
-    - Removed admin button from navbar (access only via /admin route)
+- **2025-10-29**: Enhanced platform with complete i18n, theme support, media features, and authentication
+  - **Completed Multi-language Support (English/Bangla)**:
+    - Extended i18n to About page, Contact page, and Footer component
+    - 90+ translation keys covering all UI text
+    - Language switcher with Globe icon dropdown (no emojis, Lucide icons only)
+    - Property data localization (titleBn, locationBn, descriptionBn, featuresBn)
+    - Language preference persists in localStorage as "well-asset-language"
+    - All components use useTranslations hook consistently
+    - Data-testid attributes on all interactive elements for testing
   
-  - **Hero Carousel**:
-    - Built auto-playing carousel with embla-carousel-react and Framer Motion
-    - 5-second auto-advance with smooth transitions
-    - Manual navigation controls (prev/next buttons, dot indicators)
-    - Fully language-aware with property data localization
-    - Image null guard with gradient fallback
+  - **Dark/Light Theme Toggle**:
+    - Implemented ThemeProvider using next-themes
+    - Three modes: Light, Dark, System (follows OS preference)
+    - ThemeToggle component in navbar with Sun/Moon icons
+    - Theme persists in localStorage as "well-asset-theme"
+    - Smooth transitions between themes
+    - All components support both light and dark modes
   
-  - **Eye-catching Animations**:
-    - Scroll animations using Framer Motion
-    - Property card hover effects (image scale, gradient overlay)
-    - Staggered entrance animations
-    - Smooth page transitions throughout
+  - **Property Media Slider**:
+    - Built PropertyMediaSlider component using embla-carousel-react
+    - Videos display first, then images (if videos array has content)
+    - 5-second autoplay with manual controls (prev/next buttons, dot indicators, thumbnails)
+    - Conditionally shows controls only when allMedia.length > 1 (UX optimization)
+    - Framer Motion animations for smooth transitions
+    - Full data-testid attributes for all interactive elements
+    - Properly integrates with property details page
   
-  - **Complete Multi-language Support (English/Bangla)**:
-    - Comprehensive i18n system with 90+ translation keys
-    - Language switcher with Lucide icons (Globe, Check - NO emojis)
-    - Data-testid attributes added to all dropdown items
-    - Full UI translation across all pages
-    - Property data localization (title, location, description, features)
-    - Language preference stored in localStorage
+  - **Leaflet Map Integration**:
+    - Created PropertyMap component using react-leaflet v4
+    - Shows property locations on interactive OpenStreetMap
+    - Dhaka-area coordinate mapping (Gulshan, Banani, Dhanmondi, Motijheel, Uttara, Bashundhara)
+    - Fallback to Dhaka center (23.8103, 90.4125) for unmapped areas
+    - Marker with popup showing property title and location
+    - Integrated on property details page below media slider
+  
+  - **Authentication Middleware & Route Guards**:
+    - Created AuthProvider context (client/src/lib/auth.tsx)
+    - Auth state management: user, token, isAuthenticated, authHydrated
+    - Login/logout functions with localStorage persistence
+    - Route guards in App.tsx:
+      - Logged-out users accessing /admin/* → redirect to /admin/login
+      - Logged-in users accessing /admin/login → redirect to /admin/dashboard
+      - Public routes remain accessible without auth
+    - Auth hydration fix: Loading spinner shows while checking localStorage
+    - No race condition: Route guards wait for authHydrated before redirecting
+    - Updated admin login page to use auth context
+    - Updated admin sidebar logout to use auth context
+    - JWT token and user data stored in localStorage
+    - Smooth UX: No login flash on dashboard reload
   
   - **Bangladesh/Dhaka Market Focus**:
-    - Currency changed from USD to BDT (৳) across ALL pages
-    - Database schema extended with Bangla fields (titleBn, locationBn, descriptionBn, featuresBn)
-    - Database reseeded with 6 Bangladesh/Dhaka properties
-    - All properties have comprehensive Bangla translations
-    - Locations: Gulshan, Banani, Dhanmondi, Motijheel, Uttara, Bashundhara
+    - Currency: BDT (৳) displayed across ALL pages
+    - Contact page shows Dhaka, Bangladesh location
+    - Database schema has Bangla fields (titleBn, locationBn, descriptionBn, featuresBn)
+    - Properties focused on Dhaka areas (Gulshan, Banani, Dhanmondi, etc.)
   
   - **Technical Implementation**:
-    - Created usePropertyText helper for language-aware property display
-    - Updated all components to use localized content (Home, Properties, Property Details, Hero Carousel)
-    - PostgreSQL database with standard pg driver (node-postgres)
-    - DatabaseStorage with all CRUD operations
-    - Full i18n support across all pages
-    - Proper data-testid attributes for testing
+    - PostgreSQL database with Drizzle ORM
+    - DatabaseStorage with full CRUD operations
+    - React 18 with TypeScript
+    - Wouter for routing
+    - TanStack Query for data fetching
+    - Shadcn/ui components with Radix primitives
+    - Comprehensive data-testid attributes throughout
   
-  - **E2E Testing**: Comprehensive testing completed and PASSED
-    - All currency displays verified as BDT (৳)
-    - Language switching tested (EN ↔ BN)
-    - Hero carousel functionality verified
-    - All animations working smoothly
+  - **E2E Testing**: Comprehensive testing PASSED
+    - ✅ Multi-language switching (English ↔ Bangla)
+    - ✅ Theme toggle (Light/Dark/System modes)
+    - ✅ Property listings with BDT (৳) currency
+    - ✅ Property details with media slider and map
+    - ✅ Dhaka/Bangladesh market localization
+    - ✅ Authentication middleware (login/logout/route guards)
+    - ✅ All pages navigate correctly
+    - Minor React warnings in console (don't affect functionality)
     - No blocking issues found
 
 ## Project Architecture
@@ -152,34 +179,45 @@ A luxury real estate web platform with modern white/gold/dark gray design. Featu
 client/
   src/
     components/
-      ui/          - Shadcn UI components
-      navbar.tsx   - Public site navigation
-      footer.tsx   - Public site footer
-      admin-sidebar.tsx - Admin navigation
+      ui/                    - Shadcn UI components
+      navbar.tsx             - Public site navigation with language/theme toggles
+      footer.tsx             - Public site footer with i18n support
+      admin-sidebar.tsx      - Admin navigation with logout
+      theme-provider.tsx     - Dark/light theme context provider
+      theme-toggle.tsx       - Theme toggle component (Sun/Moon icons)
+      language-switcher.tsx  - Language dropdown (Globe icon)
+      property-media-slider.tsx - Embla carousel for images/videos
+      property-map.tsx       - Leaflet map component
+    lib/
+      i18n.tsx              - i18n context and translations (90+ keys)
+      auth.tsx              - Authentication context and provider
+      queryClient.ts        - TanStack Query setup
     pages/
-      home.tsx
-      properties.tsx
-      property-details.tsx
-      about.tsx
-      contact.tsx
+      home.tsx              - Landing page with hero carousel
+      properties.tsx        - Property listings with filters
+      property-details.tsx  - Individual property page with slider & map
+      about.tsx             - About page with i18n
+      contact.tsx           - Contact page with Dhaka location
       admin/
-        login.tsx
-        dashboard.tsx
-        properties.tsx
-        agents.tsx
-        inquiries.tsx
-    App.tsx        - Main app with routing
-    index.css      - Global styles with design tokens
+        login.tsx           - Admin login with auth context
+        dashboard.tsx       - Admin overview
+        properties.tsx      - Property management
+        agents.tsx          - Agent management
+        inquiries.tsx       - Inquiry management
+    App.tsx               - Main app with routing and auth guards
+    index.css             - Global styles with design tokens
 shared/
-  schema.ts        - Shared TypeScript types and Zod schemas
+  schema.ts               - Drizzle schemas and Zod validation
 server/
-  routes.ts        - API endpoints (to be implemented)
-  storage.ts       - Data storage interface (to be implemented)
+  routes.ts               - API endpoints (PostgreSQL + Drizzle)
+  storage.ts              - Database storage implementation
+  db.ts                   - Database connection
 ```
 
-## API Endpoints (To be implemented)
-- POST /api/auth/login - Admin authentication
-- GET /api/properties - List all properties
+## API Endpoints (Implemented)
+- POST /api/auth/login - Admin authentication (creates user if not exists)
+- GET /api/properties - List all properties with optional filters
+- GET /api/properties/:id - Get single property by ID
 - POST /api/properties - Create property
 - PUT /api/properties/:id - Update property
 - DELETE /api/properties/:id - Delete property
@@ -197,9 +235,11 @@ server/
 - Backend: Express server on same port
 - Auto-restart on file changes
 
-## Next Steps
-1. Implement backend API endpoints
-2. Set up JWT authentication
-3. Connect frontend to backend
-4. Add proper error handling
-5. Test all user journeys
+## Next Steps (Future Enhancements)
+1. **Image/Video Upload System**: Implement multer-based file upload for admin panel to add property media
+2. **CMS Functionality**: Add admin interface to edit About page content and Contact information
+3. **Token Validation**: Add JWT expiration handling and server-side token validation
+4. **Auth UX**: Add loading state during auth rehydration to eliminate login page flash
+5. **Search Optimization**: Enhance property search with full-text search and advanced filters
+6. **Email Notifications**: Send email confirmations for inquiries
+7. **Analytics Dashboard**: Add property view tracking and inquiry analytics
