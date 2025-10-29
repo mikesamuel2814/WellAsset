@@ -8,7 +8,8 @@ import {
   insertUserSchema,
   insertPropertySchema,
   insertAgentSchema,
-  insertInquirySchema 
+  insertInquirySchema,
+  updatePasswordSchema
 } from "@shared/schema";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "your-secret-key-change-in-production";
@@ -97,6 +98,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
           role: user.role,
         },
       });
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.put("/api/auth/update-password", authMiddleware, async (req, res) => {
+    try {
+      const authReq = req as AuthRequest;
+      const validation = updatePasswordSchema.safeParse(req.body);
+
+      if (!validation.success) {
+        return res.status(400).json({ error: validation.error.errors[0].message });
+      }
+
+      const { currentPassword, newPassword } = validation.data;
+      const userId = authReq.user!.id;
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: "Current password is incorrect" });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const updatedUser = await storage.updateUserPassword(userId, hashedPassword);
+
+      if (!updatedUser) {
+        return res.status(500).json({ error: "Failed to update password" });
+      }
+
+      res.json({ message: "Password updated successfully" });
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }
