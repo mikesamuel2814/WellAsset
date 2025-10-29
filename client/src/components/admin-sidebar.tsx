@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/sidebar";
 import { Building2, LayoutDashboard, Home, Users, MessageSquare, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
 
 export function AdminSidebar() {
-  const [location, setLocation] = useLocation();
+  const [location] = useLocation();
+  const { logout } = useAuth();
 
   const menuItems = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
@@ -20,12 +22,6 @@ export function AdminSidebar() {
     { title: "Agents", icon: Users, path: "/admin/agents" },
     { title: "Inquiries", icon: MessageSquare, path: "/admin/inquiries" },
   ];
-
-  const handleLogout = () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user");
-    setLocation("/admin/login");
-  };
 
   return (
     <Sidebar>
@@ -66,7 +62,7 @@ export function AdminSidebar() {
         <Button
           variant="ghost"
           className="w-full justify-start hover-elevate"
-          onClick={handleLogout}
+          onClick={logout}
           data-testid="button-logout"
         >
           <LogOut className="w-5 h-5 mr-2" />
