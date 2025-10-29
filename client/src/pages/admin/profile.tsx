@@ -26,10 +26,7 @@ export default function AdminProfile() {
 
   const mutation = useMutation({
     mutationFn: async (data: UpdatePassword) => {
-      return await apiRequest("/api/auth/update-password", {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("PUT", "/api/auth/update-password", data);
     },
     onSuccess: () => {
       toast({
