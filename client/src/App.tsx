@@ -20,6 +20,7 @@ import AdminDashboard from "@/pages/admin/dashboard";
 import AdminProperties from "@/pages/admin/properties";
 import AdminAgents from "@/pages/admin/agents";
 import AdminInquiries from "@/pages/admin/inquiries";
+import AdminCMS from "@/pages/admin/cms";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 
@@ -82,6 +83,7 @@ function Router() {
                 <Route path="/admin/properties" component={AdminProperties} />
                 <Route path="/admin/agents" component={AdminAgents} />
                 <Route path="/admin/inquiries" component={AdminInquiries} />
+                <Route path="/admin/cms" component={AdminCMS} />
                 <Route component={NotFound} />
               </Switch>
             </main>

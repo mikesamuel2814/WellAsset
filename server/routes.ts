@@ -281,6 +281,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/cms/settings", async (_req, res) => {
+    try {
+      const settings = await storage.getAllSiteSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch settings" });
+    }
+  });
+
+  app.put("/api/cms/settings/:key", authMiddleware, async (req, res) => {
+    try {
+      const { value } = req.body;
+      if (!value && value !== "") {
+        return res.status(400).json({ error: "Value is required" });
+      }
+      const setting = await storage.updateSiteSetting(req.params.key, value);
+      if (!setting) {
+        return res.status(404).json({ error: "Setting not found" });
+      }
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update setting" });
+    }
+  });
+
+  app.get("/api/cms/social-media", async (_req, res) => {
+    try {
+      const socialMediaItems = await storage.getAllSocialMedia();
+      res.json(socialMediaItems);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch social media" });
+    }
+  });
+
+  app.put("/api/cms/social-media/:id", authMiddleware, async (req, res) => {
+    try {
+      const { url } = req.body;
+      if (!url) {
+        return res.status(400).json({ error: "URL is required" });
+      }
+      const socialMedia = await storage.updateSocialMedia(req.params.id, { url });
+      if (!socialMedia) {
+        return res.status(404).json({ error: "Social media item not found" });
+      }
+      res.json(socialMedia);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update social media" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

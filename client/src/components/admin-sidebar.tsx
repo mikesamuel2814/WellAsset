@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Building2, LayoutDashboard, Home, Users, MessageSquare, LogOut } from "lucide-react";
+import { Building2, LayoutDashboard, Home, Users, MessageSquare, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 
@@ -21,6 +21,7 @@ export function AdminSidebar() {
     { title: "Properties", icon: Home, path: "/admin/properties" },
     { title: "Agents", icon: Users, path: "/admin/agents" },
     { title: "Inquiries", icon: MessageSquare, path: "/admin/inquiries" },
+    { title: "CMS", icon: Settings, path: "/admin/cms" },
   ];
 
   return (
