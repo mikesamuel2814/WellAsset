@@ -1,0 +1,92 @@
+ubuntu@ip-172-31-25-230:~$ #!/bin/bash
+set -e
+
+echo "Setting up Well Asset server..."
+
+# Update system
+sudo yum update -y
+
+# Install Node.js 20
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+sudo yum install -y nodejs
+
+# Install PM2 globally
+sudo npm install -g pm2
+
+# Install Nginx
+sudo yum install -y nginx
+
+# Install Git
+sudo yum install -y git
+
+# Install PostgreSQL 16
+sudo dnf install -y postgresql16 postgresql16-server postgresql16-contrib
+
+# Initialize PostgreSQL
+sudo postgresql-setup --initdb
+
+# Start and enable PostgreSQL
+sudo systemctl start postgresql
+echo "Basic setup complete!"r/backups/wellasset
+Setting up Well Asset server...
+sudo: yum: command not found
+Connection to ec2-54-254-253-106.ap-southeast-1.compute.amazonaws.com closed.
+PS C:\Users\9RZGXQ3\Downloads> ssh -i "api-server-key.pem" ubuntu@ec2-54-254-253-106.ap-southeast-1.compute.amazonaws.com
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.14.0-1011-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Oct 30 08:21:16 UTC 2025
+
+  System load:  0.01               Processes:             111
+  Usage of /:   12.0% of 18.33GB   Users logged in:       0
+  Memory usage: 29%                IPv4 address for enX0: 172.31.25.230
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+*** System restart required ***
+Last login: Thu Oct 30 08:14:51 2025 from 38.47.35.16
+ubuntu@ip-172-31-25-230:~$ #!/bin/bash
+set -e
+
+echo "Setting up Well Asset server..."
+
+# Update system
+sudo yum update -y
+
+# Install Node.js 20
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+sudo yum install -y nodejs
+
+# Install PM2 globally
+sudo npm install -g pm2
+
+# Install Nginx
+sudo yum install -y nginx
+
+# Install Git
+sudo yum install -y git
+
+# Install PostgreSQL 16
+sudo dnf install -y postgresql16 postgresql16-server postgresql16-contrib
+
+# Initialize PostgreSQL
+sudo postgresql-setup --initdb
+
+# Start and enable PostgreSQL
+sudo systemctl start postgresql
+echo "Basic setup complete!"r/backups/wellasset
+Setting up Well Asset server...
+sudo: yum: command not found
+Connection to ec2-54-254-253-106.ap-southeast-1.compute.amazonaws.com closed.
+PS C:\Users\9RZGXQ3\Downloads>
