@@ -9,10 +9,8 @@ module.exports = {
     instances: 1,
     exec_mode: 'cluster',
     
-    // Load environment variables from .env.production file
-    env_file: '.env.production',
-    
-    // Environment variables
+    // Environment variables loaded via systemd EnvironmentFile
+    // See wellasset.service for environment configuration
     env_production: {
       NODE_ENV: 'production',
       PORT: 5000,
