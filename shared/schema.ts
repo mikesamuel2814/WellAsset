@@ -1,75 +1,75 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, decimal, timestamp, boolean } from "drizzle-orm/pg-core";
+import { mysqlTable, text, varchar, int, decimal, timestamp, boolean, json } from "drizzle-orm/mysql-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  password: text("password").notNull(),
-  role: text("role").notNull().default("admin"),
+export const users = mysqlTable("users", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: varchar("password", { length: 255 }).notNull(),
+  role: varchar("role", { length: 50 }).notNull().default("admin"),
 });
 
-export const properties = pgTable("properties", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  title: text("title").notNull(),
-  titleBn: text("title_bn"),
+export const properties = mysqlTable("properties", {
+  id: int("id").primaryKey().autoincrement(),
+  title: varchar("title", { length: 500 }).notNull(),
+  titleBn: varchar("title_bn", { length: 500 }),
   price: decimal("price", { precision: 12, scale: 2 }).notNull(),
-  type: text("type").notNull(),
-  location: text("location").notNull(),
-  locationBn: text("location_bn"),
+  type: varchar("type", { length: 100 }).notNull(),
+  location: varchar("location", { length: 255 }).notNull(),
+  locationBn: varchar("location_bn", { length: 255 }),
   latitude: decimal("latitude", { precision: 10, scale: 7 }),
   longitude: decimal("longitude", { precision: 10, scale: 7 }),
-  bedrooms: integer("bedrooms").notNull(),
-  bathrooms: integer("bathrooms").notNull(),
-  area: integer("area").notNull(),
+  bedrooms: int("bedrooms").notNull(),
+  bathrooms: int("bathrooms").notNull(),
+  area: int("area").notNull(),
   description: text("description").notNull(),
   descriptionBn: text("description_bn"),
-  features: text("features").array().notNull(),
-  featuresBn: text("features_bn").array(),
-  status: text("status").notNull().default("active"),
-  images: text("images").array().notNull(),
-  videos: text("videos").array(),
-  agentId: varchar("agent_id"),
+  features: json("features").$type<string[]>().notNull(),
+  featuresBn: json("features_bn").$type<string[]>(),
+  status: varchar("status", { length: 50 }).notNull().default("active"),
+  images: json("images").$type<string[]>().notNull(),
+  videos: json("videos").$type<string[]>(),
+  agentId: int("agent_id"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const agents = pgTable("agents", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  phone: text("phone").notNull(),
+export const agents = mysqlTable("agents", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  phone: varchar("phone", { length: 50 }).notNull(),
   profileImage: text("profile_image"),
 });
 
-export const inquiries = pgTable("inquiries", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  phone: text("phone").notNull(),
+export const inquiries = mysqlTable("inquiries", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }).notNull(),
   message: text("message").notNull(),
-  propertyId: varchar("property_id"),
-  status: text("status").notNull().default("unread"),
+  propertyId: int("property_id"),
+  status: varchar("status", { length: 50 }).notNull().default("unread"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const siteSettings = pgTable("site_settings", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  key: text("key").notNull().unique(),
+export const siteSettings = mysqlTable("site_settings", {
+  id: int("id").primaryKey().autoincrement(),
+  key: varchar("key", { length: 100 }).notNull().unique(),
   value: text("value").notNull(),
   valueBn: text("value_bn"),
-  category: text("category").notNull(), // 'contact', 'about', 'general'
+  category: varchar("category", { length: 50 }).notNull(), // 'contact', 'about', 'general'
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const socialMedia = pgTable("social_media", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  platform: text("platform").notNull(), // 'facebook', 'instagram', 'linkedin', 'twitter'
-  url: text("url").notNull(),
-  icon: text("icon"), // icon name from lucide-react
+export const socialMedia = mysqlTable("social_media", {
+  id: int("id").primaryKey().autoincrement(),
+  platform: varchar("platform", { length: 50 }).notNull(), // 'facebook', 'instagram', 'linkedin', 'twitter'
+  url: varchar("url", { length: 500 }).notNull(),
+  icon: varchar("icon", { length: 50 }), // icon name from lucide-react
   isActive: boolean("is_active").notNull().default(true),
-  order: integer("order").notNull().default(0),
+  order: int("order").notNull().default(0),
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({
