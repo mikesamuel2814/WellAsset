@@ -1,0 +1,61 @@
+deploy
+failed now in 1m 24s
+Search logs
+1s
+2s
+3s
+12s
+7s
+1s
+55s
+Run # Setup SSH
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+Uploading deployment package...
+Executing deployment script...
+====== Starting Deployment ======
+Timestamp: Thu Oct 30 08:57:58 UTC 2025
+Stopping application...
+Creating backup: /var/backups/wellasset/wellasset-20251030-085758.tar.gz
+Extracting new version...
+Installing dependencies...
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+added 560 packages, and audited 561 packages in 16s
+74 packages are looking for funding
+  run `npm fund` for details
+8 vulnerabilities (3 low, 5 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+Running database migrations...
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+No config path provided, using default 'drizzle.config.json'
+/var/www/wellasset/drizzle.config.json file does not exist
+Error: Process completed with exit code 1.
+0s
+0s
+Run if [ failure == 'success' ]; then
+❌ Deployment to EC2 failed!
+0s
+0s
+Post job cleanup.
+/usr/bin/git version
+git version 2.51.0
+Temporarily overriding HOME='/home/runner/work/_temp/a500c829-6b6b-42ad-af9c-030061c53fad' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/WellAsset/WellAsset
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+0s
+Cleaning up orphan processes

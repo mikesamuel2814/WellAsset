@@ -41,6 +41,7 @@ jobs:
           cp package.json package-lock.json deploy/
           cp ecosystem.config.cjs deploy/
           cp deploy.sh deploy/
+          cp drizzle.config.ts deploy/
           
           # Copy migrations directory if it exists
           if [ -d "migrations" ]; then
