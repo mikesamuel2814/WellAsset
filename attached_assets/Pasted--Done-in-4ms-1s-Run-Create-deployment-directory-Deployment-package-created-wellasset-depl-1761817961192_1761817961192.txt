@@ -1,0 +1,42 @@
+⚡ Done in 4ms
+1s
+Run # Create deployment directory
+  
+Deployment package created: wellasset-deploy.tar.gz
+-rw-r--r-- 1 runner runner 8.8M Oct 30 09:51 wellasset-deploy.tar.gz
+49s
+Run # Setup SSH
+  
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+Uploading deployment package...
+Executing deployment script...
+====== Starting Deployment ======
+Timestamp: Thu Oct 30 09:51:51 UTC 2025
+Stopping application...
+Creating backup: /var/backups/wellasset/wellasset-20251030-095151.tar.gz
+Extracting new version...
+Updating systemd service...
+cp: cannot stat '/var/www/wellasset/wellasset.service': No such file or directory
+Error: Process completed with exit code 1.
+0s
+0s
+Run if [ failure == 'success' ]; then
+❌ Deployment to EC2 failed!
+0s
+0s
+Post job cleanup.
+/usr/bin/git version
+git version 2.51.0
+Temporarily overriding HOME='/home/runner/work/_temp/5a691b47-cffd-4cef-b00d-2daeb3ebc4f5' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/WellAsset/WellAsset
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"

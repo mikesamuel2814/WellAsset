@@ -42,6 +42,7 @@ jobs:
           cp ecosystem.config.cjs deploy/
           cp deploy.sh deploy/
           cp drizzle.config.ts deploy/
+          cp wellasset.service deploy/
           
           # Copy migrations directory if it exists
           if [ -d "migrations" ]; then
