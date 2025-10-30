@@ -11,8 +11,15 @@ AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 AWS_REGION=$(aws configure get region || echo "us-east-1")
 ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
-# Read image tag from deployment (passed via environment variable or use latest)
-IMAGE_TAG=${IMAGE_TAG:-latest}
+# Read image tag from deployment file
+if [ -f IMAGE_TAG ]; then
+    IMAGE_TAG=$(cat IMAGE_TAG)
+    echo "Using image tag from deployment: ${IMAGE_TAG}"
+else
+    IMAGE_TAG="latest"
+    echo "No IMAGE_TAG file found, using: latest"
+fi
+
 IMAGE_URI="${ECR_REGISTRY}/wellasset-realestate:${IMAGE_TAG}"
 
 echo "Pulling Docker image: ${IMAGE_URI}"

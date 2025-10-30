@@ -16,9 +16,9 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: wellasset-realestate
-  ECS_SERVICE: wellasset-service
-  ECS_CLUSTER: wellasset-cluster
-  ECS_TASK_DEFINITION: wellasset-task
+  CODEDEPLOY_APPLICATION: wellasset-app
+  CODEDEPLOY_DEPLOYMENT_GROUP: wellasset-deployment-group
+  S3_BUCKET: wellasset-codedeploy-artifacts
 
 jobs:
   deploy:
@@ -65,27 +65,68 @@ jobs:
           npm ci
           npm run db:push
       
-      - name: Download task definition
+      - name: Create deployment package
         run: |
-          aws ecs describe-task-definition \
-            --task-definition ${{ env.ECS_TASK_DEFINITION }} \
-            --query taskDefinition > task-definition.json
+          # Create a clean directory for deployment
+          mkdir -p deployment
+          
+          # Copy deployment files
+          cp appspec.yml deployment/
+          cp -r scripts deployment/
+          
+          # Create a file with the image tag for EC2 instances to use
+          echo "${{ github.sha }}" > deployment/IMAGE_TAG
+          
+          # Create deployment archive
+          cd deployment
+          zip -r ../deployment.zip .
+          cd ..
+          
+          echo "Deployment package created: deployment.zip"
       
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: wellasset-container
-          image: ${{ steps.build-image.outputs.image }}
+      - name: Upload deployment package to S3
+        run: |
+          aws s3 cp deployment.zip s3://${{ env.S3_BUCKET }}/wellasset-${{ github.sha }}.zip
+          echo "Deployment package uploaded to S3"
       
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Create CodeDeploy deployment
+        id: deploy
+        run: |
+          DEPLOYMENT_ID=$(aws deploy create-deployment \
+            --application-name ${{ env.CODEDEPLOY_APPLICATION }} \
+            --deployment-group-name ${{ env.CODEDEPLOY_DEPLOYMENT_GROUP }} \
+            --s3-location bucket=${{ env.S3_BUCKET }},key=wellasset-${{ github.sha }}.zip,bundleType=zip \
+            --description "Deployment for commit ${{ github.sha }}" \
+            --query 'deploymentId' \
+            --output text)
+          
+          echo "deployment-id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+          echo "Deployment created: $DEPLOYMENT_ID"
+      
+      - name: Wait for deployment to complete
+        env:
+          DEPLOYMENT_ID: ${{ steps.deploy.outputs.deployment-id }}
+        run: |
+          echo "Waiting for deployment $DEPLOYMENT_ID to complete..."
+          
+          aws deploy wait deployment-successful \
+            --deployment-id $DEPLOYMENT_ID \
+            --region ${{ env.AWS_REGION }} \
+            --cli-read-timeout 900
+          
+          echo "Deployment completed successfully!"
+      
+      - name: Get deployment status
+        if: always()
+        env:
+          DEPLOYMENT_ID: ${{ steps.deploy.outputs.deployment-id }}
+        run: |
+          if [ -n "$DEPLOYMENT_ID" ]; then
+            aws deploy get-deployment \
+              --deployment-id $DEPLOYMENT_ID \
+              --query 'deploymentInfo.status' \
+              --output text
+          fi
       
       - name: Notify deployment status
         if: always()
