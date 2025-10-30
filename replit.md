@@ -56,15 +56,13 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 The project uses a simplified, cost-effective AWS deployment approach:
 
 **Architecture:**
-- **Single EC2 instance** (t3.small) running Node.js with PM2 process manager
-- **PostgreSQL RDS** (db.t3.micro) for managed database
+- **Single EC2 instance** (t3.small) running Node.js, PostgreSQL, and PM2
 - **Nginx** as reverse proxy with SSL termination
 - **GitHub Actions** for automated SSH-based deployment
 - **Let's Encrypt** for free SSL certificates
 
-**Monthly Cost:** ~$25-30
-- EC2 t3.small: ~$15/month
-- RDS PostgreSQL db.t3.micro: ~$15/month
+**Monthly Cost:** ~$15/month
+- EC2 t3.small: ~$15/month (includes PostgreSQL on the same instance)
 
 ### Deployment Pipeline
 
@@ -133,5 +131,6 @@ Complete setup guides available:
 - **Frontend Libraries**: React, TypeScript, Vite, TailwindCSS, Wouter, TanStack Query, React Hook Form, Zod, Shadcn/ui, Radix UI, next-themes, embla-carousel-react, react-leaflet, Framer Motion, @tsparticles/react.
 - **Backend Libraries**: Node.js, Express, bcrypt (for password hashing), Multer (for file uploads - planned).
 - **Mapping Service**: OpenStreetMap (via react-leaflet).
-- **Cloud Infrastructure**: AWS (EC2, Auto Scaling, CodeDeploy, ECR, RDS, ALB, S3, Secrets Manager, CloudWatch)
-- **CI/CD**: GitHub Actions with CodeDeploy
+- **Cloud Infrastructure**: AWS (EC2, Nginx, Let's Encrypt)
+- **Database**: PostgreSQL 16 (installed on EC2)
+- **CI/CD**: GitHub Actions with SSH deployment

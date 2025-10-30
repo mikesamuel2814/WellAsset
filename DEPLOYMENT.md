@@ -34,15 +34,13 @@ This guide covers deploying the Well Asset Real Estate platform to a simple AWS 
 ### Simple Single EC2 Setup (Current Implementation)
 
 A cost-effective, production-ready deployment using:
-- **1 EC2 instance** (t3.small) - Runs Node.js application with PM2
-- **PostgreSQL RDS** (db.t3.micro) - Managed database
+- **1 EC2 instance** (t3.small) - Runs Node.js, PostgreSQL, and PM2
 - **Nginx** - Reverse proxy and SSL termination
 - **GitHub Actions** - Automated SSH-based deployment
 - **Let's Encrypt** - Free SSL certificates
 
-**Monthly Cost:** ~$25-30
-- EC2 t3.small: ~$15/month
-- RDS db.t3.micro: ~$15/month
+**Monthly Cost:** ~$15/month
+- EC2 t3.small: ~$15/month (includes PostgreSQL on the same instance)
 
 **Pros:**
 - Very cost-effective
@@ -66,7 +64,7 @@ See [SIMPLE_EC2_SETUP.md](./SIMPLE_EC2_SETUP.md) for detailed step-by-step setup
 
 **Quick summary:**
 - 1 EC2 instance (t3.small with Amazon Linux 2023)
-- RDS PostgreSQL database (db.t3.micro)
+- PostgreSQL 16 installed on EC2
 - Nginx reverse proxy
 - PM2 process manager
 - SSL certificate with Let's Encrypt

@@ -1,19 +1,17 @@
 # Simple EC2 Setup Guide
 
-Complete guide for deploying the Well Asset Real Estate Platform to a single AWS EC2 instance with PostgreSQL RDS and Nginx.
+Complete guide for deploying the Well Asset Real Estate Platform to a single AWS EC2 instance with PostgreSQL, Node.js, and Nginx.
 
 ## Overview
 
 **What you'll set up:**
-- 1 EC2 instance (t3.small) running Node.js with PM2
-- 1 RDS PostgreSQL database  
+- 1 EC2 instance (t3.small) running Node.js, PostgreSQL, and PM2
 - Nginx as reverse proxy
 - SSL certificate with Let's Encrypt
 - Automated deployment via GitHub Actions
 
-**Estimated monthly cost:** ~$25-30
-- EC2 t3.small: ~$15/month
-- RDS db.t3.micro PostgreSQL: ~$15/month
+**Estimated monthly cost:** ~$15/month
+- EC2 t3.small: ~$15/month (includes PostgreSQL on the same instance)
 
 ## Prerequisites
 
@@ -21,42 +19,7 @@ Complete guide for deploying the Well Asset Real Estate Platform to a single AWS
 - Domain name (for SSL certificate)
 - GitHub repository
 
-## Step 1: Create RDS PostgreSQL Database
-
-### Via AWS Console
-
-1. Go to [AWS RDS Console](https://console.aws.amazon.com/rds/)
-2. Click **Create database**
-3. Choose:
-   - **Engine**: PostgreSQL 16
-   - **Template**: Free tier (or Production if needed)
-   - **DB instance class**: db.t3.micro
-   - **Storage**: 20 GB gp3
-   - **DB instance identifier**: `wellasset-db`
-   - **Master username**: `postgres`
-   - **Master password**: Create a strong password
-   - **Public access**: No (we'll connect from EC2 only)
-4. Click **Create database**
-5. Wait 5-10 minutes for database to be available
-6. Note the **Endpoint** (e.g., `wellasset-db.abc123.us-east-1.rds.amazonaws.com`)
-
-### Via AWS CLI
-
-```bash
-aws rds create-db-instance \
-  --db-instance-identifier wellasset-db \
-  --db-instance-class db.t3.micro \
-  --engine postgres \
-  --engine-version 16.1 \
-  --master-username postgres \
-  --master-user-password YOUR_STRONG_PASSWORD \
-  --allocated-storage 20 \
-  --backup-retention-period 7 \
-  --storage-encrypted \
-  --publicly-accessible false
-```
-
-## Step 2: Launch EC2 Instance
+## Step 1: Launch EC2 Instance
 
 ### Via AWS Console
 
@@ -84,32 +47,7 @@ aws ec2 describe-instances \
   --output text
 ```
 
-## Step 3: Configure Security Groups
-
-Allow EC2 to connect to RDS:
-
-```bash
-# Get EC2 security group ID
-EC2_SG=$(aws ec2 describe-instances \
-  --filters "Name=tag:Name,Values=wellasset-server" \
-  --query 'Reservations[0].Instances[0].SecurityGroups[0].GroupId' \
-  --output text)
-
-# Get RDS security group ID
-RDS_SG=$(aws rds describe-db-instances \
-  --db-instance-identifier wellasset-db \
-  --query 'DBInstances[0].VpcSecurityGroups[0].VpcSecurityGroupId' \
-  --output text)
-
-# Allow EC2 to access RDS on port 5432
-aws ec2 authorize-security-group-ingress \
-  --group-id $RDS_SG \
-  --protocol tcp \
-  --port 5432 \
-  --source-group $EC2_SG
-```
-
-## Step 4: Setup EC2 Instance
+## Step 2: Setup EC2 Instance
 
 SSH into your EC2 instance:
 
@@ -141,6 +79,16 @@ sudo yum install -y nginx
 # Install Git
 sudo yum install -y git
 
+# Install PostgreSQL 16
+sudo dnf install -y postgresql16 postgresql16-server postgresql16-contrib
+
+# Initialize PostgreSQL
+sudo postgresql-setup --initdb
+
+# Start and enable PostgreSQL
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
 # Create application user
 sudo useradd -m -s /bin/bash nodejs
 
@@ -159,7 +107,60 @@ sudo chown nodejs:nodejs /var/backups/wellasset
 echo "Basic setup complete!"
 ```
 
-## Step 5: Configure Environment Variables
+## Step 3: Configure PostgreSQL
+
+After the basic setup, configure PostgreSQL:
+
+```bash
+# Switch to postgres user
+sudo -i -u postgres
+
+# Create database and user
+psql << EOF
+CREATE DATABASE wellasset;
+CREATE USER wellasset_user WITH ENCRYPTED PASSWORD 'CHANGE_THIS_PASSWORD';
+GRANT ALL PRIVILEGES ON DATABASE wellasset TO wellasset_user;
+\c wellasset
+GRANT ALL ON SCHEMA public TO wellasset_user;
+ALTER DATABASE wellasset OWNER TO wellasset_user;
+EOF
+
+# Exit postgres user
+exit
+```
+
+Configure PostgreSQL to allow local connections:
+
+```bash
+# Edit pg_hba.conf
+sudo nano /var/lib/pgsql/16/data/pg_hba.conf
+```
+
+Add this line before the other rules:
+
+```
+# Allow wellasset_user to connect locally
+local   wellasset       wellasset_user                          md5
+host    wellasset       wellasset_user  127.0.0.1/32            md5
+```
+
+Restart PostgreSQL:
+
+```bash
+sudo systemctl restart postgresql
+```
+
+Test the connection:
+
+```bash
+# Test with the new user
+psql -U wellasset_user -d wellasset -h localhost
+# Enter password when prompted
+# If successful, you'll see the PostgreSQL prompt
+\q  # to quit
+```
+
+## Step 4: Configure Environment Variables
 
 Create environment file:
 
@@ -167,12 +168,12 @@ Create environment file:
 sudo nano /var/www/wellasset/.env.production
 ```
 
-Add:
+Add (replace YOUR_PASSWORD with the one you set in Step 3):
 
 ```env
 NODE_ENV=production
 PORT=5000
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@wellasset-db.abc123.us-east-1.rds.amazonaws.com:5432/wellasset
+DATABASE_URL=postgresql://wellasset_user:YOUR_PASSWORD@localhost:5432/wellasset
 SESSION_SECRET=GENERATE_RANDOM_SECRET_HERE
 ```
 
@@ -189,7 +190,7 @@ sudo chown nodejs:nodejs /var/www/wellasset/.env.production
 sudo chmod 600 /var/www/wellasset/.env.production
 ```
 
-## Step 6: Configure Nginx
+## Step 5: Configure Nginx
 
 ```bash
 # Copy nginx config
@@ -207,7 +208,7 @@ sudo systemctl start nginx
 sudo systemctl enable nginx
 ```
 
-## Step 7: Setup SSL Certificate
+## Step 6: Setup SSL Certificate
 
 Install Certbot:
 
@@ -234,7 +235,7 @@ sudo certbot renew --dry-run
 # Certbot automatically sets up a cron job
 ```
 
-## Step 8: Setup Systemd Service
+## Step 7: Setup Systemd Service
 
 ```bash
 # Copy service file
@@ -249,7 +250,7 @@ sudo systemctl enable wellasset
 # The service will be started by the deployment script
 ```
 
-## Step 9: Configure GitHub Actions
+## Step 8: Configure GitHub Actions
 
 ### Add GitHub Secrets
 
@@ -287,7 +288,7 @@ sudo chmod 600 /home/nodejs/.ssh/authorized_keys
 echo "nodejs ALL=(ALL) NOPASSWD: /bin/systemctl start wellasset, /bin/systemctl stop wellasset, /bin/systemctl restart wellasset, /bin/systemctl status wellasset" | sudo tee /etc/sudoers.d/nodejs
 ```
 
-## Step 10: Initial Deployment
+## Step 9: Initial Deployment
 
 ### Manual First Deployment
 
@@ -339,7 +340,7 @@ git commit -m "Deploy to EC2"
 git push origin main
 ```
 
-## Step 11: Domain Configuration
+## Step 10: Domain Configuration
 
 Point your domain to EC2:
 
@@ -400,8 +401,8 @@ sudo nano /usr/local/bin/backup-wellasset-db.sh
 BACKUP_DIR="/var/backups/wellasset/db"
 mkdir -p $BACKUP_DIR
 
-# Backup database
-pg_dump $DATABASE_URL | gzip > $BACKUP_DIR/wellasset-$(date +%Y%m%d-%H%M%S).sql.gz
+# Backup database (using local PostgreSQL)
+sudo -u postgres pg_dump wellasset | gzip > $BACKUP_DIR/wellasset-$(date +%Y%m%d-%H%M%S).sql.gz
 
 # Keep only last 7 days
 find $BACKUP_DIR -name "wellasset-*.sql.gz" -mtime +7 -delete
@@ -448,11 +449,14 @@ sudo systemctl restart wellasset
 ### Database connection failed
 
 ```bash
-# Test connection from EC2
-psql "$DATABASE_URL"
+# Test connection
+psql -U wellasset_user -d wellasset -h localhost
 
-# Check security group
-aws ec2 describe-security-groups --group-ids $RDS_SG
+# Check if PostgreSQL is running
+sudo systemctl status postgresql
+
+# Check PostgreSQL logs
+sudo tail -f /var/lib/pgsql/16/data/log/postgresql-*.log
 ```
 
 ### Nginx errors
@@ -473,18 +477,40 @@ sudo systemctl restart nginx
 1. **Use Reserved Instances**: Save 30-40% by committing to 1 year
 2. **Stop during off-hours**: Use Lambda to stop/start EC2 when not needed
 3. **Monitor usage**: Set up CloudWatch billing alerts
-4. **Optimize RDS**: Use db.t3.micro for low traffic
+4. **Increase storage if needed**: Add EBS volume for database growth
 
 ## Next Steps
 
 1. ✅ EC2 instance running
-2. ✅ RDS database configured
+2. ✅ PostgreSQL installed and configured
 3. ✅ Nginx with SSL
 4. ✅ GitHub Actions deployment
 5. ⬜ Configure CloudWatch monitoring
 6. ⬜ Set up automated backups to S3
 7. ⬜ Configure custom domain
 8. ⬜ Add monitoring/alerting
+
+## Benefits of This Setup
+
+**Pros:**
+- Very cost-effective (~$15/month)
+- Simple architecture - everything on one instance
+- Easy to understand and maintain
+- Perfect for small to medium traffic sites
+- No network latency between app and database
+
+**Cons:**
+- Single point of failure (can be mitigated with EBS snapshots)
+- Manual database management (backups, updates)
+- Scaling requires vertical scaling (larger instance)
+- No automatic failover
+
+**When to upgrade:**
+- Traffic exceeds 1000+ concurrent users
+- Need high availability (99.9%+ uptime)
+- Database size exceeds 100GB
+- Require read replicas or multi-region
+- → Then consider separating database to RDS
 
 ## Support
 

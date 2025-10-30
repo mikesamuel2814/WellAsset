@@ -5,11 +5,11 @@
 Your application is now configured for a **simple, cost-effective AWS EC2 deployment** using:
 
 - **Single EC2 instance** (t3.small) with PM2 process manager
-- **PostgreSQL RDS** database (db.t3.micro)
+- **PostgreSQL 16** installed on EC2
 - **Nginx** reverse proxy with SSL
 - **GitHub Actions** for automated deployment
 
-**Estimated monthly cost:** ~$25-30
+**Estimated monthly cost:** ~$15/month
 
 ## 📁 Deployment Files Created
 
@@ -41,12 +41,11 @@ Your application is now configured for a **simple, cost-effective AWS EC2 deploy
 Follow **[SIMPLE_EC2_SETUP.md](./SIMPLE_EC2_SETUP.md)** for complete instructions.
 
 **Summary:**
-1. Create RDS PostgreSQL database (db.t3.micro)
-2. Launch EC2 instance (t3.small with Amazon Linux 2023)
-3. Configure security groups (EC2 ↔ RDS communication)
-4. Install Node.js, PM2, Nginx on EC2
-5. Configure Nginx with your domain
-6. Set up SSL with Let's Encrypt
+1. Launch EC2 instance (t3.small with Amazon Linux 2023)
+2. Install Node.js, PostgreSQL 16, PM2, and Nginx on EC2
+3. Configure PostgreSQL database
+4. Configure Nginx with your domain
+5. Set up SSL with Let's Encrypt
 
 ### Step 2: Configure GitHub Secrets
 
@@ -102,15 +101,13 @@ GitHub Actions will automatically:
          │  ┌────────────┐  │
          │  │    PM2     │  │◄─── Process Manager
          │  │  (Node.js) │  │     Auto-restart
-         │  └────────────┘  │     Clustering
+         │  └─────┬──────┘  │     Clustering
+         │        │         │
+         │  ┌─────▼──────┐  │
+         │  │ PostgreSQL │  │◄─── Local Database
+         │  │    16      │  │     Same Instance
+         │  └────────────┘  │
          │                  │
-         └────────┬─────────┘
-                  │ PostgreSQL Protocol (5432)
-                  ▼
-         ┌──────────────────┐
-         │   RDS PostgreSQL │
-         │   (db.t3.micro)  │◄─── Managed Database
-         │   Multi-AZ       │     Automated Backups
          └──────────────────┘
 ```
 
@@ -151,21 +148,21 @@ Developer                GitHub Actions              EC2 Server
 | Service | Instance Type | Monthly Cost |
 |---------|---------------|--------------|
 | EC2 | t3.small (2 vCPU, 2 GB RAM) | ~$15 |
-| RDS PostgreSQL | db.t3.micro | ~$15 |
-| Data Transfer | Minimal for low traffic | ~$1-2 |
-| **Total** | | **~$25-30** |
+| PostgreSQL | Installed on EC2 | Included |
+| Data Transfer | Minimal for low traffic | ~$1 |
+| **Total** | | **~$15-16** |
 
 **Cost Optimization Tips:**
 - Use Reserved Instances (save 30-40% with 1-year commitment)
 - Stop EC2 during off-hours (development only)
-- Enable RDS auto-backup retention (7 days free)
+- Enable automated backups to S3 (very cheap)
 
 ## 🔒 Security Features
 
 - **SSL/TLS**: Let's Encrypt certificates (auto-renewal)
 - **HTTPS Only**: All HTTP traffic redirected to HTTPS
 - **Security Headers**: X-Frame-Options, CSP, etc.
-- **Database Security**: RDS in private subnet, accessible only from EC2
+- **Database Security**: PostgreSQL bound to localhost only
 - **SSH Access**: Key-based authentication only
 - **Environment Secrets**: Stored securely on EC2, not in code
 - **Session Security**: Strong session secret encryption
@@ -193,11 +190,12 @@ sudo tail -f /var/log/nginx/wellasset_error.log
 
 ### Database Backups
 ```bash
-# RDS automated backups enabled by default (7 days retention)
-# Manual backup
-aws rds create-db-snapshot \
-  --db-instance-identifier wellasset-db \
-  --db-snapshot-identifier wellasset-manual-$(date +%Y%m%d)
+# Manual backup on EC2
+ssh -i your-key.pem ec2-user@YOUR_EC2_IP
+sudo -u postgres pg_dump wellasset | gzip > ~/wellasset-backup-$(date +%Y%m%d).sql.gz
+
+# Automated backups are configured via cron (daily at 2 AM)
+# See SIMPLE_EC2_SETUP.md for setup instructions
 ```
 
 ### Update Application
@@ -230,19 +228,19 @@ When you outgrow the simple setup:
 
 1. **Vertical Scaling** (Easiest)
    - Upgrade to t3.medium ($30/month)
-   - Upgrade RDS to db.t3.small ($30/month)
-   - Cost: ~$60/month, 2x capacity
+   - Add more EBS storage if needed
+   - Cost: ~$30-35/month, 2x capacity
 
-2. **Add Load Balancer + Auto Scaling**
+2. **Separate Database to RDS**
+   - Keep current t3.small EC2 (~$15/month)
+   - Add RDS PostgreSQL db.t3.micro (~$15/month)
+   - Cost: ~$30/month, better reliability
+
+3. **Add Load Balancer + Auto Scaling**
    - Application Load Balancer (~$16/month)
    - 2+ EC2 instances (~$30-45/month)
-   - Multi-AZ RDS (~$30/month)
+   - RDS PostgreSQL (~$30/month)
    - Cost: ~$75-90/month, high availability
-
-3. **Move to Managed Container Service**
-   - AWS ECS Fargate
-   - Fully managed, auto-scaling
-   - Cost: ~$100-150/month
 
 ## 📚 Documentation Reference
 
