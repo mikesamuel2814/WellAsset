@@ -1,0 +1,202 @@
+deploy
+failed now in 3m 5s
+Search logs
+0s
+2s
+1s
+9s
+Run npm ci
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+added 560 packages, and audited 561 packages in 9s
+74 packages are looking for funding
+  run `npm fund` for details
+8 vulnerabilities (3 low, 5 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+6s
+Run npm run build
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+vite v5.4.20 building for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+✓ 2595 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                                                          1.10 kB │ gzip:   0.59 kB
+../dist/public/assets/Penthouse_interior_property_image_dbc84d3f-Sx7NG3vD.png  1,467.70 kB
+../dist/public/assets/Modern_townhouse_property_image_63084dd1-Ch3UfZTS.png    1,542.33 kB
+../dist/public/assets/Office_building_property_image_aa5f3a46-DdllSpGN.png     1,863.38 kB
+../dist/public/assets/Beachfront_condo_property_image_eb2adc6c-BAmuONfB.png    1,900.36 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+../dist/public/assets/Mansion_interior_property_image_9b6f3d6b-gKKTbDTU.png    1,930.42 kB
+../dist/public/assets/index-BVmBjjOo.css                                          95.12 kB │ gzip:  19.35 kB
+../dist/public/assets/index-BmtbhPsX.js                                        1,068.05 kB │ gzip: 320.27 kB
+✓ built in 6.18s
+  dist/index.js  27.0kb
+⚡ Done in 5ms
+0s
+Run # Create deployment directory
+  
+Deployment package created: wellasset-deploy.tar.gz
+-rw-r--r-- 1 runner runner 8.8M Oct 30 09:18 wellasset-deploy.tar.gz
+2m 42s
+Run # Setup SSH
+  
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+Uploading deployment package...
+Executing deployment script...
+====== Starting Deployment ======
+Timestamp: Thu Oct 30 09:18:46 UTC 2025
+Stopping application...
+Creating backup: /var/backups/wellasset/wellasset-20251030-091846.tar.gz
+Extracting new version...
+Installing dependencies...
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+added 560 packages, and audited 561 packages in 15s
+74 packages are looking for funding
+  run `npm fund` for details
+8 vulnerabilities (3 low, 5 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+Running database migrations...
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/var/www/wellasset/drizzle.config.ts'
+Using 'pg' driver for database querying
+[⣷] Pulling schema from database...
+[⣯] Pulling schema from database...
+[✓] Pulling schema from database...
+[i] No changes detected
+Removing devDependencies...
+npm warn config production Use `--omit=dev` instead.
+up to date, audited 466 packages in 2s
+62 packages are looking for funding
+  run `npm fund` for details
+3 low severity vulnerabilities
+To address all issues, run:
+  npm audit fix
+Run `npm audit` for details.
+Starting application...
+Waiting for application to start...
+Waiting for health check... (1/30)
+Waiting for health check... (2/30)
+Waiting for health check... (3/30)
+Waiting for health check... (4/30)
+Waiting for health check... (5/30)
+Waiting for health check... (6/30)
+Waiting for health check... (7/30)
+Waiting for health check... (8/30)
+Waiting for health check... (9/30)
+Waiting for health check... (10/30)
+Waiting for health check... (11/30)
+Waiting for health check... (12/30)
+Waiting for health check... (13/30)
+Waiting for health check... (14/30)
+Waiting for health check... (19/30)
+Waiting for health check... (20/30)
+Waiting for health check... (21/30)
+Waiting for health check... (22/30)
+Waiting for health check... (23/30)
+Waiting for health check... (24/30)
+Waiting for health check... (25/30)
+Waiting for health check... (26/30)
+Waiting for health check... (27/30)
+Waiting for health check... (28/30)
+Waiting for health check... (29/30)
+Waiting for health check... (30/30)
+ERROR: Application failed to start
+Checking logs...
+Oct 30 09:08:29 ip-172-31-25-230 pm2[20960]: │ 0  │ wellasset-app    │ default     │ 1.0.0   │ cluster │ 20978    │ 0s     │ 0    │ online    │ 0%       │ 40.7mb   │ nodejs   │ disabled │
+Oct 30 09:08:29 ip-172-31-25-230 pm2[20960]: └────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Oct 30 09:08:29 ip-172-31-25-230 systemd[1]: Started wellasset.service - Well Asset Real Estate Platform.
+Oct 30 09:13:03 ip-172-31-25-230 systemd[1]: Stopping wellasset.service - Well Asset Real Estate Platform...
+Oct 30 09:13:04 ip-172-31-25-230 pm2[21270]: [PM2] [wellasset-app](0) ✓
+Oct 30 09:13:04 ip-172-31-25-230 pm2[21270]: ┌────┬──────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+Oct 30 09:13:04 ip-172-31-25-230 pm2[21270]: │ id │ name             │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+Oct 30 09:13:04 ip-172-31-25-230 pm2[21270]: ├────┼──────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+Oct 30 09:13:04 ip-172-31-25-230 pm2[21270]: │ 0  │ wellasset-app    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 0    │ stopped   │ 0%       │ 0b       │ nodejs   │ disabled │
+Oct 30 09:13:04 ip-172-31-25-230 pm2[21270]: └────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Oct 30 09:13:04 ip-172-31-25-230 systemd[1]: wellasset.service: Deactivated successfully.
+Oct 30 09:13:04 ip-172-31-25-230 systemd[1]: Stopped wellasset.service - Well Asset Real Estate Platform.
+Oct 30 09:13:04 ip-172-31-25-230 systemd[1]: wellasset.service: Consumed 1.366s CPU time.
+Oct 30 09:13:56 ip-172-31-25-230 systemd[1]: Starting wellasset.service - Well Asset Real Estate Platform...
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: [PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: [PM2] PM2 Successfully daemonized
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: [PM2][WARN] Applications wellasset-app not running, starting...
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: [PM2] App [wellasset-app] launched (1 instances)
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: ┌────┬──────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: │ id │ name             │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: ├────┼──────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: │ 0  │ wellasset-app    │ default     │ 1.0.0   │ cluster │ 21437    │ 0s     │ 0    │ online    │ 0%       │ 40.6mb   │ nodejs   │ disabled │
+Oct 30 09:13:57 ip-172-31-25-230 pm2[21419]: └────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Oct 30 09:13:57 ip-172-31-25-230 systemd[1]: Started wellasset.service - Well Asset Real Estate Platform.
+Oct 30 09:16:09 ip-172-31-25-230 systemd[1]: Stopping wellasset.service - Well Asset Real Estate Platform...
+Oct 30 09:16:10 ip-172-31-25-230 pm2[21552]: [PM2] [wellasset-app](0) ✓
+Oct 30 09:16:10 ip-172-31-25-230 pm2[21552]: ┌────┬──────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+Oct 30 09:16:10 ip-172-31-25-230 pm2[21552]: │ id │ name             │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+Oct 30 09:16:10 ip-172-31-25-230 pm2[21552]: ├────┼──────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+Oct 30 09:16:10 ip-172-31-25-230 pm2[21552]: │ 0  │ wellasset-app    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 0    │ stopped   │ 0%       │ 0b       │ nodejs   │ disabled │
+Oct 30 09:16:10 ip-172-31-25-230 pm2[21552]: └────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Oct 30 09:16:10 ip-172-31-25-230 systemd[1]: wellasset.service: Deactivated successfully.
+Oct 30 09:16:10 ip-172-31-25-230 systemd[1]: Stopped wellasset.service - Well Asset Real Estate Platform.
+Oct 30 09:16:10 ip-172-31-25-230 systemd[1]: wellasset.service: Consumed 1.205s CPU time.
+Oct 30 09:19:38 ip-172-31-25-230 systemd[1]: Starting wellasset.service - Well Asset Real Estate Platform...
+Oct 30 09:19:39 ip-172-31-25-230 pm2[22069]: [PM2] Applying action restartProcessId on app [wellasset-app](ids: [ 0 ])
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22069]: [PM2] [wellasset-app](0) ✓
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22069]: ┌────┬──────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22069]: │ id │ name             │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22069]: ├────┼──────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22069]: │ 0  │ wellasset-app    │ default     │ 1.0.0   │ cluster │ 22093    │ 0      │ 12   │ waiting … │ 0%       │ 0b       │ nodejs   │ disabled │
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22069]: └────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22102]: [PM2] [wellasset-app](0) ✓
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22102]: ┌────┬──────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22102]: │ id │ name             │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22102]: ├────┼──────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22102]: │ 0  │ wellasset-app    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 12   │ stopped   │ 0%       │ 0b       │ nodejs   │ disabled │
+Oct 30 09:19:49 ip-172-31-25-230 pm2[22102]: └────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Oct 30 09:19:49 ip-172-31-25-230 systemd[1]: wellasset.service: Deactivated successfully.
+Oct 30 09:19:49 ip-172-31-25-230 systemd[1]: Started wellasset.service - Well Asset Real Estate Platform.
+Rolling back to previous version...
+Restoring from: /var/backups/wellasset/wellasset-20251030-091846.tar.gz
+Error: Process completed with exit code 1.
+0s
+0s
+Run if [ failure == 'success' ]; then
+❌ Deployment to EC2 failed!
+0s
+0s
+Post job cleanup.
+/usr/bin/git version
+git version 2.51.0
+Temporarily overriding HOME='/home/runner/work/_temp/ffd1f6d7-3465-4f2b-ab42-c901620fac98' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/WellAsset/WellAsset
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+1s
+Cleaning up orphan processes
