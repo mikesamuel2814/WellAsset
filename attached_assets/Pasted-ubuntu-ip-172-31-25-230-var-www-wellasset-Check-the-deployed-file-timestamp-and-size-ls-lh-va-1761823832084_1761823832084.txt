@@ -1,0 +1,34 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Check the deployed file timestamp and size
+ls -lh /var/www/wellasset/dist/index.js
+
+# Check for vite references in the deployed file
+grep -i "vite" /var/www/wellasset/dist/index.js
+
+# Check PM2 logs for the actual error
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 50 --nostream
+-rw-r--r-- 1 nodejs nodejs 14K Oct 30 11:27 /var/www/wellasset/dist/index.js
+[TAILING] Tailing last 50 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 50 lines:
+/var/log/wellasset/error.log last 50 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset$
