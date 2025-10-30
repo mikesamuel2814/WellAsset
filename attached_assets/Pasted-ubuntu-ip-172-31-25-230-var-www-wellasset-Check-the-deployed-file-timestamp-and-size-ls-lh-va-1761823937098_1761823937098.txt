@@ -1,0 +1,110 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Check the deployed file timestamp and size
+ls -lh /var/www/wellasset/dist/index.js
+
+# Check for vite references in the deployed file
+grep -i "vite" /var/www/wellasset/dist/index.js
+
+# Check PM2 logs for the actual error
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 50 --nostream
+-rw-r--r-- 1 nodejs nodejs 14K Oct 30 11:27 /var/www/wellasset/dist/index.js
+[TAILING] Tailing last 50 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 50 lines:
+/var/log/wellasset/error.log last 50 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Clear old PM2 logs and restart
+sudo systemctl stop wellasset
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 delete wellasset-app || true
+sudo rm -f /var/log/wellasset/error.log /var/log/wellasset/out.log
+
+# Start fresh
+sudo systemctl start wellasset
+
+# Wait a moment
+sleep 5
+
+# Check health
+curl http://localhost:5000/health
+
+# If that works, check PM2 status
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+
+# Check the fresh logs
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 20 --nostream
+[PM2] Applying action deleteProcessId on app [wellasset-app](ids: [ 0 ])
+[PM2] [wellasset-app](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 0    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 20 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 20 lines:
+/var/log/wellasset/error.log last 20 lines:
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Try to start manually and see the immediate error
+cd /var/www/wellasset
+sudo -u nodejs NODE_ENV=production /home/nodejs/node_modules/.bin/pm2 start ecosystem.config.cjs --env production
+
+# Wait a second
+sleep 2
+
+# Check status
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+
+# Check the fresh logs
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 30 --nostream
+
+# If no logs, try running the app directly to see the error
+sudo -u nodejs bash -c "cd /var/www/wellasset && NODE_ENV=production PORT=5000 node dist/index.js"
+[PM2] Applying action restartProcessId on app [wellasset-app](ids: [ 0 ])
+[PM2] [wellasset-app](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 0    │ online    │ 0%       │ 39.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 0    │ online    │ 0%       │ 77.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 30 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/error.log last 30 lines:
+/var/log/wellasset/out.log last 30 lines:
+0|wellasse | 2025-10-30 11:32:02 +00:00: 11:32:02 serving on port 5000
+
+file:///var/www/wellasset/dist/index.js:1
+var Z=Object.defineProperty;var H=(n,s)=>{for(var t in s)Z(n,t,{get:s[t],enumerable:!0})};import v from"express";import{createServer as ie}from"http";import L from"express";import M from"bcryptjs";import T from"jsonwebtoken";import K from"multer";import C from"path";import{promises as O}from"fs";var $={};H($,{agents:()=>g,inquiries:()=>w,insertAgentSchema:()=>U,insertInquirySchema:()=>B,insertPropertySchema:()=>b,insertSiteSettingSchema:()=>Y,insertSocialMediaSchema:()=>ee,insertUserSchema:()=>X,properties:()=>m,siteSettings:()=>P,socialMedia:()=>S,updatePasswordSchema:()=>D,users:()=>y});import{pgTable as I,text as o,integer as A,decimal as F,timestamp as k,boolean as Q,serial as q}from"drizzle-orm/pg-core";import{createInsertSchema as x}from"drizzle-zod";import{z as p}from"zod";var y=I("users",{id:q("id").primaryKey(),name:o("name").notNull(),email:o("email").notNull().unique(),password:o("password").notNull(),role:o("role").notNull().default("admin")}),m=I("properties",{id:q("id").primaryKey(),title:o("title").notNull(),titleBn:o("title_bn"),price:F("price",{precision:12,scale:2}).notNull(),type:o("type").notNull(),location:o("location").notNull(),locationBn:o("location_bn"),latitude:F("latitude",{precision:10,scale:7}),longitude:F("longitude",{precision:10,scale:7}),bedrooms:A("bedrooms").notNull(),bathrooms:A("bathrooms").notNull(),area:A("area").notNull(),description:o("description").notNull(),descriptionBn:o("description_bn"),features:o("features").array().notNull(),featuresBn:o("features_bn").array(),status:o("status").notNull().default("active"),images:o("images").array().notNull(),videos:o("videos").array(),agentId:A("agent_id"),createdAt:k("created_at").defaultNow()}),g=I("agents",{id:q("id").primaryKey(),name:o("name").notNull(),email:o("email").notNull().unique(),phone:o("phone").notNull(),profileImage:o("profile_image")}),w=I("inquiries",{id:q("id").primaryKey(),name:o("name").notNull(),email:o("email").notNull(),phone:o("phone").notNull(),message:o("message").notNull(),propertyId:A("property_id"),status:o("status").notNull().default("unread"),createdAt:k("created_at").defaultNow()}),P=I("site_settings",{id:q("id").primaryKey(),key:o("key").notNull().unique(),value:o("value").notNull(),valueBn:o("value_bn"),category:o("category").notNull(),updatedAt:k("updated_at").defaultNow()}),S=I("social_media",{id:q("id").primaryKey(),platform:o("platform").notNull(),url:o("url").notNull(),icon:o("icon"),isActive:Q("is_active").notNull().default(!0),order:A("order").notNull().default(0)}),X=x(y).omit({id:!0}),b=x(m).omit({id:!0,createdAt:!0}).extend({price:p.string().min(1,"Price is required"),bedrooms:p.number().min(0),bathrooms:p.number().min(0),area:p.number().min(1)}),U=x(g).omit({id:!0}),B=x(w).omit({id:!0,createdAt:!0,status:!0}).extend({name:p.string().min(2,"Name must be at least 2 characters").max(100,"Name is too long"),email:p.string().email("Please enter a valid email address"),phone:p.string().min(10,"Phone number must be at least 10 digits").max(20,"Phone number is too long"),message:p.string().min(10,"Message must be at least 10 characters").max(1e3,"Message is too long")}),Y=x(P).omit({id:!0,updatedAt:!0}),ee=x(S).omit({id:!0}),D=p.object({currentPassword:p.string().min(1,"Current password is required"),newPassword:p.string().min(8,"New password must be at least 8 characters").max(100,"Password is too long"),confirmPassword:p.string().min(1,"Please confirm your password")}).refine(n=>n.newPassword===n.confirmPassword,{message:"Passwords do not match",path:["confirmPassword"]});import te from"pg";import{drizzle as se}from"drizzle-orm/node-postgres";var{Pool:re}=te;if(!process.env.DATABASE_URL)throw new Error("DATABASE_URL must be set. Did you forget to provision a database?");var ne=new re({connectionString:process.env.DATABASE_URL}),a=se(ne,{schema:$});import{eq as c}from"drizzle-orm";var z=class{async getUser(s){let[t]=await a.select().from(y).where(c(y.id,s));return t||void 0}async getUserByEmail(s){let[t]=await a.select().from(y).where(c(y.email,s));return t||void 0}async createUser(s){let[t]=await a.insert(y).values(s).returning();return t}async updateUserPassword(s,t){let[e]=await a.update(y).set({password:t}).where(c(y.id,s)).returning();return e||void 0}async getAllProperties(){return await a.select().from(m)}async getProperty(s){let[t]=await a.select().from(m).where(c(m.id,s));return t||void 0}async createProperty(s){let[t]=await a.insert(m).values(s).returning();return t}async updateProperty(s,t){let[e]=await a.update(m).set(t).where(c(m.id,s)).returning();return e||void 0}async deleteProperty(s){return((await a.delete(m).where(c(m.id,s))).rowCount??0)>0}async getAllAgents(){return await a.select().from(g)}async getAgent(s){let[t]=await a.select().from(g).where(c(g.id,s));return t||void 0}async createAgent(s){let[t]=await a.insert(g).values(s).returning();return t}async updateAgent(s,t){let[e]=await a.update(g).set(t).where(c(g.id,s)).returning();return e||void 0}async deleteAgent(s){return((await a.delete(g).where(c(g.id,s))).rowCount??0)>0}async getAllInquiries(){return await a.select().from(w)}async getInquiry(s){let[t]=await a.select().from(w).where(c(w.id,s));return t||void 0}async createInquiry(s){let[t]=await a.insert(w).values(s).returning();return t}async updateInquiryStatus(s,t){let[e]=await a.update(w).set({status:t}).where(c(w.id,s)).returning();return e||void 0}async getAllSiteSettings(){return await a.select().from(P)}async getSiteSetting(s){let[t]=await a.select().from(P).where(c(P.key,s));return t||void 0}async updateSiteSetting(s,t,e){let r={updatedAt:new Date};t!==void 0&&(r.value=t),e!==void 0&&(r.valueBn=e);let[i]=await a.update(P).set(r).where(c(P.key,s)).returning();return i||void 0}async getAllSocialMedia(){return await a.select().from(S)}async getSocialMediaItem(s){let[t]=await a.select().from(S).where(c(S.id,s));return t||void 0}async updateSocialMedia(s,t){let[e]=await a.update(S).set(t).where(c(S.id,s)).returning();return e||void 0}},u=new z;var V=process.env.SESSION_SECRET||"your-secret-key-change-in-production";function _(n,s,t){let e=n,r=n.headers.authorization?.replace("Bearer ","");if(!r)return s.status(401).json({error:"No token provided"});try{let i=T.verify(r,V);e.user=i,t()}catch{return s.status(401).json({error:"Invalid token"})}}var E=C.join(import.meta.dirname,"..","uploads");async function oe(){try{await O.access(E)}catch{await O.mkdir(E,{recursive:!0})}}var ae=K.diskStorage({destination:async(n,s,t)=>{await oe(),t(null,E)},filename:(n,s,t)=>{let e=Date.now()+"-"+Math.round(Math.random()*1e9),r=C.extname(s.originalname),i=C.basename(s.originalname,r).replace(/[^a-zA-Z0-9]/g,"-");t(null,i+"-"+e+r)}}),ue=K({storage:ae,limits:{fileSize:50*1024*1024},fileFilter:(n,s,t)=>{let e=["image/jpeg","image/jpg","image/png","image/gif","image/webp","video/mp4","video/webm","video/quicktime","video/x-msvideo","video/mpeg","video/ogg"],i=/\.(jpeg|jpg|png|gif|webp|mp4|mov|avi|webm|mpeg|ogg)$/i.test(s.originalname.toLowerCase());if(e.includes(s.mimetype)&&i)return t(null,!0);t(new Error("Only image files (JPG, PNG, GIF, WEBP) and video files (MP4, MOV, AVI, WEBM) are allowed!"))}});async function J(n){return n.use(L.json()),n.post("/api/auth/login",async(t,e)=>{try{let{email:r,password:i}=t.body;if(!r||!i)return e.status(400).json({error:"Email and password are required"});let d=await u.getUserByEmail(r);if(!d){let N=await M.hash(i,10),h=await u.createUser({name:"Admin User",email:r,password:N,role:"admin"}),R=T.sign({id:h.id,email:h.email,role:h.role},V,{expiresIn:"7d"});return e.json({token:R,user:{id:h.id,name:h.name,email:h.email,role:h.role}})}if(!await M.compare(i,d.password))return e.status(401).json({error:"Invalid credentials"});let l=T.sign({id:d.id,email:d.email,role:d.role},V,{expiresIn:"7d"});e.json({token:l,user:{id:d.id,name:d.name,email:d.email,role:d.role}})}catch{e.status(500).json({error:"Internal server error"})}}),n.put("/api/auth/update-password",_,async(t,e)=>{try{let r=t,i=D.safeParse(t.body);if(!i.success)return e.status(400).json({error:i.error.errors[0].message});let{currentPassword:d,newPassword:f}=i.data,l=r.user.id,N=await u.getUser(l);if(!N)return e.status(404).json({error:"User not found"});if(!await M.compare(d,N.password))return e.status(401).json({error:"Current password is incorrect"});let R=await M.hash(f,10);if(!await u.updateUserPassword(l,R))return e.status(500).json({error:"Failed to update password"});e.json({message:"Password updated successfully"})}catch{e.status(500).json({error:"Internal server error"})}}),n.get("/api/properties",async(t,e)=>{try{let r=await u.getAllProperties();e.json(r)}catch{e.status(500).json({error:"Failed to fetch properties"})}}),n.get("/api/properties/:id",async(t,e)=>{try{let r=await u.getProperty(t.params.id);if(!r)return e.status(404).json({error:"Property not found"});e.json(r)}catch{e.status(500).json({error:"Failed to fetch property"})}}),n.post("/api/properties",async(t,e)=>{try{let r=b.parse(t.body),i=await u.createProperty(r);e.status(201).json(i)}catch(r){r instanceof Error?e.status(400).json({error:r.message}):e.status(500).json({error:"Failed to create property"})}}),n.put("/api/properties/:id",async(t,e)=>{try{let r=b.parse(t.body),i=await u.updateProperty(t.params.id,r);if(!i)return e.status(404).json({error:"Property not found"});e.json(i)}catch(r){r instanceof Error?e.status(400).json({error:r.message}):e.status(500).json({error:"Failed to update property"})}}),n.delete("/api/properties/:id",async(t,e)=>{try{if(!await u.deleteProperty(t.params.id))return e.status(404).json({error:"Property not found"});e.status(204).send()}catch{e.status(500).json({error:"Failed to delete property"})}}),n.get("/api/agents",async(t,e)=>{try{let r=await u.getAllAgents();e.json(r)}catch{e.status(500).json({error:"Failed to fetch agents"})}}),n.get("/api/agents/:id",async(t,e)=>{try{let r=await u.getAgent(t.params.id);if(!r)return e.status(404).json({error:"Agent not found"});e.json(r)}catch{e.status(500).json({error:"Failed to fetch agent"})}}),n.post("/api/agents",async(t,e)=>{try{let r=U.parse(t.body),i=await u.createAgent(r);e.status(201).json(i)}catch(r){r instanceof Error?e.status(400).json({error:r.message}):e.status(500).json({error:"Failed to create agent"})}}),n.put("/api/agents/:id",async(t,e)=>{try{let r=U.parse(t.body),i=await u.updateAgent(t.params.id,r);if(!i)return e.status(404).json({error:"Agent not found"});e.json(i)}catch(r){r instanceof Error?e.status(400).json({error:r.message}):e.status(500).json({error:"Failed to update agent"})}}),n.delete("/api/agents/:id",async(t,e)=>{try{if(!await u.deleteAgent(t.params.id))return e.status(404).json({error:"Agent not found"});e.status(204).send()}catch{e.status(500).json({error:"Failed to delete agent"})}}),n.get("/api/inquiries",async(t,e)=>{try{let r=await u.getAllInquiries();e.json(r)}catch{e.status(500).json({error:"Failed to fetch inquiries"})}}),n.get("/api/inquiries/:id",async(t,e)=>{try{let r=await u.getInquiry(t.params.id);if(!r)return e.status(404).json({error:"Inquiry not found"});e.json(r)}catch{e.status(500).json({error:"Failed to fetch inquiry"})}}),n.post("/api/inquiries",async(t,e)=>{try{let r=B.parse(t.body),i=await u.createInquiry(r);e.status(201).json(i)}catch(r){r instanceof Error?e.status(400).json({error:r.message}):e.status(500).json({error:"Failed to create inquiry"})}}),n.put("/api/inquiries/:id",async(t,e)=>{try{let{status:r}=t.body;if(!r)return e.status(400).json({error:"Status is required"});let i=await u.updateInquiryStatus(t.params.id,r);if(!i)return e.status(404).json({error:"Inquiry not found"});e.json(i)}catch{e.status(500).json({error:"Failed to update inquiry"})}}),n.get("/api/cms/settings",async(t,e)=>{try{let r=await u.getAllSiteSettings();e.json(r)}catch{e.status(500).json({error:"Failed to fetch settings"})}}),n.put("/api/cms/settings/:key",_,async(t,e)=>{try{let{value:r,valueBn:i}=t.body;if(r===void 0&&i===void 0)return e.status(400).json({error:"At least one value (English or Bangla) is required"});let d=await u.updateSiteSetting(t.params.key,r,i);if(!d)return e.status(404).json({error:"Setting not found"});e.json(d)}catch{e.status(500).json({error:"Failed to update setting"})}}),n.get("/api/cms/social-media",async(t,e)=>{try{let r=await u.getAllSocialMedia();e.json(r)}catch{e.status(500).json({error:"Failed to fetch social media"})}}),n.put("/api/cms/social-media/:id",_,async(t,e)=>{try{let{url:r}=t.body;if(!r)return e.status(400).json({error:"URL is required"});let i=await u.updateSocialMedia(t.params.id,{url:r});if(!i)return e.status(404).json({error:"Social media item not found"});e.json(i)}catch{e.status(500).json({error:"Failed to update social media"})}}),n.post("/api/upload",_,ue.array("files",10),async(t,e)=>{try{if(!t.files||!Array.isArray(t.files)||t.files.length===0)return e.status(400).json({error:"No files uploaded"});let r=t.files.map(i=>`/uploads/${i.filename}`);e.json({urls:r})}catch{e.status(500).json({error:"Failed to upload files"})}}),n.use("/uploads",L.static(E)),ie(n)}import W from"path";var G=(...n)=>{console.log(new Date().toLocaleTimeString("en-US",{hour12:!1}),...n)},j=v();j.use(v.json({verify:(n,s,t)=>{n.rawBody=t}}));j.use(v.urlencoded({extended:!1}));j.use((n,s,t)=>{let e=Date.now(),r=n.path,i,d=s.json;s.json=function(f,...l){return i=f,d.apply(s,[f,...l])},s.on("finish",()=>{let f=Date.now()-e;if(r.startsWith("/api")){let l=`${n.method} ${r} ${s.statusCode} in ${f}ms`;i&&(l+=` :: ${JSON.stringify(i)}`),l.length>80&&(l=l.slice(0,79)+"\u2026"),G(l)}}),t()});j.get("/health",(n,s)=>{s.status(200).json({status:"ok",timestamp:new Date().toISOString()})});(async()=>{let n=await J(j),s=W.resolve(import.meta.dirname,"..","attached_assets");j.use("/attached_assets",v.static(s)),j.use((e,r,i,d)=>{let f=e.status||e.statusCode||500,l=e.message||"Internal Server Error";throw i.status(f).json({message:l}),e}),j.use(v.static(W.resolve(import.meta.dirname,"../dist/public")));let t=parseInt(process.env.PORT||"5000",10);n.listen({port:t,host:"0.0.0.0",reusePort:!0},()=>{G(`serving on port ${t}`)})})();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
+Error: DATABASE_URL must be set. Did you forget to provision a database?
+    at file:///var/www/wellasset/dist/index.js:1:3684
+    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v20.19.5
+ubuntu@ip-172-31-25-230:/var/www/wellasset$

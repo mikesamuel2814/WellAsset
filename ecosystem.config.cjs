@@ -9,6 +9,9 @@ module.exports = {
     instances: 1,
     exec_mode: 'cluster',
     
+    // Load environment variables from .env.production file
+    env_file: '.env.production',
+    
     // Environment variables
     env_production: {
       NODE_ENV: 'production',
