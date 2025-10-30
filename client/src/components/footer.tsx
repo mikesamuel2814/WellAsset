@@ -1,9 +1,36 @@
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Building2, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
+type SocialMedia = {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+};
+
 export function Footer() {
   const { t } = useI18n();
+  
+  const { data: socialMedia } = useQuery<SocialMedia[]>({
+    queryKey: ["/api/cms/social-media"],
+  });
+
+  const getSocialIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'facebook':
+        return Facebook;
+      case 'twitter':
+        return Twitter;
+      case 'instagram':
+        return Instagram;
+      case 'linkedin':
+        return Linkedin;
+      default:
+        return Building2;
+    }
+  };
   
   return (
     <footer className="bg-card border-t">
@@ -83,38 +110,22 @@ export function Footer() {
           <div>
             <h4 className="font-display font-semibold mb-4">{t("footer.followUs")}</h4>
             <div className="flex gap-3">
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
-                aria-label="Facebook"
-                data-testid="link-social-facebook"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
-                aria-label="Twitter"
-                data-testid="link-social-twitter"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
-                aria-label="Instagram"
-                data-testid="link-social-instagram"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
-                aria-label="LinkedIn"
-                data-testid="link-social-linkedin"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
+              {socialMedia?.map((social) => {
+                const Icon = getSocialIcon(social.platform);
+                return (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                    aria-label={social.platform}
+                    data-testid={`link-social-${social.platform.toLowerCase()}`}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>
