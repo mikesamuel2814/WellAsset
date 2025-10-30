@@ -16,39 +16,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build application
-        run: |
-          # Build frontend
-          npx vite build
-          
-          # Build backend with NODE_ENV=production defined at build time to eliminate dev-only code
-          npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --minify --define:process.env.NODE_ENV='"production"' --outdir=dist
-      
       - name: Create deployment package
         run: |
           # Create deployment directory
           mkdir -p deploy
           
-          # Copy necessary files
+          # Copy source files (server will build them)
           cp -r client deploy/
           cp -r server deploy/
           cp -r shared deploy/
-          cp -r dist deploy/
           cp package.json package-lock.json deploy/
           cp ecosystem.config.cjs deploy/
           cp deploy.sh deploy/
           cp drizzle.config.ts deploy/
           cp wellasset.service deploy/
-          cp start.sh deploy/
+          cp vite.config.ts deploy/
+          cp tsconfig.json deploy/
+          cp tailwind.config.ts deploy/
+          cp postcss.config.js deploy/
           
           # Copy attached assets (images)
           if [ -d "attached_assets" ]; then

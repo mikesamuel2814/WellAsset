@@ -55,15 +55,20 @@ echo "Updating systemd service..."
 sudo cp "$APP_DIR/wellasset.service" /etc/systemd/system/wellasset.service
 sudo systemctl daemon-reload
 
-# Install dependencies as nodejs user (including devDependencies for migrations)
+# Install dependencies as nodejs user (including devDependencies for build and migrations)
 echo "Installing dependencies..."
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm ci"
+
+# Build application
+echo "Building application..."
+sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npx vite build"
+sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --minify --define:process.env.NODE_ENV='\"production\"' --outdir=dist"
 
 # Run database migrations as nodejs user (with environment variables loaded)
 echo "Running database migrations..."
 sudo -u $DEPLOY_USER bash -c "set -a && source $APP_DIR/.env.production && set +a && cd $APP_DIR && npm run db:push"
 
-# Remove devDependencies after migrations
+# Remove devDependencies after build and migrations
 echo "Removing devDependencies..."
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm prune --production"
 
