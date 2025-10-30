@@ -17,39 +17,34 @@ sudo mkdir -p "$BACKUP_DIR"
 
 # Stop the application
 echo "Stopping application..."
-sudo systemctl stop wellasset || pm2 stop wellasset-app || true
+sudo systemctl stop wellasset || true
 
 # Create backup of current version
-if [ -d "$APP_DIR" ]; then
+if [ -d "$APP_DIR" ] && [ "$(ls -A $APP_DIR)" ]; then
     BACKUP_FILE="$BACKUP_DIR/wellasset-$(date +%Y%m%d-%H%M%S).tar.gz"
     echo "Creating backup: $BACKUP_FILE"
     sudo tar -czf "$BACKUP_FILE" -C "$APP_DIR" . || true
     
     # Keep only last 5 backups
-    ls -t "$BACKUP_DIR"/wellasset-*.tar.gz | tail -n +6 | xargs rm -f || true
+    sudo find "$BACKUP_DIR" -name "wellasset-*.tar.gz" -type f | sort -r | tail -n +6 | xargs -r sudo rm -f
 fi
 
 # Extract new version
 echo "Extracting new version..."
+sudo mkdir -p "$APP_DIR"
 cd "$APP_DIR"
-tar -xzf /tmp/wellasset-deploy.tar.gz
+sudo tar -xzf /tmp/wellasset-deploy.tar.gz
 
 # Set correct permissions
 sudo chown -R $DEPLOY_USER:$DEPLOY_USER "$APP_DIR"
 
-# Install dependencies
+# Install dependencies as nodejs user
 echo "Installing dependencies..."
-npm ci --production
+sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm ci --production"
 
-# Run database migrations
+# Run database migrations as nodejs user
 echo "Running database migrations..."
-npm run db:push
-
-# Build frontend (if not built in CI)
-if [ ! -d "dist" ]; then
-    echo "Building frontend..."
-    npm run build
-fi
+sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm run db:push"
 
 # Start the application
 echo "Starting application..."
@@ -57,7 +52,7 @@ sudo systemctl start wellasset
 
 # Wait for application to be healthy
 echo "Waiting for application to start..."
-sleep 5
+sleep 10
 
 # Health check
 MAX_ATTEMPTS=30
@@ -74,13 +69,18 @@ done
 
 if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
     echo "ERROR: Application failed to start"
+    echo "Checking logs..."
+    sudo journalctl -u wellasset -n 50 --no-pager || true
+    
     echo "Rolling back to previous version..."
     
     # Rollback
-    LATEST_BACKUP=$(ls -t "$BACKUP_DIR"/wellasset-*.tar.gz | head -1)
+    LATEST_BACKUP=$(sudo find "$BACKUP_DIR" -name "wellasset-*.tar.gz" -type f | sort -r | head -1)
     if [ -n "$LATEST_BACKUP" ]; then
+        echo "Restoring from: $LATEST_BACKUP"
         cd "$APP_DIR"
-        tar -xzf "$LATEST_BACKUP"
+        sudo tar -xzf "$LATEST_BACKUP"
+        sudo chown -R $DEPLOY_USER:$DEPLOY_USER "$APP_DIR"
         sudo systemctl start wellasset
     fi
     

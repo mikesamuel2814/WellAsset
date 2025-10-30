@@ -1,0 +1,64 @@
+ubuntu@ip-172-31-25-230:~$ # Switch to postgres user and create database
+sudo -i -u postgres psql << 'EOF'
+CREATE DATABASE wellasset;
+CREATE USER wellasset_user WITH ENCRYPTED PASSWORD 'WellAsset2024!SecurePass';
+GRANT ALL PRIVILEGES ON DATABASE wellasset TO wellasset_user;
+\c wellasset
+GRANT ALL ON SCHEMA public TO wellasset_user;
+ALTER DATABASE wellasset OWNER TO wellasset_user;
+\q
+EOF
+CREATE DATABASE
+CREATE ROLE
+GRANT
+You are now connected to database "wellasset" as user "postgres".
+GRANT
+ALTER DATABASE
+ubuntu@ip-172-31-25-230:~$ # Configure PostgreSQL to allow local connections
+sudo nano /etc/postgresql/16/main/pg_hba.conf
+ubuntu@ip-172-31-25-230:~$ psql -U wellasset_user -d wellasset -h localhost
+# Enter password: WellAsset2024!SecurePass
+# If successful, you'll see: wellasset=>
+\q
+Password for user wellasset_user:
+psql (16.10 (Ubuntu 16.10-1.pgdg24.04+1))
+SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
+Type "help" for help.
+
+wellasset=> exit
+Command 'q' not found, but can be installed with:
+sudo apt install python3-q-text-as-data
+ubuntu@ip-172-31-25-230:~$ sudo mkdir -p /var/www/wellasset
+sudo nano /var/www/wellasset/.env.production
+ubuntu@ip-172-31-25-230:~$ sudo chown nodejs:nodejs /var/www/wellasset/.env.production
+sudo chmod 600 /var/www/wellasset/.env.production
+ubuntu@ip-172-31-25-230:~$ sudo nano /etc/nginx/sites-available/wellasset
+ubuntu@ip-172-31-25-230:~$ sudo nano /etc/nginx/sites-available/wellasset
+ubuntu@ip-172-31-25-230:~$ # Enable the site
+sudo ln -s /etc/nginx/sites-available/wellasset /etc/nginx/sites-enabled/
+
+# Remove default site
+sudo rm /etc/nginx/sites-enabled/default
+
+# Test configuration
+sudo nginx -t
+
+# Restart Nginx
+sudo systemctl restart nginx
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+ubuntu@ip-172-31-25-230:~$ sudo nano /etc/systemd/system/wellasset.service
+ubuntu@ip-172-31-25-230:~$ sudo systemctl daemon-reload
+sudo systemctl enable wellasset
+Created symlink /etc/systemd/system/multi-user.target.wants/wellasset.service → /etc/systemd/system/wellasset.service.
+ubuntu@ip-172-31-25-230:~$ sudo mkdir -p /home/nodejs/.ssh
+sudo cp ~/.ssh/authorized_keys /home/nodejs/.ssh/
+sudo chown -R nodejs:nodejs /home/nodejs/.ssh
+sudo chmod 700 /home/nodejs/.ssh
+sudo chmod 600 /home/nodejs/.ssh/authorized_keys
+
+# Give nodejs user sudo for systemctl
+echo "nodejs ALL=(ALL) NOPASSWD: /bin/systemctl start wellasset, /bin/systemctl stop wellasset, /bin/systemctl restart wellasset, /bin/systemctl status wellasset" | sudo tee /etc/sudoers.d/nodejs
+sudo chmod 440 /etc/sudoers.d/nodejs
+nodejs ALL=(ALL) NOPASSWD: /bin/systemctl start wellasset, /bin/systemctl stop wellasset, /bin/systemctl restart wellasset, /bin/systemctl status wellasset
+ubuntu@ip-172-31-25-230:~$
