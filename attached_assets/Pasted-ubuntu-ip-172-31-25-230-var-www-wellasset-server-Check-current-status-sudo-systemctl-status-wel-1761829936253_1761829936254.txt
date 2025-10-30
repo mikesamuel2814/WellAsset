@@ -1,0 +1,74 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset/server$ # Check current status
+sudo systemctl status wellasset
+
+# The service is trying to use start.sh which doesn't exist yet
+# Let's manually create it on the server
+
+# Create the start.sh script
+sudo tee /var/www/wellasset/start.sh > /dev/null << 'EOF'
+#!/bin/bash
+# Well Asset Real Estate Platform - Startup Wrapper Script
+set -e
+
+# Load environment variables
+set -a
+source /var/www/wellasset/.env.production
+set +a
+
+# Start PM2 in runtime mode (foreground)
+exec /home/nodejs/node_modules/.bin/pm2-runtime start /var/www/wellasset/ecosystem.config.cjs --env production
+EOF
+
+# Make it executable
+sudo chmod +x /var/www/wellasset/start.sh
+sudo chown nodejs:nodejs /var/www/wellasset/start.sh
+
+# Restart the service
+sudo systemctl restart wellasset
+
+# Check status
+sleep 5
+sudo systemctl status wellasset
+
+# Test health
+curl http://localhost:5000/health
+● wellasset.service - Well Asset Real Estate Platform
+     Loaded: loaded (/etc/systemd/system/wellasset.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2025-10-30 13:10:10 UTC; 1min 38s ago
+       Docs: https://github.com/yourusername/wellasset
+   Main PID: 33934 (node)
+      Tasks: 22 (limit: 1121)
+     Memory: 47.8M (peak: 59.1M)
+        CPU: 1.026s
+     CGroup: /system.slice/wellasset.service
+             ├─33934 node /home/nodejs/node_modules/.bin/pm2-runtime start /var/www/wellasset/ecosystem.config.cjs >
+             └─33945 "node /var/www/wellasset/dist/index.js"
+
+Oct 30 13:10:00 ip-172-31-25-230 systemd[1]: wellasset.service: Main process exited, code=exited, status=203/EXEC
+Oct 30 13:10:00 ip-172-31-25-230 systemd[1]: wellasset.service: Failed with result 'exit-code'.
+Oct 30 13:10:10 ip-172-31-25-230 systemd[1]: wellasset.service: Scheduled restart job, restart counter is at 8.
+Oct 30 13:10:10 ip-172-31-25-230 systemd[1]: Started wellasset.service - Well Asset Real Estate Platform.
+Oct 30 13:10:11 ip-172-31-25-230 start.sh[33934]: 2025-10-30T13:10:11: PM2 log: Launching in no daemon mode
+Oct 30 13:10:11 ip-172-31-25-230 start.sh[33934]: 2025-10-30T13:10:11: PM2 log: App [wellasset-app:0] starting in ->
+Oct 30 13:10:11 ip-172-31-25-230 start.sh[33934]: 2025-10-30T13:10:11: PM2 log: App [wellasset-app:0] online
+Oct 30 13:10:11 ip-172-31-25-230 start.sh[33934]: 2025-10-30 13:10:11 +00:00: 13:10:11 serving on port 5000
+lines 1-20/20 (END)
+● wellasset.service - Well Asset Real Estate Platform
+     Loaded: loaded (/etc/systemd/system/wellasset.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2025-10-30 13:11:54 UTC; 5s ago
+       Docs: https://github.com/yourusername/wellasset
+   Main PID: 34000 (node)
+      Tasks: 22 (limit: 1121)
+     Memory: 48.8M (peak: 49.3M)
+        CPU: 714ms
+     CGroup: /system.slice/wellasset.service
+             ├─34000 node /home/nodejs/node_modules/.bin/pm2-runtime start /var/www/wellasset/ecosystem.config.cjs >
+             └─34012 "node /var/www/wellasset/dist/index.js"
+
+Oct 30 13:11:54 ip-172-31-25-230 systemd[1]: Started wellasset.service - Well Asset Real Estate Platform.
+Oct 30 13:11:54 ip-172-31-25-230 start.sh[34000]: 2025-10-30T13:11:54: PM2 log: Launching in no daemon mode
+Oct 30 13:11:54 ip-172-31-25-230 start.sh[34000]: 2025-10-30T13:11:54: PM2 log: App [wellasset-app:0] starting in ->
+Oct 30 13:11:55 ip-172-31-25-230 start.sh[34000]: 2025-10-30T13:11:54: PM2 log: App [wellasset-app:0] online
+Oct 30 13:11:55 ip-172-31-25-230 start.sh[34000]: 2025-10-30 13:11:55 +00:00: 13:11:55 serving on port 5000
+
+{"status":"ok","timestamp":"2025-10-30T13:12:09.279Z"}ubuntu@ip-172-31-25-230:/var/www/wellasset/server$
