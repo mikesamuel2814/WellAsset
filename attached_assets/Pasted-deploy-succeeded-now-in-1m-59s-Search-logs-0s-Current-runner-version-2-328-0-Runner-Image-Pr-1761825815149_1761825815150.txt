@@ -1,0 +1,179 @@
+deploy
+succeeded now in 1m 59s
+Search logs
+0s
+Current runner version: '2.328.0'
+Runner Image Provisioner
+Operating System
+Runner Image
+GITHUB_TOKEN Permissions
+Secret source: Actions
+Prepare workflow directory
+Prepare all required actions
+Getting action download info
+Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+Complete job name: deploy
+2s
+Run actions/checkout@v4
+Syncing repository: mikesamuel2814/WellAsset
+Getting Git version info
+Temporarily overriding HOME='/home/runner/work/_temp/bb4fd3e6-638a-4d1b-b522-a8d84f02cea9' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/WellAsset/WellAsset
+Deleting the contents of '/home/runner/work/WellAsset/WellAsset'
+Initializing the repository
+Disabling automatic garbage collection
+Setting up auth
+Fetching the repository
+Determining the checkout info
+/usr/bin/git sparse-checkout disable
+/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Checking out the ref
+/usr/bin/git log -1 --format=%H
+9130d02375cebf2120dece170c5fa247d8a22df2
+2s
+Run actions/setup-node@v4
+Found in cache @ /opt/hostedtoolcache/node/20.19.5/x64
+Environment details
+/opt/hostedtoolcache/node/20.19.5/x64/bin/npm config get cache
+/home/runner/.npm
+npm cache is not found
+10s
+Run npm ci
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+
+added 560 packages, and audited 561 packages in 10s
+
+74 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (3 low, 5 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+8s
+Run # Build frontend
+vite v5.4.20 building for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+✓ 2595 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                                                          1.10 kB │ gzip:   0.59 kB
+../dist/public/assets/Penthouse_interior_property_image_dbc84d3f-Sx7NG3vD.png  1,467.70 kB
+../dist/public/assets/Modern_townhouse_property_image_63084dd1-Ch3UfZTS.png    1,542.33 kB
+../dist/public/assets/Office_building_property_image_aa5f3a46-DdllSpGN.png     1,863.38 kB
+../dist/public/assets/Beachfront_condo_property_image_eb2adc6c-BAmuONfB.png    1,900.36 kB
+../dist/public/assets/Mansion_interior_property_image_9b6f3d6b-gKKTbDTU.png    1,930.42 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+../dist/public/assets/index-BVmBjjOo.css                                          95.12 kB │ gzip:  19.35 kB
+../dist/public/assets/index-BmtbhPsX.js                                        1,068.05 kB │ gzip: 320.27 kB
+✓ built in 6.77s
+
+  dist/index.js  13.8kb
+
+⚡ Done in 4ms
+0s
+Run # Create deployment directory
+Deployment package created: wellasset-deploy.tar.gz
+-rw-r--r-- 1 runner runner 8.8M Oct 30 12:01 wellasset-deploy.tar.gz
+1m 20s
+Run # Setup SSH
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+Uploading deployment package...
+Executing deployment script...
+====== Starting Deployment ======
+Timestamp: Thu Oct 30 12:01:24 UTC 2025
+Stopping application...
+Creating backup: /var/backups/wellasset/wellasset-20251030-120125.tar.gz
+Extracting new version...
+Updating systemd service...
+Installing dependencies...
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+added 560 packages, and audited 561 packages in 15s
+74 packages are looking for funding
+  run `npm fund` for details
+8 vulnerabilities (3 low, 5 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+Running database migrations...
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/var/www/wellasset/drizzle.config.ts'
+Using 'pg' driver for database querying
+[⣷] Pulling schema from database...
+[⣯] Pulling schema from database...
+[✓] Pulling schema from database...
+[i] No changes detected
+Removing devDependencies...
+npm warn config production Use `--omit=dev` instead.
+up to date, audited 466 packages in 2s
+62 packages are looking for funding
+  run `npm fund` for details
+3 low severity vulnerabilities
+To address all issues, run:
+  npm audit fix
+Run `npm audit` for details.
+✓ .env.production file found
+Starting application...
+Waiting for application to start...
+✓ Application is healthy!
+====== Deployment Complete ======
+Timestamp: Thu Oct 30 12:02:31 UTC 2025
+Application URL: http://
+10s
+Run echo "Verifying deployment..."
+Verifying deployment...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100    54  100    54    0     0    132      0 --:--:-- --:--:-- --:--:--   132
+{"status":"ok","timestamp":"2025-10-30T12:02:41.486Z"}✅ Deployment successful! Application is healthy.
+0s
+Run if [ success == 'success' ]; then
+✅ Deployment to EC2 successful!
+3s
+Post job cleanup.
+/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/WellAsset/WellAsset --files-from manifest.txt --use-compress-program zstdmt
+Sent 28770304 of 81415182 (35.3%), 27.4 MBs/sec
+Sent 72220672 of 81415182 (88.7%), 34.4 MBs/sec
+Sent 81415182 of 81415182 (100.0%), 31.3 MBs/sec
+1s
+Post job cleanup.
+/usr/bin/git version
+git version 2.51.0
+Temporarily overriding HOME='/home/runner/work/_temp/14d3a1af-3fd1-4d7e-b69b-536ca0e8d5cf' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/WellAsset/WellAsset
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+0s
+Cleaning up orphan processes
