@@ -50,8 +50,57 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 - **CMS**: Admin interface for managing site settings and social media links. Includes office coordinate editing (office_latitude, office_longitude) in Contact Information section.
 - **Profile**: Admin profile page with password update functionality (min 8 characters, validation, bcrypt hashing).
 
+## Deployment & CI/CD
+
+### CI/CD Pipeline
+The project is configured for automated deployment to AWS using GitHub Actions:
+
+- **Continuous Integration** (`.github/workflows/ci.yml`):
+  - Runs on every push and pull request
+  - Automated testing with PostgreSQL service container
+  - Database migration testing
+  - Application build verification
+  - Artifact generation
+
+- **Continuous Deployment** (`.github/workflows/deploy-aws.yml`):
+  - Automatic deployment on push to `main` branch
+  - Manual deployment option for staging/production
+  - Docker image building and pushing to Amazon ECR
+  - Database migration execution on production
+  - Blue-green deployment to Amazon ECS Fargate
+  - Deployment health verification
+
+### Infrastructure
+- **Containerization**: Multi-stage Docker build for optimized production images
+- **Container Registry**: Amazon ECR
+- **Orchestration**: Amazon ECS with Fargate
+- **Database**: Amazon RDS PostgreSQL
+- **Load Balancing**: Application Load Balancer
+- **Monitoring**: CloudWatch Logs and metrics
+- **Secrets Management**: AWS Secrets Manager
+- **Health Checks**: Built-in `/health` endpoint for load balancer and container health checks
+
+### Deployment Documentation
+Comprehensive deployment guides available:
+- **DEPLOYMENT.md** - Overall deployment guide with multiple AWS deployment options
+- **AWS_SETUP.md** - Step-by-step AWS infrastructure setup instructions
+- **CICD_SETUP.md** - Quick start guide for GitHub Actions CI/CD
+- **ENVIRONMENT.md** - Complete environment variable reference
+- **.env.example** - Template for local development environment
+
+### Key Features
+- Zero-downtime deployments with ECS rolling updates
+- Automatic rollback on health check failures
+- Database migration safety with pre-deployment schema updates
+- Multi-environment support (development, staging, production)
+- Secure secret management via AWS Secrets Manager
+- Auto-scaling based on CPU/memory utilization
+- Production-ready Docker configuration with non-root user
+
 ## External Dependencies
 - **Database**: PostgreSQL (managed with Drizzle ORM)
 - **Frontend Libraries**: React, TypeScript, Vite, TailwindCSS, Wouter, TanStack Query, React Hook Form, Zod, Shadcn/ui, Radix UI, next-themes, embla-carousel-react, react-leaflet, Framer Motion, @tsparticles/react.
 - **Backend Libraries**: Node.js, Express, bcrypt (for password hashing), Multer (for file uploads - planned).
 - **Mapping Service**: OpenStreetMap (via react-leaflet).
+- **Cloud Infrastructure**: AWS (ECS, ECR, RDS, ALB, Secrets Manager, CloudWatch)
+- **CI/CD**: GitHub Actions
