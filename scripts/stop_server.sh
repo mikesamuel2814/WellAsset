@@ -3,7 +3,10 @@ set -e
 
 echo "===== Stopping Server ====="
 
-cd /home/ec2-user/wellasset
+# Ensure application directory exists
+APP_DIR="/home/ec2-user/wellasset"
+mkdir -p "$APP_DIR"
+cd "$APP_DIR"
 
 # Check if container is running
 if docker ps -q -f name=wellasset-app | grep -q .; then

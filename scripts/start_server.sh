@@ -3,7 +3,10 @@ set -e
 
 echo "===== Starting Server ====="
 
-cd /home/ec2-user/wellasset
+# Ensure application directory exists
+APP_DIR="/home/ec2-user/wellasset"
+mkdir -p "$APP_DIR"
+cd "$APP_DIR"
 
 # Run database migrations before starting server
 echo "Running database migrations..."
