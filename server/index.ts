@@ -7,11 +7,6 @@ const log = (...args: any[]) => {
   console.log(new Date().toLocaleTimeString('en-US', { hour12: false }), ...args);
 };
 
-// Only import Vite functions in development
-const { setupVite, serveStatic } = process.env.NODE_ENV === "production"
-  ? { setupVite: null, serveStatic: null }
-  : await import("./vite");
-
 const app = express();
 
 declare module 'http' {
@@ -79,12 +74,11 @@ app.get("/health", (_req: Request, res: Response) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development" && setupVite) {
+  if (app.get("env") === "development") {
+    const { setupVite } = await import("./vite");
     await setupVite(app, server);
-  } else if (serveStatic) {
-    serveStatic(app);
   } else {
-    // In production without Vite, serve static files from dist/public
+    // In production, serve static files from dist/public
     app.use(express.static(path.resolve(import.meta.dirname, "../dist/public")));
   }
 
