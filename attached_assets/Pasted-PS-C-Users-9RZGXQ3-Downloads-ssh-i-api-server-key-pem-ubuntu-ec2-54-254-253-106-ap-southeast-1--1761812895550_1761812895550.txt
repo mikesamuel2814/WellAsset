@@ -1,0 +1,422 @@
+PS C:\Users\9RZGXQ3\Downloads> ssh -i "api-server-key.pem" ubuntu@ec2-54-254-253-106.ap-southeast-1.compute.amazonaws.com
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.14.0-1011-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Oct 30 08:21:16 UTC 2025
+
+  System load:  0.01               Processes:             111
+  Usage of /:   12.0% of 18.33GB   Users logged in:       0
+  Memory usage: 29%                IPv4 address for enX0: 172.31.25.230
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+*** System restart required ***
+Last login: Thu Oct 30 08:21:17 2025 from 38.47.35.16
+ubuntu@ip-172-31-25-230:~$ # Download the setup script
+wget https://raw.githubusercontent.com/YOUR_REPO/main/setup-ubuntu.sh
+chmod +x setup-ubuntu.sh
+
+# Or copy the script content directly:
+nano setup-ubuntu.sh
+# Paste the content, save (Ctrl+O, Enter, Ctrl+X)
+chmod +x setup-ubuntu.sh
+
+# Run the setup
+./setup-ubuntu.sh
+--2025-10-30 08:25:01--  https://raw.githubusercontent.com/YOUR_REPO/main/setup-ubuntu.sh
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.108.133, 185.199.109.133, 185.199.110.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.108.133|:443... connected.
+HTTP request sent, awaiting response... 400 Bad Request
+2025-10-30 08:25:01 ERROR 400: Bad Request.
+
+
+chmod: cannot access 'setup-ubuntu.sh': No such file or directory
+-bash: ./setup-ubuntu.sh: No such file or directory
+ubuntu@ip-172-31-25-230:~$ nano setup-ubuntu.sh
+ubuntu@ip-172-31-25-230:~$ chmod +x setup-ubuntu.sh
+./setup-ubuntu.sh
+Setting up Well Asset server on Ubuntu...
+Hit:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble InRelease
+Hit:2 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:3 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Calculating upgrade... Done
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+2025-10-30 08:26:59 - Installing pre-requisites
+Hit:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble InRelease
+Hit:2 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:3 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+ca-certificates is already the newest version (20240203).
+ca-certificates set to manually installed.
+curl is already the newest version (8.5.0-2ubuntu10.6).
+curl set to manually installed.
+gnupg is already the newest version (2.4.4-2ubuntu17.3).
+gnupg set to manually installed.
+The following NEW packages will be installed:
+  apt-transport-https
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 3970 B of archives.
+After this operation, 36.9 kB of additional disk space will be used.
+Get:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates/universe amd64 apt-transport-https all 2.8.3 [3970 B]
+Fetched 3970 B in 0s (286 kB/s)
+Selecting previously unselected package apt-transport-https.
+(Reading database ... 103372 files and directories currently installed.)
+Preparing to unpack .../apt-transport-https_2.8.3_all.deb ...
+Unpacking apt-transport-https (2.8.3) ...
+Setting up apt-transport-https (2.8.3) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Pending kernel upgrade!
+Running kernel version:
+  6.14.0-1011-aws
+Diagnostics:
+  The currently running kernel version is not the expected kernel version 6.14.0-1016-aws.
+
+Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart getty@tty1.service
+ systemctl restart networkd-dispatcher.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Hit:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble InRelease
+Hit:2 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:3 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-backports InRelease
+Get:4 https://deb.nodesource.com/node_20.x nodistro InRelease [12.1 kB]
+Hit:5 http://security.ubuntu.com/ubuntu noble-security InRelease
+Get:6 https://deb.nodesource.com/node_20.x nodistro/main amd64 Packages [12.8 kB]
+Fetched 25.0 kB in 1s (37.1 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+2025-10-30 08:27:09 - Repository configured successfully.
+2025-10-30 08:27:09 - To install Node.js, run: apt install nodejs -y
+2025-10-30 08:27:09 - You can use N|solid Runtime as a node.js alternative
+2025-10-30 08:27:09 - To install N|solid Runtime, run: apt install nsolid -y
+
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  nodejs
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 32.0 MB of archives.
+After this operation, 197 MB of additional disk space will be used.
+Get:1 https://deb.nodesource.com/node_20.x nodistro/main amd64 nodejs amd64 20.19.5-1nodesource1 [32.0 MB]
+Fetched 32.0 MB in 0s (65.5 MB/s)
+Selecting previously unselected package nodejs.
+(Reading database ... 103376 files and directories currently installed.)
+Preparing to unpack .../nodejs_20.19.5-1nodesource1_amd64.deb ...
+Unpacking nodejs (20.19.5-1nodesource1) ...
+Setting up nodejs (20.19.5-1nodesource1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Pending kernel upgrade!
+Running kernel version:
+  6.14.0-1011-aws
+Diagnostics:
+  The currently running kernel version is not the expected kernel version 6.14.0-1016-aws.
+
+Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart getty@tty1.service
+ systemctl restart networkd-dispatcher.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+v20.19.5
+10.8.2
+
+added 133 packages in 10s
+
+13 packages are looking for funding
+  run `npm fund` for details
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.6.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+npm notice To update run: npm install -g npm@11.6.2
+npm notice
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  nginx-common
+Suggested packages:
+  fcgiwrap nginx-doc ssl-cert
+The following NEW packages will be installed:
+  nginx nginx-common
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Need to get 564 kB of archives.
+After this operation, 1596 kB of additional disk space will be used.
+Get:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates/main amd64 nginx-common all 1.24.0-2ubuntu7.5 [43.4 kB]
+Get:2 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates/main amd64 nginx amd64 1.24.0-2ubuntu7.5 [520 kB]
+Fetched 564 kB in 0s (14.3 MB/s)
+Preconfiguring packages ...
+Selecting previously unselected package nginx-common.
+(Reading database ... 108739 files and directories currently installed.)
+Preparing to unpack .../nginx-common_1.24.0-2ubuntu7.5_all.deb ...
+Unpacking nginx-common (1.24.0-2ubuntu7.5) ...
+Selecting previously unselected package nginx.
+Preparing to unpack .../nginx_1.24.0-2ubuntu7.5_amd64.deb ...
+Unpacking nginx (1.24.0-2ubuntu7.5) ...
+Setting up nginx-common (1.24.0-2ubuntu7.5) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /usr/lib/systemd/system/nginx.service.
+Setting up nginx (1.24.0-2ubuntu7.5) ...
+ * Upgrading binary nginx                                                                                    [ OK ]
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for ufw (0.36.2-6) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Pending kernel upgrade!
+Running kernel version:
+  6.14.0-1011-aws
+Diagnostics:
+  The currently running kernel version is not the expected kernel version 6.14.0-1016-aws.
+
+Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart getty@tty1.service
+ systemctl restart networkd-dispatcher.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+git is already the newest version (1:2.43.0-1ubuntu7.3).
+git set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+wget is already the newest version (1.21.4-1ubuntu4.1).
+wget set to manually installed.
+ca-certificates is already the newest version (20240203).
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Warning: apt-key is deprecated. Manage keyring files in trusted.gpg.d instead (see apt-key(8)).
+OK
+deb http://apt.postgresql.org/pub/repos/apt noble-pgdg main
+Hit:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble InRelease
+Get:2 http://apt.postgresql.org/pub/repos/apt noble-pgdg InRelease [107 kB]
+Hit:3 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:4 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-backports InRelease
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease
+Hit:6 http://security.ubuntu.com/ubuntu noble-security InRelease
+Get:7 http://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 Packages [351 kB]
+Fetched 457 kB in 1s (435 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+W: http://apt.postgresql.org/pub/repos/apt/dists/noble-pgdg/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Note, selecting 'postgresql-16' instead of 'postgresql-contrib-16'
+The following additional packages will be installed:
+  libcommon-sense-perl libjson-perl libjson-xs-perl libllvm19 libpq5 libtypes-serialiser-perl postgresql-client-16
+  postgresql-client-common postgresql-common ssl-cert
+Suggested packages:
+  libpq-oauth postgresql-doc-16
+The following NEW packages will be installed:
+  libcommon-sense-perl libjson-perl libjson-xs-perl libllvm19 libpq5 libtypes-serialiser-perl postgresql-16
+  postgresql-client-16 postgresql-client-common postgresql-common ssl-cert
+0 upgraded, 11 newly installed, 0 to remove and 0 not upgraded.
+Need to get 47.6 MB of archives.
+After this operation, 198 MB of additional disk space will be used.
+Get:1 http://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 postgresql-client-common all 285.pgdg24.04+1 [47.9 kB]
+Get:2 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/main amd64 libjson-perl all 4.10000-1 [81.9 kB]
+Get:3 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/main amd64 ssl-cert all 1.1.2ubuntu1 [17.8 kB]
+Get:4 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/main amd64 libcommon-sense-perl amd64 3.75-3build3 [20.4 kB]
+Get:5 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/main amd64 libtypes-serialiser-perl all 1.01-1 [11.6 kB]
+Get:6 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates/main amd64 libjson-xs-perl amd64 4.040-0ubuntu0.24.04.1 [83.7 kB]
+Get:7 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates/main amd64 libllvm19 amd64 1:19.1.1-1ubuntu1~24.04.2 [28.7 MB]
+Get:8 http://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 postgresql-common all 285.pgdg24.04+1 [112 kB]
+Get:9 http://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 libpq5 amd64 18.0-1.pgdg24.04+3 [248 kB]
+Get:10 http://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 postgresql-client-16 amd64 16.10-1.pgdg24.04+1 [1919 kB]
+Get:11 http://apt.postgresql.org/pub/repos/apt noble-pgdg/main amd64 postgresql-16 amd64 16.10-1.pgdg24.04+1 [16.4 MB]
+Fetched 47.6 MB in 1s (65.6 MB/s)
+Preconfiguring packages ...
+Selecting previously unselected package libjson-perl.
+(Reading database ... 108787 files and directories currently installed.)
+Preparing to unpack .../00-libjson-perl_4.10000-1_all.deb ...
+Unpacking libjson-perl (4.10000-1) ...
+Selecting previously unselected package postgresql-client-common.
+Preparing to unpack .../01-postgresql-client-common_285.pgdg24.04+1_all.deb ...
+Unpacking postgresql-client-common (285.pgdg24.04+1) ...
+Selecting previously unselected package ssl-cert.
+Preparing to unpack .../02-ssl-cert_1.1.2ubuntu1_all.deb ...
+Unpacking ssl-cert (1.1.2ubuntu1) ...
+Selecting previously unselected package postgresql-common.
+Preparing to unpack .../03-postgresql-common_285.pgdg24.04+1_all.deb ...
+Adding 'diversion of /usr/bin/pg_config to /usr/bin/pg_config.libpq-dev by postgresql-common'
+Unpacking postgresql-common (285.pgdg24.04+1) ...
+Selecting previously unselected package libcommon-sense-perl:amd64.
+Preparing to unpack .../04-libcommon-sense-perl_3.75-3build3_amd64.deb ...
+Unpacking libcommon-sense-perl:amd64 (3.75-3build3) ...
+Selecting previously unselected package libtypes-serialiser-perl.
+Preparing to unpack .../05-libtypes-serialiser-perl_1.01-1_all.deb ...
+Unpacking libtypes-serialiser-perl (1.01-1) ...
+Selecting previously unselected package libjson-xs-perl.
+Preparing to unpack .../06-libjson-xs-perl_4.040-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libjson-xs-perl (4.040-0ubuntu0.24.04.1) ...
+Selecting previously unselected package libllvm19:amd64.
+Preparing to unpack .../07-libllvm19_1%3a19.1.1-1ubuntu1~24.04.2_amd64.deb ...
+Unpacking libllvm19:amd64 (1:19.1.1-1ubuntu1~24.04.2) ...
+Selecting previously unselected package libpq5:amd64.
+Preparing to unpack .../08-libpq5_18.0-1.pgdg24.04+3_amd64.deb ...
+Unpacking libpq5:amd64 (18.0-1.pgdg24.04+3) ...
+Selecting previously unselected package postgresql-client-16.
+Preparing to unpack .../09-postgresql-client-16_16.10-1.pgdg24.04+1_amd64.deb ...
+Unpacking postgresql-client-16 (16.10-1.pgdg24.04+1) ...
+Selecting previously unselected package postgresql-16.
+Preparing to unpack .../10-postgresql-16_16.10-1.pgdg24.04+1_amd64.deb ...
+Unpacking postgresql-16 (16.10-1.pgdg24.04+1) ...
+Setting up postgresql-client-common (285.pgdg24.04+1) ...
+Setting up libllvm19:amd64 (1:19.1.1-1ubuntu1~24.04.2) ...
+Setting up libpq5:amd64 (18.0-1.pgdg24.04+3) ...
+Setting up libcommon-sense-perl:amd64 (3.75-3build3) ...
+Setting up ssl-cert (1.1.2ubuntu1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/ssl-cert.service → /usr/lib/systemd/system/ssl-cert.service.
+Setting up libtypes-serialiser-perl (1.01-1) ...
+Setting up libjson-perl (4.10000-1) ...
+Setting up libjson-xs-perl (4.040-0ubuntu0.24.04.1) ...
+Setting up postgresql-client-16 (16.10-1.pgdg24.04+1) ...
+update-alternatives: using /usr/share/postgresql/16/man/man1/psql.1.gz to provide /usr/share/man/man1/psql.1.gz (psql.1.gz) in auto mode
+Setting up postgresql-common (285.pgdg24.04+1) ...
+
+Creating config file /etc/postgresql-common/createcluster.conf with new version
+Building PostgreSQL dictionaries from installed myspell/hunspell packages...
+Removing obsolete dictionary files:
+Created symlink /etc/systemd/system/multi-user.target.wants/postgresql.service → /usr/lib/systemd/system/postgresql.service.
+Setting up postgresql-16 (16.10-1.pgdg24.04+1) ...
+Creating new PostgreSQL cluster 16/main ...
+/usr/lib/postgresql/16/bin/initdb -D /var/lib/postgresql/16/main --auth-local peer --auth-host scram-sha-256 --no-instructions
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C.UTF-8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/16/main ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Etc/UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.6) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Pending kernel upgrade!
+Running kernel version:
+  6.14.0-1011-aws
+Diagnostics:
+  The currently running kernel version is not the expected kernel version 6.14.0-1016-aws.
+
+Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart getty@tty1.service
+ systemctl restart networkd-dispatcher.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+● postgresql.service - PostgreSQL RDBMS
+     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; enabled; preset: enabled)
+     Active: active (exited) since Thu 2025-10-30 08:27:51 UTC; 8s ago
+   Main PID: 16544 (code=exited, status=0/SUCCESS)
+        CPU: 2ms
+
+Oct 30 08:27:51 ip-172-31-25-230 systemd[1]: Starting postgresql.service - PostgreSQL RDBMS...
+Oct 30 08:27:51 ip-172-31-25-230 systemd[1]: Finished postgresql.service - PostgreSQL RDBMS.
+
+✅ Basic setup complete!
+
+Next steps:
+1. Configure PostgreSQL (see UBUNTU_EC2_SETUP.md)
+2. Set up environment variables
+3. Configure Nginx
+ubuntu@ip-172-31-25-230:~$
