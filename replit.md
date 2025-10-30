@@ -29,6 +29,7 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 - **Backend**: Node.js with Express, using Drizzle ORM for PostgreSQL. Authentication is handled via JWT.
 - **Data Models**: Core entities include Properties, Agents, Inquiries, Users, siteSettings, and socialMedia.
 - **Media Handling**: Property media sliders support both videos and images, with Leaflet maps integrated for property locations.
+- **Map Coordinate Management**: Properties and office location support custom latitude/longitude coordinates editable from admin panel. PropertyMap component uses database coordinates with intelligent fallback to location name matching. Interactive Leaflet maps on property details and contact pages.
 - **SEO Optimization**: Centralized SEO management with dynamic meta tags, Open Graph tags, Twitter cards, and JSON-LD structured data for RealEstateAgent and RealEstateListing schemas.
 - **Localization**: Comprehensive i18n support across all components, including property data localization and currency display in BDT.
 - **Authentication**: JWT-based authentication with protected admin routes and client-side route guards.
@@ -38,15 +39,15 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 #### Public Website
 - **Home Page**: Hero banner, featured properties, company intro, latest listings, call-to-action.
 - **Property Listings**: Filterable grid layout with property cards.
-- **Property Details**: Image gallery, specifications, description, features, Leaflet map, inquiry form.
+- **Property Details**: Image gallery, specifications, description, features, interactive Leaflet map (uses property coordinates from database or falls back to location matching), inquiry form.
 - **About Page**: Company story, mission, values, statistics.
-- **Contact Page**: Contact information, form, office hours, map.
+- **Contact Page**: Contact information, form, office hours, interactive Leaflet map showing office location from CMS-editable coordinates.
 
 #### Admin Dashboard
 - **Login**: JWT-based authentication for secure access.
 - **Dashboard**: Overview statistics, recent inquiries feed.
-- **Management**: CRUD operations for Properties, Agents, and Inquiries.
-- **CMS**: Admin interface for managing site settings and social media links.
+- **Management**: CRUD operations for Properties, Agents, and Inquiries. Property form includes latitude/longitude coordinate inputs for precise map positioning.
+- **CMS**: Admin interface for managing site settings and social media links. Includes office coordinate editing (office_latitude, office_longitude) in Contact Information section.
 - **Profile**: Admin profile page with password update functionality (min 8 characters, validation, bcrypt hashing).
 
 ## External Dependencies
