@@ -193,6 +193,8 @@ export default function AdminProperties() {
       type: property.type,
       location: property.location,
       locationBn: property.locationBn || "",
+      latitude: property.latitude ?? undefined,
+      longitude: property.longitude ?? undefined,
       bedrooms: property.bedrooms,
       bathrooms: property.bathrooms,
       area: property.area,
@@ -293,8 +295,11 @@ export default function AdminProperties() {
                                 type="number" 
                                 step="0.0000001" 
                                 placeholder="23.7938" 
-                                {...field} 
-                                value={field.value || ""} 
+                                value={field.value ?? ""} 
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  field.onChange(val === "" ? null : parseFloat(val));
+                                }}
                                 data-testid="input-property-latitude" 
                               />
                             </FormControl>
@@ -314,8 +319,11 @@ export default function AdminProperties() {
                                 type="number" 
                                 step="0.0000001" 
                                 placeholder="90.4043" 
-                                {...field} 
-                                value={field.value || ""} 
+                                value={field.value ?? ""} 
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  field.onChange(val === "" ? null : parseFloat(val));
+                                }}
                                 data-testid="input-property-longitude" 
                               />
                             </FormControl>
