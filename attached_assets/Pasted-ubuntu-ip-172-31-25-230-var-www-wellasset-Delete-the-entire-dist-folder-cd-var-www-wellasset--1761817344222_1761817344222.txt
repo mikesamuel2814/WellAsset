@@ -1,0 +1,70 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Delete the entire dist folder
+cd /var/www/wellasset
+sudo -u nodejs rm -rf dist
+
+# Create fresh dist directory
+sudo -u nodejs mkdir dist
+
+# Rebuild completely fresh (no cache)
+sudo -u nodejs npx esbuild server/index.ts \
+  --platform=node \
+  --packages=external \
+  --bundle \
+  --format=esm \
+  --external:./vite \
+  --outdir=dist
+
+# Verify the build is new (should be larger than 18kb)
+ls -lh dist/index.js
+
+# Check if vite import is still there
+grep -n "setupVite" dist/index.js
+
+# Restart PM2
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 kill
+sudo -u nodejs bash -c "cd /var/www/wellasset && source .env.production && /home/nodejs/node_modules/.bin/pm2 start ecosystem.config.cjs --env production"
+
+# Test
+sleep 5
+curl http://localhost:5000/health
+
+# Check logs
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 10 --nostream
+
+  dist/index.js  18.5kb
+
+⚡ Done in 6ms
+-rw-rw-r-- 1 nodejs nodejs 19K Oct 30 09:42 dist/index.js
+571:    const { setupVite } = await import("./vite");
+572:    await setupVite(app, server);
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+[PM2] [all](0) ✓
+[PM2] [v] All Applications Stopped
+[PM2] [v] PM2 Daemon Stopped
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+[PM2] PM2 Successfully daemonized
+[PM2][WARN] Applications wellasset-app not running, starting...
+[PM2][WARN] Environment [production] is not defined in process file
+[PM2][WARN] App wellasset-app has option 'wait_ready' set, waiting for app to be ready...
+[PM2] App [wellasset-app] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 2    │  │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+[TAILING] Tailing last 10 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 10 lines:
+/var/log/wellasset/error.log last 10 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset$
