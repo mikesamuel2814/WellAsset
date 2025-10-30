@@ -25,8 +25,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Build frontend
-        run: npm run build
+      - name: Build application
+        run: |
+          # Build frontend
+          npx vite build
+          
+          # Build backend with external vite flag to prevent bundling vite in production
+          npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --external:./vite --outdir=dist
       
       - name: Create deployment package
         run: |
