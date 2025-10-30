@@ -14,9 +14,9 @@ Environment=PORT=5000
 EnvironmentFile=/var/www/wellasset/.env.production
 
 # PM2 commands
-ExecStart=/usr/bin/pm2 start ecosystem.config.cjs --env production
-ExecStop=/usr/bin/pm2 stop ecosystem.config.cjs
-ExecReload=/usr/bin/pm2 reload ecosystem.config.cjs
+ExecStart=/home/nodejs/node_modules/.bin/pm2 start ecosystem.config.cjs --env production
+ExecStop=/home/nodejs/node_modules/.bin/pm2 stop ecosystem.config.cjs
+ExecReload=/home/nodejs/node_modules/.bin/pm2 reload ecosystem.config.cjs
 
 # Restart policy
 Restart=on-failure

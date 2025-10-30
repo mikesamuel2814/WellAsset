@@ -38,6 +38,11 @@ sudo tar -xzf /tmp/wellasset-deploy.tar.gz
 # Set correct permissions
 sudo chown -R $DEPLOY_USER:$DEPLOY_USER "$APP_DIR"
 
+# Copy and enable systemd service file
+echo "Updating systemd service..."
+sudo cp "$APP_DIR/wellasset.service" /etc/systemd/system/wellasset.service
+sudo systemctl daemon-reload
+
 # Install dependencies as nodejs user (including devDependencies for migrations)
 echo "Installing dependencies..."
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm ci"
