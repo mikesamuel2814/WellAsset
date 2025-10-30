@@ -114,14 +114,14 @@ export default function AdminProperties() {
     });
 
     try {
-      const response = await apiRequest("POST", "/api/upload", formData) as unknown as { urls: string[] };
-      const { urls } = response;
-      setUploadedFiles(prev => [...prev, ...urls]);
+      const response = await apiRequest("POST", "/api/upload", formData);
+      const data = await response.json() as { urls: string[] };
+      setUploadedFiles(prev => [...prev, ...data.urls]);
       toast({ title: "Files uploaded successfully" });
     } catch (error) {
       toast({ 
         title: "Upload failed", 
-        description: "Failed to upload files",
+        description: error instanceof Error ? error.message : "Failed to upload files",
         variant: "destructive" 
       });
     } finally {
