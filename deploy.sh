@@ -33,7 +33,7 @@ fi
 echo "Extracting new version..."
 sudo mkdir -p "$APP_DIR"
 cd "$APP_DIR"
-sudo tar -xzf /tmp/wellasset-deploy.tar.gz
+sudo tar -xzf /tmp/wellasset-deploy.tar.gz --overwrite
 
 # Set correct permissions
 sudo chown -R $DEPLOY_USER:$DEPLOY_USER "$APP_DIR"
