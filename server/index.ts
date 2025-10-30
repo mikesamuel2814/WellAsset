@@ -47,6 +47,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check endpoint for Docker and load balancers
+app.get("/health", (_req: Request, res: Response) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
 (async () => {
   const server = await registerRoutes(app);
 
