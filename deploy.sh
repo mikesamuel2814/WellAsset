@@ -38,13 +38,17 @@ sudo tar -xzf /tmp/wellasset-deploy.tar.gz
 # Set correct permissions
 sudo chown -R $DEPLOY_USER:$DEPLOY_USER "$APP_DIR"
 
-# Install dependencies as nodejs user
+# Install dependencies as nodejs user (including devDependencies for migrations)
 echo "Installing dependencies..."
-sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm ci --production"
+sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm ci"
 
 # Run database migrations as nodejs user
 echo "Running database migrations..."
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm run db:push"
+
+# Remove devDependencies after migrations
+echo "Removing devDependencies..."
+sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm prune --production"
 
 # Start the application
 echo "Starting application..."
