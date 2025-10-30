@@ -79,7 +79,13 @@ app.get("/health", (_req: Request, res: Response) => {
     await setupVite(app, server);
   } else {
     // In production, serve static files from dist/public
-    app.use(express.static(path.resolve(import.meta.dirname, "../dist/public")));
+    const publicPath = path.resolve(import.meta.dirname, "../dist/public");
+    app.use(express.static(publicPath));
+    
+    // SPA catch-all route: serve index.html for all non-API routes
+    app.get('*', (_req: Request, res: Response) => {
+      res.sendFile(path.join(publicPath, 'index.html'));
+    });
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT

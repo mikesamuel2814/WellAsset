@@ -33,7 +33,19 @@ fi
 echo "Extracting new version..."
 sudo mkdir -p "$APP_DIR"
 cd "$APP_DIR"
+
+# Preserve start.sh if it exists (it's not in the deployment package)
+if [ -f "$APP_DIR/start.sh" ]; then
+    sudo cp "$APP_DIR/start.sh" /tmp/start.sh.backup
+fi
+
 sudo tar -xzf /tmp/wellasset-deploy.tar.gz --overwrite
+
+# Restore start.sh if it was backed up
+if [ -f "/tmp/start.sh.backup" ]; then
+    sudo mv /tmp/start.sh.backup "$APP_DIR/start.sh"
+    sudo chmod +x "$APP_DIR/start.sh"
+fi
 
 # Set correct permissions
 sudo chown -R $DEPLOY_USER:$DEPLOY_USER "$APP_DIR"
