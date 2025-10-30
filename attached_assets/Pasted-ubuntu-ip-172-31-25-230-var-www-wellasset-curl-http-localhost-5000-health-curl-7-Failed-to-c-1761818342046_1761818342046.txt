@@ -1,0 +1,85 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ curl http://localhost:5000/health
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ sudo pm2 status
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ pm2 status
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Check the nodejs user's PM2 status
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+
+# Check PM2 logs for errors
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 30 --nostream
+
+# Check if the systemd service file was updated
+cat /etc/systemd/system/wellasset.service | grep ExecStart
+
+# Check the .env.production file
+cat /var/www/wellasset/.env.production
+
+# Manually start the app to see the error
+sudo systemctl stop wellasset
+sudo systemctl start wellasset
+sleep 3
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 20 --nostream
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 21   │ online    │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 30 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 30 lines:
+/var/log/wellasset/error.log last 30 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+ExecStart=/home/nodejs/node_modules/.bin/pm2 start ecosystem.config.cjs --env production
+cat: /var/www/wellasset/.env.production: Permission denied
+^C
+[TAILING] Tailing last 20 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 20 lines:
+/var/log/wellasset/error.log last 20 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ ^C
+ubuntu@ip-172-31-25-230:/var/www/wellasset$
