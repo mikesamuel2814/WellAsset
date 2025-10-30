@@ -30,8 +30,8 @@ jobs:
           # Build frontend
           npx vite build
           
-          # Build backend with external vite flag to prevent bundling vite in production
-          npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --external:./vite --outdir=dist
+          # Build backend - minify to remove dead code (like vite imports in production)
+          npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --minify --outdir=dist
       
       - name: Create deployment package
         run: |
