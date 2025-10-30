@@ -55,6 +55,18 @@ sudo -u $DEPLOY_USER bash -c "set -a && source $APP_DIR/.env.production && set +
 echo "Removing devDependencies..."
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm prune --production"
 
+# Verify .env.production file exists
+if [ ! -f "$APP_DIR/.env.production" ]; then
+    echo "ERROR: .env.production file not found!"
+    echo "Please create .env.production on the server with required environment variables:"
+    echo "  - DATABASE_URL"
+    echo "  - SESSION_SECRET"
+    echo "  - PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE"
+    exit 1
+fi
+
+echo "✓ .env.production file found"
+
 # Start the application
 echo "Starting application..."
 sudo systemctl start wellasset
