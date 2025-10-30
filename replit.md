@@ -52,59 +52,81 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 
 ## Deployment & CI/CD
 
-### CI/CD Pipeline
-The project is configured for automated deployment to AWS EC2 using GitHub Actions and CodeDeploy:
+### Simple EC2 Deployment
+The project uses a simplified, cost-effective AWS deployment approach:
 
-- **Continuous Integration** (`.github/workflows/ci.yml`):
-  - Runs on every push and pull request
-  - Automated testing with PostgreSQL service container
-  - Database migration testing
-  - Application build verification
-  - Artifact generation
+**Architecture:**
+- **Single EC2 instance** (t3.small) running Node.js with PM2 process manager
+- **PostgreSQL RDS** (db.t3.micro) for managed database
+- **Nginx** as reverse proxy with SSL termination
+- **GitHub Actions** for automated SSH-based deployment
+- **Let's Encrypt** for free SSL certificates
 
-- **Continuous Deployment** (`.github/workflows/deploy-aws.yml`):
-  - Automatic deployment on push to `main` branch
-  - Manual deployment option for staging/production
-  - Docker image building and pushing to Amazon ECR
-  - Database migration execution on production
-  - Creates deployment package with AppSpec and lifecycle scripts
-  - Uploads to S3 and triggers CodeDeploy
-  - Zero-downtime deployment with Auto Scaling Group
-  - Deployment health verification
+**Monthly Cost:** ~$25-30
+- EC2 t3.small: ~$15/month
+- RDS PostgreSQL db.t3.micro: ~$15/month
 
-### Infrastructure
-- **Compute**: EC2 instances (t3.micro) in Auto Scaling Group (2-6 instances)
-- **Containerization**: Multi-stage Docker build for optimized production images
-- **Container Registry**: Amazon ECR
-- **Deployment**: AWS CodeDeploy with In-Place deployment strategy
-- **Database**: Amazon RDS PostgreSQL (Multi-AZ optional)
-- **Load Balancing**: Application Load Balancer with health checks on `/health`
-- **Networking**: VPC with public and private subnets across 2 AZs
-- **Storage**: S3 for CodeDeploy artifacts
-- **Monitoring**: CloudWatch Logs and metrics
-- **Secrets Management**: AWS Secrets Manager
-- **Health Checks**: Built-in `/health` endpoint for ALB and CodeDeploy verification
+### Deployment Pipeline
+
+**GitHub Actions Workflow** (`.github/workflows/deploy-ec2-simple.yml`):
+1. Builds frontend application
+2. Creates deployment package (tarball)
+3. Uploads to EC2 via SCP over SSH
+4. Executes deployment script remotely
+5. Runs database migrations
+6. Performs zero-downtime restart with PM2
+7. Verifies health check
+
+**Deployment Script** (`deploy.sh`):
+- Stops application gracefully
+- Creates backup of current version
+- Extracts new version
+- Installs dependencies
+- Runs database migrations
+- Starts application
+- Performs health check
+- Auto-rollback on failure
+
+### Infrastructure Components
+
+- **PM2 Process Manager** (`ecosystem.config.cjs`):
+  - Cluster mode for reliability
+  - Automatic restart on failures
+  - Memory limit enforcement (1GB)
+  - Log rotation and management
+
+- **Nginx Reverse Proxy** (`nginx.conf`):
+  - SSL/TLS termination
+  - Gzip compression
+  - Static asset caching
+  - Security headers
+  - WebSocket support
+
+- **Systemd Service** (`wellasset.service`):
+  - Automatic startup on server boot
+  - Service restart on failure
+  - Resource limits
+  - Environment variable management
 
 ### Deployment Documentation
-Comprehensive deployment guides available:
-- **DEPLOYMENT.md** - Overall deployment guide with AWS EC2 deployment
-- **AWS_SETUP_EC2.md** - Step-by-step AWS EC2 infrastructure setup instructions
-- **CICD_SETUP.md** - Quick start guide for GitHub Actions CI/CD
-- **ENVIRONMENT.md** - Complete environment variable reference
-- **.env.example** - Template for local development environment
-- **appspec.yml** - CodeDeploy application specification
-- **scripts/** - Deployment lifecycle hooks (install, start, stop, validate)
-- **ec2-user-data.sh** - EC2 instance initialization script
+
+Complete setup guides available:
+- **SIMPLE_EC2_SETUP.md** - Step-by-step AWS infrastructure setup
+- **DEPLOYMENT.md** - Deployment overview and quick start
+- **ENVIRONMENT.md** - Environment variable reference
+- **.env.example** - Local development environment template
 
 ### Key Features
-- Zero-downtime deployments with CodeDeploy and Auto Scaling
-- Automatic rollback on health check failures
-- Database migration safety with pre-deployment schema updates
-- Multi-environment support (development, staging, production)
-- Secure secret management via AWS Secrets Manager
-- Auto-scaling based on CPU/memory utilization (2-6 instances)
-- Production-ready Docker configuration with non-root user
-- Cost-effective: ~$90/month for production infrastructure
+
+- **Cost-effective**: ~$25-30/month for complete production stack
+- **Simple to understand**: No complex orchestration or containers
+- **Automated deployments**: Push to `main` branch auto-deploys
+- **Zero-downtime**: PM2 handles graceful restarts
+- **Health checks**: Automatic verification and rollback
+- **Database migrations**: Safe, automated schema updates
+- **SSL/HTTPS**: Free certificates with Let's Encrypt
+- **Monitoring**: PM2 logs and systemd journal
+- **Backups**: Automated application and database backups
 
 ## External Dependencies
 - **Database**: PostgreSQL (managed with Drizzle ORM)
