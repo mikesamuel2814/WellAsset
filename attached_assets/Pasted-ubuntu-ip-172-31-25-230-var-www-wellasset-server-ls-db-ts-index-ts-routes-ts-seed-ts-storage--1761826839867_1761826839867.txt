@@ -1,0 +1,107 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset/server$ ls
+db.ts  index.ts  routes.ts  seed.ts  storage.ts  vite.ts  wellasset_local_data.sql
+ubuntu@ip-172-31-25-230:/var/www/wellasset/server$ # Import the data into production database
+PGPASSWORD='WellAsset2024!SecurePass' psql -U wellasset_user -d wellasset -h localhost -f wellasset_local_data.sql
+
+# Restart the application to ensure everything is fresh
+sudo systemctl restart wellasset
+
+# Wait a few seconds
+sleep 5
+
+# Verify the app is healthy
+curl http://localhost:5000/health
+
+# Test if we have properties now
+curl http://localhost:5000/api/properties | jq '.[] | {id, title, price}'
+SET
+SET
+SET
+SET
+SET
+ set_config
+------------
+
+(1 row)
+
+SET
+SET
+SET
+SET
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+DROP TABLE
+SET
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+COPY 1
+COPY 4
+COPY 7
+COPY 12
+COPY 4
+COPY 4
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+{"status":"ok","timestamp":"2025-10-30T12:20:33.138Z"}  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 11202  100 11202    0     0   237k      0 --:--:-- --:--:-- --:--:--  243k
+{
+  "id": "76077325-3697-449f-8983-263783c72af6",
+  "title": "Modern Banani Penthouse",
+  "price": "55000000.00"
+}
+{
+  "id": "ee948475-425a-4f77-ab0c-4f2c5ae77a49",
+  "title": "Prime Commercial Space Motijheel",
+  "price": "120000000.00"
+}
+{
+  "id": "39600ceb-135f-4395-9249-ea5c9cd7b486",
+  "title": "Stylish Bashundhara Apartment",
+  "price": "25000000.00"
+}
+{
+  "id": "d21993e8-182c-4b1e-9482-b88bd4458eb0",
+  "title": "Elegant Uttara Mansion",
+  "price": "95000000.00"
+}
+{
+  "id": "8569041d-6b4f-4a24-a498-0810d274ecc2",
+  "title": "Luxury Gulshan Villa",
+  "price": "85000000.00"
+}
+{
+  "id": "06ecd239-3be9-4a1e-90cd-0f20113a6272",
+  "title": "Contemporary Dhanmondi Townhouse",
+  "price": "38000000.00"
+}
+{
+  "id": "058eb6d0-28d5-460a-a192-8b913109f598",
+  "title": "Test Property with Coordinates",
+  "price": "15000000.00"
+}
+ubuntu@ip-172-31-25-230:/var/www/wellasset/server$
