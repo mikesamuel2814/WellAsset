@@ -1,6 +1,6 @@
 # Deployment Guide - Well Asset Real Estate Platform
 
-This guide covers deploying the Well Asset Real Estate platform to AWS using GitHub Actions for CI/CD.
+This guide covers deploying the Well Asset Real Estate platform to a simple AWS EC2 setup with PostgreSQL RDS and Nginx.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
@@ -29,62 +29,48 @@ This guide covers deploying the Well Asset Real Estate platform to AWS using Git
 - **Amazon S3** - Deployment artifact storage
 - **Amazon CloudWatch** - Logging and monitoring
 
-## Deployment Options
+## Deployment Architecture
 
-### Option 1: AWS EC2 with Auto Scaling (Current Implementation)
-Docker-based deployment on EC2 instances with Auto Scaling and CodeDeploy for zero-downtime updates.
+### Simple Single EC2 Setup (Current Implementation)
 
-**Pros:**
-- Cost-effective (~$90/month)
-- Full control over instances
-- Auto-scaling based on demand
-- Zero-downtime deployments with CodeDeploy
-- Flexible configuration
+A cost-effective, production-ready deployment using:
+- **1 EC2 instance** (t3.small) - Runs Node.js application with PM2
+- **PostgreSQL RDS** (db.t3.micro) - Managed database
+- **Nginx** - Reverse proxy and SSL termination
+- **GitHub Actions** - Automated SSH-based deployment
+- **Let's Encrypt** - Free SSL certificates
 
-**Cons:**
-- Requires initial infrastructure setup
-- More operational overhead than serverless
-
-**Current Status:** ✅ Fully configured with GitHub Actions
-
-### Option 2: AWS ECS Fargate
-Serverless container deployment (alternative approach).
+**Monthly Cost:** ~$25-30
+- EC2 t3.small: ~$15/month
+- RDS db.t3.micro: ~$15/month
 
 **Pros:**
-- No server management
-- Automatic scaling
-- Pay only for resources used
+- Very cost-effective
+- Simple to understand and maintain
+- Full control over configuration
+- Suitable for small to medium traffic
+- Easy to upgrade later if needed
 
 **Cons:**
-- Higher cost (~$100-150/month)
-- Less control over infrastructure
+- Single point of failure (can add multi-AZ RDS for ~$30/month)
+- Manual scaling (vertical only)
+- Requires basic Linux knowledge
 
-### Option 3: AWS Elastic Beanstalk
-Easiest AWS deployment option with automatic environment setup.
-
-**Pros:**
-- Simple setup
-- Automatic environment management
-- Built-in monitoring
-
-**Cons:**
-- Less control
-- Higher abstraction
-- Limited customization
+**Current Status:** ✅ Fully configured with deployment scripts and documentation
 
 ## Quick Start
 
 ### 1. Set Up AWS Infrastructure
 
-See [AWS_SETUP_EC2.md](./AWS_SETUP_EC2.md) for detailed EC2 infrastructure setup instructions.
+See [SIMPLE_EC2_SETUP.md](./SIMPLE_EC2_SETUP.md) for detailed step-by-step setup instructions.
 
 **Quick summary:**
-- VPC with public and private subnets
-- Auto Scaling Group with 2+ EC2 instances
-- Application Load Balancer
-- RDS PostgreSQL database
-- CodeDeploy for deployments
-- ECR for Docker images
+- 1 EC2 instance (t3.small with Amazon Linux 2023)
+- RDS PostgreSQL database (db.t3.micro)
+- Nginx reverse proxy
+- PM2 process manager
+- SSL certificate with Let's Encrypt
+- GitHub Actions for deployment
 
 ### 2. Configure Environment Variables
 
@@ -98,10 +84,10 @@ Add the following secrets to your GitHub repository:
 2. Add these secrets:
 
 ```
-AWS_ACCESS_KEY_ID          # Your AWS access key
-AWS_SECRET_ACCESS_KEY      # Your AWS secret key
-DATABASE_URL               # PostgreSQL connection string
-SESSION_SECRET             # Random string for session encryption
+EC2_HOST                   # Your EC2 public IP or domain name
+EC2_USER                   # SSH user (usually "ec2-user")
+EC2_SSH_KEY                # Your private SSH key (from .pem file)
+DATABASE_URL               # PostgreSQL connection string (for CI migrations)
 ```
 
 ### 4. Deploy
@@ -114,7 +100,12 @@ git commit -m "Deploy to production"
 git push origin main
 ```
 
-Monitor the deployment in the GitHub Actions tab.
+Monitor the deployment in the GitHub Actions tab. The deployment process:
+1. Builds the frontend
+2. Creates deployment package
+3. Uploads to EC2 via SCP
+4. Runs deployment script (stops app, extracts, installs deps, runs migrations, starts app)
+5. Verifies health check
 
 ## GitHub Actions CI/CD
 
