@@ -30,8 +30,8 @@ jobs:
           # Build frontend
           npx vite build
           
-          # Build backend - minify to remove dead code (like vite imports in production)
-          npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --minify --outdir=dist
+          # Build backend with NODE_ENV=production defined at build time to eliminate dev-only code
+          npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --minify --define:process.env.NODE_ENV='"production"' --outdir=dist
       
       - name: Create deployment package
         run: |

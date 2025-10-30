@@ -1,0 +1,85 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Check PM2 logs for the new error
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 50 --nostream
+
+# Check if there's still any vite reference in the minified code
+grep -i "vite" /var/www/wellasset/dist/index.js
+
+# Also check the first 50 lines of the minified dist/index.js to see what's there
+head -50 /var/www/wellasset/dist/index.js
+[TAILING] Tailing last 50 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 50 lines:
+/var/log/wellasset/error.log last 50 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+    const { setupVite } = await import("./vite");
+    await setupVite(app, server);
+var __defProp = Object.defineProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
+// server/index.ts
+import express2 from "express";
+
+// server/routes.ts
+import { createServer } from "http";
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import multer from "multer";
+import path from "path";
+import { promises as fs } from "fs";
+
+// shared/schema.ts
+var schema_exports = {};
+__export(schema_exports, {
+  agents: () => agents,
+  inquiries: () => inquiries,
+  insertAgentSchema: () => insertAgentSchema,
+  insertInquirySchema: () => insertInquirySchema,
+  insertPropertySchema: () => insertPropertySchema,
+  insertSiteSettingSchema: () => insertSiteSettingSchema,
+  insertSocialMediaSchema: () => insertSocialMediaSchema,
+  insertUserSchema: () => insertUserSchema,
+  properties: () => properties,
+  siteSettings: () => siteSettings,
+  socialMedia: () => socialMedia,
+  updatePasswordSchema: () => updatePasswordSchema,
+  users: () => users
+});
+import { pgTable, text, integer, decimal, timestamp, boolean, serial } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+var users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  role: text("role").notNull().default("admin")
+});
+var properties = pgTable("properties", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  titleBn: text("title_bn"),
+  price: decimal("price", { precision: 12, scale: 2 }).notNull(),
+ubuntu@ip-172-31-25-230:/var/www/wellasset$
