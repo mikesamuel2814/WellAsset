@@ -1,0 +1,165 @@
+ubuntu@ip-172-31-25-230:~$ # Check if the app is listening on port 5000
+sudo netstat -tlnp | grep 5000
+# Check PM2 status
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+# View recent logs (should show "serving on port 5000")
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 30 --nostream
+# Test health endpoint
+curl -v http://localhost:5000/health
+# Test if the app responds on public interface
+curl -v http://127.0.0.1:5000/health
+# Check if Nginx is working
+sudo systemctl status nginx
+curl -v http://localhost:80/health
+sudo: netstat: command not found
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 15   │ online    │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 30 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 30 lines:
+/var/log/wellasset/error.log last 30 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+* Host localhost:5000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:5000...
+* connect to ::1 port 5000 from ::1 port 34504 failed: Connection refused
+*   Trying 127.0.0.1:5000...
+* connect to 127.0.0.1 port 5000 from 127.0.0.1 port 35392 failed: Connection refused
+* Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+* Closing connection
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+*   Trying 127.0.0.1:5000...
+* connect to 127.0.0.1 port 5000 from 127.0.0.1 port 35394 failed: Connection refused
+* Failed to connect to 127.0.0.1 port 5000 after 0 ms: Couldn't connect to server
+* Closing connection
+curl: (7) Failed to connect to 127.0.0.1 port 5000 after 0 ms: Couldn't connect to server
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2025-10-30 08:35:11 UTC; 47min ago
+       Docs: man:nginx(8)
+   Main PID: 17603 (nginx)
+      Tasks: 2 (limit: 1121)
+     Memory: 2.2M (peak: 3.0M)
+        CPU: 23ms
+     CGroup: /system.slice/nginx.service
+             ├─17603 "nginx: master process /usr/sbin/nginx -g daemon on; master_process on;"
+             └─17604 "nginx: worker process"
+
+Oct 30 08:35:11 ip-172-31-25-230 systemd[1]: Starting nginx.service - A high performance web server and a reverse p>
+Oct 30 08:35:11 ip-172-31-25-230 systemd[1]: Started nginx.service - A high performance web server and a reverse pr>
+lines 1-14/14 (END)
+* Host localhost:80 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+*   Trying [::1]:80...
+* Connected to localhost (::1) port 80
+> GET /health HTTP/1.1
+> Host: localhost
+> User-Agent: curl/8.5.0
+> Accept: */*
+>
+< HTTP/1.1 502 Bad Gateway
+< Server: nginx/1.24.0 (Ubuntu)
+< Date: Thu, 30 Oct 2025 09:22:16 GMT
+< Content-Type: text/html
+< Content-Length: 166
+< Connection: keep-alive
+<
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.24.0 (Ubuntu)</center>
+</body>
+</html>
+* Connection #0 to host localhost left intact
+ubuntu@ip-172-31-25-230:~$ # Check the timestamp of dist/index.js
+ls -la /var/www/wellasset/dist/index.js
+
+# Check the first few lines to see if Vite import is there
+head -20 /var/www/wellasset/dist/index.js | grep -i vite
+
+# Kill PM2 completely and restart fresh
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 kill
+
+# Start it again with environment variables
+sudo -u nodejs bash -c "cd /var/www/wellasset && source .env.production && /home/nodejs/node_modules/.bin/pm2 start ecosystem.config.cjs --env production"
+
+# Check status
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+
+# Check logs
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 20 --nostream
+
+# Test health
+curl http://localhost:5000/health
+-rw-r--r-- 1 nodejs nodejs 26709 Oct 30 09:00 /var/www/wellasset/dist/index.js
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+[PM2] [all](0) ✓
+[PM2] [v] All Applications Stopped
+[PM2] [v] PM2 Daemon Stopped
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+[PM2] PM2 Successfully daemonized
+[PM2][WARN] Applications wellasset-app not running, starting...
+[PM2][WARN] Environment [production] is not defined in process file
+[PM2][WARN] App wellasset-app has option 'wait_ready' set, waiting for app to be ready...
+[PM2] App [wellasset-app] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 2    │  │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 2    │  │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 20 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 20 lines:
+/var/log/wellasset/error.log last 20 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /var/www/wellasset/dist/index.js
+0|wellasse |     at packageResolve (node:internal/modules/esm/resolve:873:9)
+0|wellasse |     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+0|wellasse |     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+0|wellasse |     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:708:12)
+0|wellasse |     at #cachedDefaultResolve (node:internal/modules/esm/loader:657:25)
+0|wellasse |     at ModuleLoader.resolve (node:internal/modules/esm/loader:640:38)
+0|wellasse |     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:264:38)
+0|wellasse |     at ModuleJob._link (node:internal/modules/esm/module_job:168:49)
+
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+ubuntu@ip-172-31-25-230:~$
