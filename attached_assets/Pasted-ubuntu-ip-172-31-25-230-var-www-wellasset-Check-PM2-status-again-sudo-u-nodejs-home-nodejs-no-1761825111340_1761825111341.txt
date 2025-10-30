@@ -1,0 +1,101 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Check PM2 status again
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+
+# Try to check what port the process is actually using
+sudo ss -tlnp | grep node
+
+# Get PM2 process info
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 info wellasset-app
+
+# Force restart PM2 with logs
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 restart wellasset-app
+sleep 3
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 30 --nostream
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 1    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ Describing process with id 0 - name wellasset-app
+┌───────────────────┬────────────────────────────────────────────┐
+│ status            │ stopped                                    │
+│ name              │ wellasset-app                              │
+│ namespace         │ default                                    │
+│ version           │ 1.0.0                                      │
+│ restarts          │ 1                                          │
+│ uptime            │ 0                                          │
+│ script path       │ /var/www/wellasset/dist/index.js           │
+│ script args       │ N/A                                        │
+│ error log path    │ /var/log/wellasset/error.log               │
+│ out log path      │ /var/log/wellasset/out.log                 │
+│ pid path          │ /home/nodejs/.pm2/pids/wellasset-app-0.pid │
+│ interpreter       │ node                                       │
+│ interpreter args  │ N/A                                        │
+│ script id         │ 0                                          │
+│ exec cwd          │ /var/www/wellasset                         │
+│ exec mode         │ cluster_mode                               │
+│ node.js version   │ 20.19.5                                    │
+│ node env          │ production                                 │
+│ watch & reload    │ ✘                                          │
+│ unstable restarts │ 1                                          │
+│ created at        │ 2025-10-30T11:49:29.115Z                   │
+└───────────────────┴────────────────────────────────────────────┘
+ Divergent env variables from local env
+┌──────────────┬──────────────────────────────────────────────────────────┐
+│ SUDO_COMMAND │ /home/nodejs/node_modules/.bin/pm2 start ecosystem.confi │
+└──────────────┴──────────────────────────────────────────────────────────┘
+
+ Add your own code metrics: http://bit.ly/code-metrics
+ Use `pm2 logs wellasset-app [--lines 1000]` to display logs
+ Use `pm2 env 0` to display environment variables
+ Use `pm2 monit` to monitor CPU and Memory usage wellasset-app
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [wellasset-app](ids: [ 0 ])
+[PM2] [wellasset-app](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 1    │ online    │ 0%       │ 39.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 30 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 30 lines:
+/var/log/wellasset/error.log last 30 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error: DATABASE_URL must be set. Did you forget to provision a database?
+0|wellasse |     at file:///var/www/wellasset/dist/index.js:1:3684
+0|wellasse |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|wellasse |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Check PM2 status and get detailed info
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 restart wellasset-app
+sleep 3
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 30 --nostream
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 1    │ online    │ 0%       │ 61.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [wellasset-app](ids: [ 0 ])
+[PM2] [wellasset-app](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 2    │ online    │ 0%       │ 39.3mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 30 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/out.log last 30 lines:
+/var/log/wellasset/error.log last 30 lines:
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error: DATABASE_URL must be set. Did you forget to provision a database?
+0|wellasse |     at file:///var/www/wellasset/dist/index.js:1:3684
+0|wellasse |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|wellasse |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+0|wellasse | You have triggered an unhandledRejection, you may have forgotten to catch a Promise rejection:
+0|wellasse | Error: DATABASE_URL must be set. Did you forget to provision a database?
+0|wellasse |     at file:///var/www/wellasset/dist/index.js:1:3684
+0|wellasse |     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+0|wellasse |     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset$
