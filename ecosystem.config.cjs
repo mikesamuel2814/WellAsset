@@ -4,14 +4,13 @@
 module.exports = {
   apps: [{
     name: 'wellasset-app',
-    script: 'server/index.ts',
+    script: 'dist/index.js',
     interpreter: 'node',
-    interpreter_args: '--loader tsx',
     instances: 1,
     exec_mode: 'cluster',
     
     // Environment variables
-    env: {
+    env_production: {
       NODE_ENV: 'production',
       PORT: 5000,
     },
@@ -34,7 +33,7 @@ module.exports = {
     
     // Graceful shutdown
     kill_timeout: 5000,
-    wait_ready: true,
+    wait_ready: false,
     listen_timeout: 10000,
   }]
 };
