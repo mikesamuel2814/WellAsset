@@ -48,6 +48,12 @@ jobs:
           cp deploy.sh deploy/
           cp drizzle.config.ts deploy/
           cp wellasset.service deploy/
+          cp start.sh deploy/
+          
+          # Copy attached assets (images)
+          if [ -d "attached_assets" ]; then
+            cp -r attached_assets deploy/
+          fi
           
           # Copy migrations directory if it exists
           if [ -d "migrations" ]; then
