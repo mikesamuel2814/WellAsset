@@ -1,0 +1,129 @@
+deploy
+failed now in 1m 27s
+Search logs
+1s
+Current runner version: '2.328.0'
+Runner Image Provisioner
+Operating System
+Runner Image
+GITHUB_TOKEN Permissions
+Secret source: Actions
+Prepare workflow directory
+Prepare all required actions
+Getting action download info
+Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+Complete job name: deploy
+1s
+Run actions/checkout@v4
+Syncing repository: mikesamuel2814/WellAsset
+Getting Git version info
+Temporarily overriding HOME='/home/runner/work/_temp/a29a1403-bcd9-4e37-b19a-e2e3e504aa7d' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/WellAsset/WellAsset
+Deleting the contents of '/home/runner/work/WellAsset/WellAsset'
+Initializing the repository
+Disabling automatic garbage collection
+Setting up auth
+Fetching the repository
+Determining the checkout info
+/usr/bin/git sparse-checkout disable
+/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Checking out the ref
+/usr/bin/git log -1 --format=%H
+6811db682eb000163e2309dec8e81207887c4462
+2s
+Run actions/setup-node@v4
+Found in cache @ /opt/hostedtoolcache/node/20.19.5/x64
+Environment details
+/opt/hostedtoolcache/node/20.19.5/x64/bin/npm config get cache
+/home/runner/.npm
+npm cache is not found
+9s
+Run npm ci
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+7s
+transforming...
+Browserslist: browsers data (caniuse-lite) is 12 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+✓ 2595 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                                                          1.10 kB │ gzip:   0.59 kB
+../dist/public/assets/Penthouse_interior_property_image_dbc84d3f-Sx7NG3vD.png  1,467.70 kB
+../dist/public/assets/Modern_townhouse_property_image_63084dd1-Ch3UfZTS.png    1,542.33 kB
+../dist/public/assets/Office_building_property_image_aa5f3a46-DdllSpGN.png     1,863.38 kB
+../dist/public/assets/Beachfront_condo_property_image_eb2adc6c-BAmuONfB.png    1,900.36 kB
+../dist/public/assets/Mansion_interior_property_image_9b6f3d6b-gKKTbDTU.png    1,930.42 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+../dist/public/assets/index-BVmBjjOo.css                                          95.12 kB │ gzip:  19.35 kB
+../dist/public/assets/index-BmtbhPsX.js                                        1,068.05 kB │ gzip: 320.27 kB
+✓ built in 6.45s
+  dist/index.js  26.1kb
+⚡ Done in 4ms
+1s
+Run # Create deployment directory
+  
+Deployment package created: wellasset-deploy.tar.gz
+-rw-r--r-- 1 runner runner 8.8M Oct 30 09:00 wellasset-deploy.tar.gz
+1m 3s
+Run # Setup SSH
+  
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+# ***:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3***13.14
+Uploading deployment package...
+Executing deployment script...
+====== Starting Deployment ======
+Timestamp: Thu Oct 30 09:00:46 UTC 2025
+Stopping application...
+Creating backup: /var/backups/wellasset/wellasset-20251030-090046.tar.gz
+Extracting new version...
+Installing dependencies...
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+added 560 packages, and audited 561 packages in 15s
+74 packages are looking for funding
+  run `npm fund` for details
+8 vulnerabilities (3 low, 5 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+Running database migrations...
+> rest-express@1.0.0 db:push
+> drizzle-kit push
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/var/www/wellasset/drizzle.config.ts'
+DATABASE_URL, ensure the database is provisioned
+Error: Process completed with exit code 1.
+0s
+0s
+Run if [ failure == 'success' ]; then
+❌ Deployment to EC2 failed!
+0s
+0s
+Post job cleanup.
+/usr/bin/git version
+git version 2.51.0
+Temporarily overriding HOME='/home/runner/work/_temp/e5c65529-e078-406c-a699-47b75947340c' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/WellAsset/WellAsset
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+0s
+Cleaning up orphan processes

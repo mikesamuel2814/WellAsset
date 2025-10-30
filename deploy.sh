@@ -42,9 +42,9 @@ sudo chown -R $DEPLOY_USER:$DEPLOY_USER "$APP_DIR"
 echo "Installing dependencies..."
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm ci"
 
-# Run database migrations as nodejs user
+# Run database migrations as nodejs user (with environment variables loaded)
 echo "Running database migrations..."
-sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm run db:push"
+sudo -u $DEPLOY_USER bash -c "set -a && source $APP_DIR/.env.production && set +a && cd $APP_DIR && npm run db:push"
 
 # Remove devDependencies after migrations
 echo "Removing devDependencies..."
