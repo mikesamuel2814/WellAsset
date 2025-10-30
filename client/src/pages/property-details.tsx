@@ -237,7 +237,12 @@ export default function PropertyDetails() {
 
             <div>
               <h2 className="font-display font-semibold text-2xl mb-4">{t("propertyDetails.location")}</h2>
-              <PropertyMap location={location} title={title} />
+              <PropertyMap 
+                location={location} 
+                title={title} 
+                latitude={property.latitude} 
+                longitude={property.longitude} 
+              />
             </div>
           </div>
 

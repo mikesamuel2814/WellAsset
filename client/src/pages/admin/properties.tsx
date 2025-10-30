@@ -281,6 +281,50 @@ export default function AdminProperties() {
                       )}
                     />
 
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="latitude"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Latitude</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.0000001" 
+                                placeholder="23.7938" 
+                                {...field} 
+                                value={field.value || ""} 
+                                data-testid="input-property-latitude" 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="longitude"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Longitude</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.0000001" 
+                                placeholder="90.4043" 
+                                {...field} 
+                                value={field.value || ""} 
+                                data-testid="input-property-longitude" 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
                       control={form.control}
                       name="description"

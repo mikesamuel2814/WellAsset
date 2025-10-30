@@ -14,9 +14,11 @@ L.Icon.Default.mergeOptions({
 interface PropertyMapProps {
   location: string;
   title: string;
+  latitude?: string | null;
+  longitude?: string | null;
 }
 
-// Coordinates for common Dhaka locations
+// Coordinates for common Dhaka locations (fallback)
 const DHAKA_LOCATIONS: Record<string, [number, number]> = {
   "Gulshan": [23.7808, 90.4164],
   "Banani": [23.7938, 90.4043],
@@ -30,9 +32,18 @@ const DHAKA_LOCATIONS: Record<string, [number, number]> = {
   "Default": [23.8103, 90.4125], // Dhaka center
 };
 
-export function PropertyMap({ location, title }: PropertyMapProps) {
-  // Find coordinates based on location name
+export function PropertyMap({ location, title, latitude, longitude }: PropertyMapProps) {
+  // Use database coordinates if available, otherwise fallback to location matching
   const getCoordinates = (): [number, number] => {
+    if (latitude && longitude) {
+      const lat = parseFloat(latitude);
+      const lng = parseFloat(longitude);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        return [lat, lng];
+      }
+    }
+    
+    // Fallback to location name matching
     for (const [area, coords] of Object.entries(DHAKA_LOCATIONS)) {
       if (location.toLowerCase().includes(area.toLowerCase())) {
         return coords;

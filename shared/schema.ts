@@ -19,6 +19,8 @@ export const properties = pgTable("properties", {
   type: text("type").notNull(),
   location: text("location").notNull(),
   locationBn: text("location_bn"),
+  latitude: decimal("latitude", { precision: 10, scale: 7 }),
+  longitude: decimal("longitude", { precision: 10, scale: 7 }),
   bedrooms: integer("bedrooms").notNull(),
   bathrooms: integer("bathrooms").notNull(),
   area: integer("area").notNull(),

@@ -8,15 +8,30 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { insertInquirySchema } from "@shared/schema";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
+import { PropertyMap } from "@/components/property-map";
 import type { z } from "zod";
+
+type SiteSetting = {
+  id: string;
+  key: string;
+  value: string;
+  valueBn?: string;
+};
 
 export default function Contact() {
   const { toast } = useToast();
   const { t } = useI18n();
+  
+  const { data: settings } = useQuery<SiteSetting[]>({
+    queryKey: ["/api/cms/settings"],
+  });
+
+  const officeLatitude = settings?.find(s => s.key === 'office_latitude')?.value;
+  const officeLongitude = settings?.find(s => s.key === 'office_longitude')?.value;
 
   const form = useForm<z.infer<typeof insertInquirySchema>>({
     resolver: zodResolver(insertInquirySchema.extend({
@@ -239,12 +254,13 @@ export default function Contact() {
 
           <div>
             <h2 className="font-display font-semibold text-3xl mb-6 tracking-tight">{t("contact.visitOffice")}</h2>
-            <div className="bg-muted rounded-lg h-96 flex items-center justify-center mb-6">
-              <div className="text-center text-muted-foreground">
-                <MapPin className="w-16 h-16 mx-auto mb-3" />
-                <p className="text-sm">{t("contact.mapAvailable")}</p>
-                <p className="text-xs mt-2 whitespace-pre-line">{t("contact.mapLocation")}</p>
-              </div>
+            <div className="mb-6">
+              <PropertyMap 
+                location={t("contact.officeAddress")}
+                title={t("footer.companyName") || "Well Asset Development Co., Ltd"}
+                latitude={officeLatitude}
+                longitude={officeLongitude}
+              />
             </div>
             <Card>
               <CardHeader>
