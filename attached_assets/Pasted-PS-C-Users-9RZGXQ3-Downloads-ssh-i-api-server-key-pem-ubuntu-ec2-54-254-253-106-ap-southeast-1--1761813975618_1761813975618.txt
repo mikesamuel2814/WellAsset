@@ -1,0 +1,151 @@
+PS C:\Users\9RZGXQ3\Downloads> ssh -i "api-server-key.pem" ubuntu@ec2-54-254-253-106.ap-southeast-1.compute.amazonaws.com
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.14.0-1011-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Oct 30 08:44:18 UTC 2025
+
+  System load:  0.0                Processes:             115
+  Usage of /:   14.6% of 18.33GB   Users logged in:       0
+  Memory usage: 30%                IPv4 address for enX0: 172.31.25.230
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+*** System restart required ***
+Last login: Thu Oct 30 08:21:44 2025 from 38.47.35.16
+ubuntu@ip-172-31-25-230:~$ # Check application status
+sudo systemctl status wellasset
+# Check PM2 status
+sudo -u nodejs pm2 status
+# View logs
+sudo -u nodejs pm2 logs wellasset-app
+# Check if app is responding
+curl http://localhost:5000/health
+○ wellasset.service - Well Asset Real Estate Platform
+     Loaded: loaded (/etc/systemd/system/wellasset.service; enabled; preset: enabled)
+     Active: inactive (dead)
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+[TAILING] Tailing last 15 lines for [wellasset-app] process (change the value with --lines option)
+/usr/lib/node_modules/pm2/lib/API/LogManagement.js:177
+      list.forEach(function(proc) {
+           ^
+
+TypeError: Cannot read properties of undefined (reading 'forEach')
+    at /usr/lib/node_modules/pm2/lib/API/LogManagement.js:177:12
+    at /usr/lib/node_modules/pm2/lib/Client.js:528:18
+    at /usr/lib/node_modules/pm2/lib/Client.js:107:21
+    at ChildProcess.onError (/usr/lib/node_modules/pm2/lib/Client.js:266:17)
+    at Object.onceWrapper (node:events:639:26)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at runNextTicks (node:internal/process/task_queues:64:3)
+
+Node.js v20.19.5
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+ubuntu@ip-172-31-25-230:~$ # Fix Node.js permissions
+sudo chmod +x /usr/bin/node
+
+# Also fix npm permissions
+sudo chmod +x /usr/bin/npm
+
+# Verify permissions
+ls -la /usr/bin/node /usr/bin/npm
+-rwxr-xr-x 1 root root 97607264 Sep  3 17:52 /usr/bin/node
+lrwxrwxrwx 1 root root       38 Sep  3 19:56 /usr/bin/npm -> ../lib/node_modules/npm/bin/npm-cli.js
+ubuntu@ip-172-31-25-230:~$ # Test PM2 as nodejs user
+sudo -u nodejs pm2 status
+
+# If that works, start the application
+sudo systemctl start wellasset
+
+# Check status
+sudo systemctl status wellasset
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+Job for wellasset.service failed because the control process exited with error code.
+See "systemctl status wellasset.service" and "journalctl -xeu wellasset.service" for details.
+● wellasset.service - Well Asset Real Estate Platform
+     Loaded: loaded (/etc/systemd/system/wellasset.service; enabled; preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Thu 2025-10-30 08:45:39 UTC; 25ms ago
+    Process: 17927 ExecStart=/usr/bin/pm2 start ecosystem.config.cjs --env production (code=exited, status=1/FAILUR>
+        CPU: 381ms
+
+Oct 30 08:45:39 ip-172-31-25-230 systemd[1]: wellasset.service: Failed with result 'exit-code'.
+Oct 30 08:45:39 ip-172-31-25-230 systemd[1]: Failed to start wellasset.service - Well Asset Real Estate Platform.
+
+ubuntu@ip-172-31-25-230:~$ # Check if deployment files exist
+ls -la /var/www/wellasset/
+
+# Check permissions
+ls -la /var/www/wellasset/.env.production
+total 12
+drwxr-xr-x 2 nodejs nodejs 4096 Oct 30 08:31 .
+drwxr-xr-x 4 root   root   4096 Oct 30 08:27 ..
+-rw------- 1 nodejs nodejs  201 Oct 30 08:31 .env.production
+-rw------- 1 nodejs nodejs 201 Oct 30 08:31 /var/www/wellasset/.env.production
+ubuntu@ip-172-31-25-230:~$ # Check if deployment files exist
+ls -la /var/www/wellasset/
+
+# Check permissions
+ls -la /var/www/wellasset/.env.production
+total 12
+drwxr-xr-x 2 nodejs nodejs 4096 Oct 30 08:31 .
+drwxr-xr-x 4 root   root   4096 Oct 30 08:27 ..
+-rw------- 1 nodejs nodejs  201 Oct 30 08:31 .env.production
+-rw------- 1 nodejs nodejs 201 Oct 30 08:31 /var/www/wellasset/.env.production
+ubuntu@ip-172-31-25-230:~$ # Test PM2 as nodejs user
+sudo -u nodejs pm2 status
+
+# If that works, start the application
+sudo systemctl start wellasset
+
+# Check status
+sudo systemctl status wellasset
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+[PM2] Spawning PM2 daemon with pm2_home=/home/nodejs/.pm2
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+spawn /usr/bin/node EACCES
+^C
+● wellasset.service - Well Asset Real Estate Platform
+     Loaded: loaded (/etc/systemd/system/wellasset.service; enabled; preset: enabled)
+     Active: activating (auto-restart) (Result: exit-code) since Thu 2025-10-30 08:46:00 UTC; 6s ago
+    Process: 17979 ExecStart=/usr/bin/pm2 start ecosystem.config.cjs --env production (code=exited, status=1/FAILUR>
+        CPU: 380ms
+
+Oct 30 08:46:00 ip-172-31-25-230 systemd[1]: wellasset.service: Failed with result 'exit-code'.
+Oct 30 08:46:00 ip-172-31-25-230 systemd[1]: Failed to start wellasset.service - Well Asset Real Estate Platform.
+lines 1-8/8 (END)
+ubuntu@ip-172-31-25-230:~$
