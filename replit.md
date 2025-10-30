@@ -104,7 +104,12 @@ The project uses a simplified, cost-effective AWS deployment approach:
   - Automatic startup on server boot
   - Service restart on failure
   - Resource limits
-  - Environment variable management
+  - Uses wrapper script (`start.sh`) to properly load environment variables from `.env.production`
+
+- **Environment Loading** (`start.sh`):
+  - Wrapper script that loads `.env.production` before starting PM2
+  - Ensures DATABASE_URL and all environment variables are available to Node.js process
+  - Uses `pm2-runtime` for foreground execution with systemd
 
 ### Deployment Documentation
 

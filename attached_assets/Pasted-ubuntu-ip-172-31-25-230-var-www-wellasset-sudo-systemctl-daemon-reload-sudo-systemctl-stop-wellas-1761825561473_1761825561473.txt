@@ -1,0 +1,164 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ sudo systemctl daemon-reload
+sudo systemctl stop wellasset
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 delete all || true
+sudo systemctl start wellasset
+sleep 5
+curl http://localhost:5000/health
+[PM2] Applying action deleteProcessId on app [all](ids: [ 0 ])
+[PM2] [wellasset-app](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+{"status":"ok","timestamp":"2025-10-30T11:57:43.357Z"}ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Install Nginx anubuntu@ip-172-31-25-230:/var/www/wellasset$ # Install Nginx and Certbot
+sudo apt-get update
+sudo apt-get install -y nginx certbot python3-certbot-nginx
+
+# Copy nginx configuration
+sudo cp /var/www/wellasset/nginx.conf /etc/nginx/sites-available/wellasset
+
+# Enable the site
+sudo ln -sf /etc/nginx/sites-available/wellasset /etc/nginx/sites-enabled/wellasset
+
+# Remove default site
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Test nginx configuration
+sudo nginx -t
+
+# Start Nginx
+sudo systemctl restart nginx
+sudo systemctl enable nginx
+
+# Obtain SSL certificate (this requires your domain to be pointing to the server)
+sudo certbot --nginx -d wellassetcompany.com -d www.wellassetcompany.com --non-interactive --agree-tos --email admin@wellassetcompany.com --redirect
+
+# Setup automatic renewal
+sudo systemctl enable certbot.timer
+sudo systemctl start certbot.timer
+Hit:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble InRelease
+Hit:2 http://apt.postgresql.org/pub/repos/apt noble-pgdg InRelease
+Hit:3 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:4 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble-backports InRelease
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease
+Hit:6 http://security.ubuntu.com/ubuntu noble-security InRelease
+Reading package lists... Done
+W: http://apt.postgresql.org/pub/repos/apt/dists/noble-pgdg/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+nginx is already the newest version (1.24.0-2ubuntu7.5).
+The following additional packages will be installed:
+  python3-acme python3-certbot python3-configargparse python3-icu python3-josepy python3-parsedatetime
+  python3-rfc3339
+Suggested packages:
+  python-certbot-doc python3-certbot-apache python-acme-doc python-certbot-nginx-doc
+The following NEW packages will be installed:
+  certbot python3-acme python3-certbot python3-certbot-nginx python3-configargparse python3-icu python3-josepy
+  python3-parsedatetime python3-rfc3339
+0 upgraded, 9 newly installed, 0 to remove and 0 not upgraded.
+Need to get 1097 kB of archives.
+After this operation, 5699 kB of additional disk space will be used.
+Get:1 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 python3-josepy all 1.14.0-1 [22.1 kB]
+Get:2 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 python3-rfc3339 all 1.1-4 [6744 B]
+Get:3 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 python3-acme all 2.9.0-1 [48.5 kB]
+Get:4 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 python3-configargparse all 1.7-1 [31.7 kB]
+Get:5 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 python3-parsedatetime all 2.6-3 [32.8 kB]
+Get:6 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 python3-certbot all 2.9.0-1 [267 kB]
+Get:7 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 certbot all 2.9.0-1 [89.2 kB]
+Get:8 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/universe amd64 python3-certbot-nginx all 2.9.0-1 [66.0 kB]
+Get:9 http://ap-southeast-1.ec2.archive.ubuntu.com/ubuntu noble/main amd64 python3-icu amd64 2.12-1build2 [534 kB]
+Fetched 1097 kB in 0s (28.4 MB/s)
+Preconfiguring packages ...
+Selecting previously unselected package python3-josepy.
+(Reading database ... 111043 files and directories currently installed.)
+Preparing to unpack .../0-python3-josepy_1.14.0-1_all.deb ...
+Unpacking python3-josepy (1.14.0-1) ...
+Selecting previously unselected package python3-rfc3339.
+Preparing to unpack .../1-python3-rfc3339_1.1-4_all.deb ...
+Unpacking python3-rfc3339 (1.1-4) ...
+Selecting previously unselected package python3-acme.
+Preparing to unpack .../2-python3-acme_2.9.0-1_all.deb ...
+Unpacking python3-acme (2.9.0-1) ...
+Selecting previously unselected package python3-configargparse.
+Preparing to unpack .../3-python3-configargparse_1.7-1_all.deb ...
+Unpacking python3-configargparse (1.7-1) ...
+Selecting previously unselected package python3-parsedatetime.
+Preparing to unpack .../4-python3-parsedatetime_2.6-3_all.deb ...
+Unpacking python3-parsedatetime (2.6-3) ...
+Selecting previously unselected package python3-certbot.
+Preparing to unpack .../5-python3-certbot_2.9.0-1_all.deb ...
+Unpacking python3-certbot (2.9.0-1) ...
+Selecting previously unselected package certbot.
+Preparing to unpack .../6-certbot_2.9.0-1_all.deb ...
+Unpacking certbot (2.9.0-1) ...
+Selecting previously unselected package python3-certbot-nginx.
+Preparing to unpack .../7-python3-certbot-nginx_2.9.0-1_all.deb ...
+Unpacking python3-certbot-nginx (2.9.0-1) ...
+Selecting previously unselected package python3-icu.
+Preparing to unpack .../8-python3-icu_2.12-1build2_amd64.deb ...
+Unpacking python3-icu (2.12-1build2) ...
+Setting up python3-configargparse (1.7-1) ...
+Setting up python3-parsedatetime (2.6-3) ...
+Setting up python3-icu (2.12-1build2) ...
+Setting up python3-josepy (1.14.0-1) ...
+Setting up python3-rfc3339 (1.1-4) ...
+Setting up python3-acme (2.9.0-1) ...
+Setting up python3-certbot (2.9.0-1) ...
+Setting up certbot (2.9.0-1) ...
+Created symlink /etc/systemd/system/timers.target.wants/certbot.timer → /usr/lib/systemd/system/certbot.timer.
+Setting up python3-certbot-nginx (2.9.0-1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Scanning processes...
+Scanning candidates...
+Scanning linux images...
+
+Pending kernel upgrade!
+Running kernel version:
+  6.14.0-1011-aws
+Diagnostics:
+  The currently running kernel version is not the expected kernel version 6.14.0-1016-aws.
+
+Restarting the system to load the new kernel will not be handled automatically, so you should consider rebooting.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart getty@tty1.service
+ systemctl restart networkd-dispatcher.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+cp: cannot stat '/var/www/wellasset/nginx.conf': No such file or directory
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Synchronizing state of nginx.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable nginx
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Account registered.
+Requesting a certificate for wellassetcompany.com and www.wellassetcompany.com
+
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/wellassetcompany.com/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/wellassetcompany.com/privkey.pem
+This certificate expires on 2026-01-28.
+These files will be updated when the certificate renews.
+Certbot has set up a scheduled task to automatically renew this certificate in the background.
+
+Deploying certificate
+Successfully deployed certificate for wellassetcompany.com to /etc/nginx/sites-enabled/wellasset
+Successfully deployed certificate for www.wellassetcompany.com to /etc/nginx/sites-enabled/wellasset
+Congratulations! You have successfully enabled HTTPS on https://wellassetcompany.com and https://www.wellassetcompany.com
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+If you like Certbot, please consider supporting our work by:
+ * Donating to ISRG / Let's Encrypt:   https://letsencrypt.org/donate
+ * Donating to EFF:                    https://eff.org/donate-le
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ubuntu@ip-172-31-25-230:/var/www/wellasset$
