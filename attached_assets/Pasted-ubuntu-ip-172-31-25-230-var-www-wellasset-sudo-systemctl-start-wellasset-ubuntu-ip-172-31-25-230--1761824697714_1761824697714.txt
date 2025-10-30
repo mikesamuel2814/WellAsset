@@ -1,0 +1,62 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ sudo systemctl start wellasset
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ curl http://localhost:5000/health
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 1    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ sudo nano /var/www/wellasset/.env.production
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Copy and run this single script to complete everything
+bash << 'EOF'
+echo "Step 1: Set proper permissions on .env.production"
+sudo chown nodejs:nodejs /var/www/wellasset/.env.production
+sudo chmod 600 /var/www/wellasset/.env.production
+echo "✓ Permissions set"
+
+echo ""
+echo "Step 2: Restart application to load environment variables"
+sudo systemctl restart wellasset
+sleep 5
+
+echo ""
+echo "Step 3: Check application health"
+curl -f http://localhost:5000/health && echo "✓ Application is healthy!" || echo "✗ Health check failed"
+
+echo ""
+echo "Step 4: Check PM2 status"
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 status
+
+echo ""
+echo "Step 5: Check PM2 logs (if any errors)"
+sudo -u nodejs /home/nodejs/node_modules/.bin/pm2 logs wellasset-app --lines 20 --nostream
+EOF
+Step 1: Set proper permissions on .env.production
+✓ Permissions set
+
+Step 2: Restart application to load environment variables
+
+Step 3: Check application health
+curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+✗ Health check failed
+
+Step 4: Check PM2 status
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ wellasset-app      │ cluster  │ 1    │ stopped   │ 0%       │ 0b       │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+
+Step 5: Check PM2 logs (if any errors)
+[TAILING] Tailing last 20 lines for [wellasset-app] process (change the value with --lines option)
+/var/log/wellasset/error.log last 20 lines:
+/var/log/wellasset/out.log last 20 lines:
+0|wellasse | 2025-10-30 11:32:02 +00:00: 11:32:02 serving on port 5000
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset$ # Install and configure Nginx with SSL
+sudo chmod +x /var/www/wellasset/setup-nginx.sh
+sudo /var/www/wellasset/setup-nginx.sh
+chmod: cannot access '/var/www/wellasset/setup-nginx.sh': No such file or directory
+sudo: /var/www/wellasset/setup-nginx.sh: command not found
+ubuntu@ip-172-31-25-230:/var/www/wellasset$
