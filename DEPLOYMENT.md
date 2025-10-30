@@ -19,29 +19,47 @@ This guide covers deploying the Well Asset Real Estate platform to AWS using Git
 - GitHub account with repository access
 
 ### AWS Services Required
-- **Amazon ECS (Elastic Container Service)** - Container orchestration
+- **Amazon EC2** - Virtual servers running Docker containers
+- **Auto Scaling Group** - Automatic scaling based on demand
+- **AWS CodeDeploy** - Automated deployment service
 - **Amazon ECR (Elastic Container Registry)** - Docker image storage
 - **Amazon RDS for PostgreSQL** - Database
-- **Application Load Balancer (ALB)** - Load balancing
+- **Application Load Balancer (ALB)** - Load balancing and health checks
 - **AWS Secrets Manager** - Secure credential storage
+- **Amazon S3** - Deployment artifact storage
 - **Amazon CloudWatch** - Logging and monitoring
 
 ## Deployment Options
 
-### Option 1: AWS ECS Fargate (Recommended)
-Best for production deployments with automatic scaling and zero server management.
+### Option 1: AWS EC2 with Auto Scaling (Current Implementation)
+Docker-based deployment on EC2 instances with Auto Scaling and CodeDeploy for zero-downtime updates.
+
+**Pros:**
+- Cost-effective (~$90/month)
+- Full control over instances
+- Auto-scaling based on demand
+- Zero-downtime deployments with CodeDeploy
+- Flexible configuration
+
+**Cons:**
+- Requires initial infrastructure setup
+- More operational overhead than serverless
+
+**Current Status:** ✅ Fully configured with GitHub Actions
+
+### Option 2: AWS ECS Fargate
+Serverless container deployment (alternative approach).
 
 **Pros:**
 - No server management
 - Automatic scaling
 - Pay only for resources used
-- High availability
 
 **Cons:**
-- Higher cost than EC2
-- Limited customization
+- Higher cost (~$100-150/month)
+- Less control over infrastructure
 
-### Option 2: AWS Elastic Beanstalk
+### Option 3: AWS Elastic Beanstalk
 Easiest AWS deployment option with automatic environment setup.
 
 **Pros:**
@@ -52,24 +70,21 @@ Easiest AWS deployment option with automatic environment setup.
 **Cons:**
 - Less control
 - Higher abstraction
-
-### Option 3: AWS EC2 + Docker
-Traditional deployment with full control.
-
-**Pros:**
-- Full control
-- Cost-effective
-- Flexible configuration
-
-**Cons:**
-- Manual server management
-- Requires DevOps expertise
+- Limited customization
 
 ## Quick Start
 
 ### 1. Set Up AWS Infrastructure
 
-See [AWS_SETUP.md](./AWS_SETUP.md) for detailed infrastructure setup instructions.
+See [AWS_SETUP_EC2.md](./AWS_SETUP_EC2.md) for detailed EC2 infrastructure setup instructions.
+
+**Quick summary:**
+- VPC with public and private subnets
+- Auto Scaling Group with 2+ EC2 instances
+- Application Load Balancer
+- RDS PostgreSQL database
+- CodeDeploy for deployments
+- ECR for Docker images
 
 ### 2. Configure Environment Variables
 
@@ -120,8 +135,11 @@ Runs on push to `main` or manual trigger:
 - Builds Docker image
 - Pushes to Amazon ECR
 - Runs database migrations on production
-- Deploys to Amazon ECS
-- Verifies deployment health
+- Creates deployment package (appspec.yml + scripts)
+- Uploads package to S3
+- Triggers CodeDeploy deployment
+- Waits for deployment completion
+- Verifies all instances are healthy
 
 ### Manual Deployment
 
@@ -202,25 +220,35 @@ npm run db:push
 ## Monitoring
 
 ### CloudWatch Logs
-- Container logs: `/aws/ecs/wellasset-service`
-- Application logs: Structured JSON logs in CloudWatch
+- EC2 instance logs: `/aws/ec2/wellasset`
+- Application logs (Docker): View via `docker logs wellasset-app`
+- CodeDeploy logs: `/var/log/aws/codedeploy-agent/`
+- User data logs: `/var/log/user-data.log`
 
 ### Health Monitoring
-- ECS Service health checks
-- Target group health checks (if using ALB)
-- CloudWatch alarms for failures
+- ALB Target Group health checks on `/health` endpoint
+- Auto Scaling Group instance health
+- CodeDeploy deployment status
+- CloudWatch alarms for CPU, memory, failed health checks
 
 ## Rollback
 
-### Via AWS Console
-1. Go to ECS Console
-2. Select your service
-3. Update service with previous task definition revision
+### Via AWS Console (CodeDeploy)
+1. Go to CodeDeploy Console
+2. Select your deployment group
+3. Create new deployment with previous revision from S3
+4. Monitor deployment progress
 
 ### Via GitHub Actions
 1. Revert the commit that caused issues
 2. Push to trigger new deployment
-3. Or manually deploy specific commit SHA
+3. Or manually trigger workflow with specific branch
+
+### Via Auto Scaling Group
+1. Go to EC2 Auto Scaling Console
+2. Terminate unhealthy instances
+3. Auto Scaling will launch new instances
+4. CodeDeploy will deploy latest successful revision
 
 ## Security Best Practices
 
@@ -254,8 +282,10 @@ For deployment issues:
 
 ## Next Steps
 
-1. [Set up AWS infrastructure](./AWS_SETUP.md)
+1. [Set up AWS EC2 infrastructure](./AWS_SETUP_EC2.md)
 2. [Configure environment variables](./ENVIRONMENT.md)
-3. Review security settings
-4. Set up monitoring alerts
-5. Configure auto-scaling policies
+3. [Set up GitHub Actions](./CICD_SETUP.md)
+4. Review security settings
+5. Set up monitoring alerts
+6. Configure auto-scaling policies
+7. Set up custom domain and SSL

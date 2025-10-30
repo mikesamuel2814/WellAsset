@@ -53,7 +53,7 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 ## Deployment & CI/CD
 
 ### CI/CD Pipeline
-The project is configured for automated deployment to AWS using GitHub Actions:
+The project is configured for automated deployment to AWS EC2 using GitHub Actions and CodeDeploy:
 
 - **Continuous Integration** (`.github/workflows/ci.yml`):
   - Runs on every push and pull request
@@ -67,40 +67,49 @@ The project is configured for automated deployment to AWS using GitHub Actions:
   - Manual deployment option for staging/production
   - Docker image building and pushing to Amazon ECR
   - Database migration execution on production
-  - Blue-green deployment to Amazon ECS Fargate
+  - Creates deployment package with AppSpec and lifecycle scripts
+  - Uploads to S3 and triggers CodeDeploy
+  - Zero-downtime deployment with Auto Scaling Group
   - Deployment health verification
 
 ### Infrastructure
+- **Compute**: EC2 instances (t3.micro) in Auto Scaling Group (2-6 instances)
 - **Containerization**: Multi-stage Docker build for optimized production images
 - **Container Registry**: Amazon ECR
-- **Orchestration**: Amazon ECS with Fargate
-- **Database**: Amazon RDS PostgreSQL
-- **Load Balancing**: Application Load Balancer
+- **Deployment**: AWS CodeDeploy with In-Place deployment strategy
+- **Database**: Amazon RDS PostgreSQL (Multi-AZ optional)
+- **Load Balancing**: Application Load Balancer with health checks on `/health`
+- **Networking**: VPC with public and private subnets across 2 AZs
+- **Storage**: S3 for CodeDeploy artifacts
 - **Monitoring**: CloudWatch Logs and metrics
 - **Secrets Management**: AWS Secrets Manager
-- **Health Checks**: Built-in `/health` endpoint for load balancer and container health checks
+- **Health Checks**: Built-in `/health` endpoint for ALB and CodeDeploy verification
 
 ### Deployment Documentation
 Comprehensive deployment guides available:
-- **DEPLOYMENT.md** - Overall deployment guide with multiple AWS deployment options
-- **AWS_SETUP.md** - Step-by-step AWS infrastructure setup instructions
+- **DEPLOYMENT.md** - Overall deployment guide with AWS EC2 deployment
+- **AWS_SETUP_EC2.md** - Step-by-step AWS EC2 infrastructure setup instructions
 - **CICD_SETUP.md** - Quick start guide for GitHub Actions CI/CD
 - **ENVIRONMENT.md** - Complete environment variable reference
 - **.env.example** - Template for local development environment
+- **appspec.yml** - CodeDeploy application specification
+- **scripts/** - Deployment lifecycle hooks (install, start, stop, validate)
+- **ec2-user-data.sh** - EC2 instance initialization script
 
 ### Key Features
-- Zero-downtime deployments with ECS rolling updates
+- Zero-downtime deployments with CodeDeploy and Auto Scaling
 - Automatic rollback on health check failures
 - Database migration safety with pre-deployment schema updates
 - Multi-environment support (development, staging, production)
 - Secure secret management via AWS Secrets Manager
-- Auto-scaling based on CPU/memory utilization
+- Auto-scaling based on CPU/memory utilization (2-6 instances)
 - Production-ready Docker configuration with non-root user
+- Cost-effective: ~$90/month for production infrastructure
 
 ## External Dependencies
 - **Database**: PostgreSQL (managed with Drizzle ORM)
 - **Frontend Libraries**: React, TypeScript, Vite, TailwindCSS, Wouter, TanStack Query, React Hook Form, Zod, Shadcn/ui, Radix UI, next-themes, embla-carousel-react, react-leaflet, Framer Motion, @tsparticles/react.
 - **Backend Libraries**: Node.js, Express, bcrypt (for password hashing), Multer (for file uploads - planned).
 - **Mapping Service**: OpenStreetMap (via react-leaflet).
-- **Cloud Infrastructure**: AWS (ECS, ECR, RDS, ALB, Secrets Manager, CloudWatch)
-- **CI/CD**: GitHub Actions
+- **Cloud Infrastructure**: AWS (EC2, Auto Scaling, CodeDeploy, ECR, RDS, ALB, S3, Secrets Manager, CloudWatch)
+- **CI/CD**: GitHub Actions with CodeDeploy
