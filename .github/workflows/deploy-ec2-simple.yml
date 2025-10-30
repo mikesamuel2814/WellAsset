@@ -37,11 +37,17 @@ jobs:
           cp -r client deploy/
           cp -r server deploy/
           cp -r shared deploy/
-          cp -r migrations deploy/
           cp -r dist deploy/
           cp package.json package-lock.json deploy/
           cp ecosystem.config.cjs deploy/
           cp deploy.sh deploy/
+          
+          # Copy migrations directory if it exists
+          if [ -d "migrations" ]; then
+            cp -r migrations deploy/
+          else
+            mkdir -p deploy/migrations
+          fi
           
           # Create tarball
           cd deploy
