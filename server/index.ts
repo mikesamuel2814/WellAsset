@@ -1,7 +1,16 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
+
+// Simple logger function
+const log = (...args: any[]) => {
+  console.log(new Date().toLocaleTimeString('en-US', { hour12: false }), ...args);
+};
+
+// Only import Vite functions in development
+const { setupVite, serveStatic } = process.env.NODE_ENV === "production"
+  ? { setupVite: null, serveStatic: null }
+  : await import("./vite");
 
 const app = express();
 
@@ -70,10 +79,13 @@ app.get("/health", (_req: Request, res: Response) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  if (app.get("env") === "development" && setupVite) {
     await setupVite(app, server);
-  } else {
+  } else if (serveStatic) {
     serveStatic(app);
+  } else {
+    // In production without Vite, serve static files from dist/public
+    app.use(express.static(path.resolve(import.meta.dirname, "../dist/public")));
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
