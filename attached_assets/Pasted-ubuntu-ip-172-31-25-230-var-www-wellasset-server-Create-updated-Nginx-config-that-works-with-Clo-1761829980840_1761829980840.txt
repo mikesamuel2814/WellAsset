@@ -1,0 +1,95 @@
+ubuntu@ip-172-31-25-230:/var/www/wellasset/server$ # Create updated Nginx config that works with Cloudflare
+sudo tee /etc/nginx/sites-available/wellasset > /dev/null << 'EOF'
+# Nginx configuration for Well Asset Real Estate Platform with Cloudflare SSL
+upstream nodejs_backend {
+    server 127.0.0.1:5000;
+    keepalive 64;
+}
+
+# Main server - works with Cloudflare SSL (Flexible or Full mode)
+server {
+    listen 80;
+    listen [::]:80;
+    server_name wellassetcompany.com www.wellassetcompany.com;
+
+    # Let's Encrypt validation
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/x-javascript application/javascript application/xml+rss
+               application/json image/svg+xml;
+
+    # Client body size (for file uploads)
+    client_max_body_size 50M;
+
+    # Logging
+    access_log /var/log/nginx/wellasset_access.log;
+    error_log /var/log/nginx/wellasset_error.log;
+
+    # Root location - proxy to Node.js
+    location / {
+        proxy_pass http://nodejs_backend;
+        proxy_http_version 1.1;
+
+        # WebSocket support
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # Proxy headers - preserve Cloudflare headers
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_set_header X-Forwarded-Host $server_name;
+
+        # Timeouts
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    # Static assets caching
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff|woff2|ttf|eot)$ {
+        proxy_pass http://nodejs_backend;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Health check endpoint
+    location /health {
+        proxy_pass http://nodejs_backend;
+        access_log off;
+    }
+}
+EOF
+
+# Test nginx config
+sudo nginx -t
+
+# If test passes, reload nginx
+sudo systemctl reload nginx
+
+# Test the site
+curl -I http://localhost/
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Thu, 30 Oct 2025 13:12:55 GMT
+Content-Type: text/html; charset=UTF-8
+Content-Length: 1278
+Connection: keep-alive
+X-Powered-By: Express
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Thu, 30 Oct 2025 12:47:16 GMT
+ETag: W/"4fe-19a35287820"
+
+ubuntu@ip-172-31-25-230:/var/www/wellasset/server$
