@@ -4,7 +4,7 @@
 A luxury real estate web platform with a modern white/gold/dark gray design. It enables property browsing with filters, detailed property pages, and inquiry submission. The platform includes a comprehensive admin dashboard for managing properties, agents, and inquiries. The project's ambition is to cater specifically to the Bangladesh/Dhaka real estate market, offering a bilingual (English/Bangla) and localized user experience.
 
 ## Admin Credentials
-**Email:** `testadmin@wellasset.com`  
+**Email:** `admin@wellassetcompany.com`  
 **Password:** `admin123`
 
 Access the admin panel at: `/admin/login`

@@ -266,7 +266,7 @@ Before deploying to production:
 - [ ] SSH access tested
 - [ ] Health endpoint accessible
 - [ ] Database migrations run successfully
-- [ ] Admin account created (testadmin@wellasset.com)
+- [ ] Admin account created (admin@wellassetcompany.com)
 
 ## 🐛 Troubleshooting
 

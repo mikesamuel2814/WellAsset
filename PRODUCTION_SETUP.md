@@ -228,7 +228,7 @@ sudo tail -f /var/log/nginx/wellasset_error.log
 After successful deployment:
 
 1. **Test the admin panel**: https://wellassetcompany.com/admin/login
-   - Email: testadmin@wellasset.com
+   - Email: admin@wellassetcompany.com
    - Password: admin123
 
 2. **Add property images** via admin dashboard
