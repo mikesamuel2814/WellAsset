@@ -194,7 +194,7 @@ export default function AdminCMS() {
   }
 
   const contactSettings = settings?.filter(s => 
-    s.key.startsWith('contact_')
+    s.key.startsWith('contact_') || s.key.startsWith('office_')
   ) || [];
 
   const aboutSettings = settings?.filter(s => 
@@ -202,7 +202,7 @@ export default function AdminCMS() {
   ) || [];
 
   const otherSettings = settings?.filter(s => 
-    !s.key.startsWith('contact_') && !s.key.startsWith('about_')
+    !s.key.startsWith('contact_') && !s.key.startsWith('about_') && !s.key.startsWith('office_')
   ) || [];
 
   return (
