@@ -1,3 +1,6 @@
+// Import config FIRST to ensure .env is loaded
+import "./config";
+
 import pkg from 'pg';
 const { Pool } = pkg;
 import { drizzle } from 'drizzle-orm/node-postgres';

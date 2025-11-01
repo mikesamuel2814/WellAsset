@@ -1,3 +1,6 @@
+// Import config FIRST to ensure .env is loaded before any other imports
+import "./config";
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import path from "path";
@@ -93,11 +96,8 @@ app.get("/health", (_req: Request, res: Response) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  // Note: reusePort is not supported on Windows, so we use the standard listen method
+  server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });
 })();
