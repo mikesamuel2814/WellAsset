@@ -87,47 +87,44 @@ export function Navbar() {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant={isActive("/contact") ? "secondary" : "ghost"}
-                    className="font-medium"
-                    data-testid="nav-link-contact"
-                  >
-                    {t("nav.contact")}
-                  </Button>
+                  <div onMouseEnter={(e) => {
+                    const button = e.currentTarget.querySelector('button');
+                    button?.click();
+                  }}>
+                    <Button
+                      variant={isActive("/contact") ? "secondary" : "ghost"}
+                      className="font-medium"
+                      data-testid="nav-link-contact"
+                    >
+                      {t("nav.contact")}
+                    </Button>
+                  </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  {facebook && (
-                    <DropdownMenuItem asChild>
-                      <a href={facebook} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-facebook">
-                        <Facebook className="w-4 h-4" />
-                        <span>Facebook</span>
-                      </a>
-                    </DropdownMenuItem>
-                  )}
-                  {telegram && (
-                    <DropdownMenuItem asChild>
-                      <a href={telegram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-telegram">
-                        <SiTelegram className="w-4 h-4" />
-                        <span>Telegram</span>
-                      </a>
-                    </DropdownMenuItem>
-                  )}
-                  {whatsapp && (
-                    <DropdownMenuItem asChild>
-                      <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-whatsapp">
-                        <SiWhatsapp className="w-4 h-4" />
-                        <span>WhatsApp</span>
-                      </a>
-                    </DropdownMenuItem>
-                  )}
-                  {phoneNumber && (
-                    <DropdownMenuItem asChild>
-                      <a href={`tel:${phoneNumber}`} className="flex items-center gap-2 cursor-pointer" data-testid="contact-phone">
-                        <Phone className="w-4 h-4" />
-                        <span>Call {phoneNumber}</span>
-                      </a>
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem asChild>
+                    <a href={facebook || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-facebook">
+                      <Facebook className="w-4 h-4" />
+                      <span>Facebook</span>
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href={telegram || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-telegram">
+                      <SiTelegram className="w-4 h-4" />
+                      <span>Telegram</span>
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href={whatsapp || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-whatsapp">
+                      <SiWhatsapp className="w-4 h-4" />
+                      <span>WhatsApp</span>
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href={`tel:${phoneNumber || ''}`} className="flex items-center gap-2 cursor-pointer" data-testid="contact-phone">
+                      <Phone className="w-4 h-4" />
+                      <span>Call {phoneNumber || 'Us'}</span>
+                    </a>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/contact">
                       <div className="flex items-center gap-2 cursor-pointer w-full" data-testid="contact-page">
@@ -172,38 +169,30 @@ export function Navbar() {
               <div className="text-xs font-medium text-muted-foreground px-3 py-2">
                 {t("nav.contact")}
               </div>
-              {facebook && (
-                <a href={facebook} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-facebook">
-                    <Facebook className="w-4 h-4" />
-                    Facebook
-                  </Button>
-                </a>
-              )}
-              {telegram && (
-                <a href={telegram} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-telegram">
-                    <SiTelegram className="w-4 h-4" />
-                    Telegram
-                  </Button>
-                </a>
-              )}
-              {whatsapp && (
-                <a href={whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-whatsapp">
-                    <SiWhatsapp className="w-4 h-4" />
-                    WhatsApp
-                  </Button>
-                </a>
-              )}
-              {phoneNumber && (
-                <a href={`tel:${phoneNumber}`} onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-phone">
-                    <Phone className="w-4 h-4" />
-                    Call {phoneNumber}
-                  </Button>
-                </a>
-              )}
+              <a href={facebook || "#"} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-facebook">
+                  <Facebook className="w-4 h-4" />
+                  Facebook
+                </Button>
+              </a>
+              <a href={telegram || "#"} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-telegram">
+                  <SiTelegram className="w-4 h-4" />
+                  Telegram
+                </Button>
+              </a>
+              <a href={whatsapp || "#"} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-whatsapp">
+                  <SiWhatsapp className="w-4 h-4" />
+                  WhatsApp
+                </Button>
+              </a>
+              <a href={`tel:${phoneNumber || ''}`} onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-phone">
+                  <Phone className="w-4 h-4" />
+                  Call {phoneNumber || 'Us'}
+                </Button>
+              </a>
               <Link href="/contact">
                 <Button 
                   variant="ghost" 
