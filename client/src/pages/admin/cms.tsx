@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Loader2, Globe, Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin, Info, Eye, EyeOff, Menu } from "lucide-react";
+import { Loader2, Globe, Facebook, Phone, MapPin, Info, Menu, MessageCircle } from "lucide-react";
 import { SiWhatsapp, SiTelegram } from "react-icons/si";
+import { MapPicker } from "@/components/map-picker";
 
 type SiteSetting = {
   id: string;
@@ -228,25 +228,6 @@ export default function AdminCMS() {
     },
   });
 
-  const toggleSocialVisibilityMutation = useMutation({
-    mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-      return await apiRequest("PUT", `/api/cms/social-media/${id}`, { isActive });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/cms/social-media"] });
-      toast({
-        title: "Success",
-        description: "Navbar dropdown visibility updated",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to update visibility",
-        variant: "destructive",
-      });
-    },
-  });
 
   const handleSettingSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -268,9 +249,6 @@ export default function AdminCMS() {
   const getIcon = (platform: string, size = "w-5 h-5") => {
     const platformLower = platform.toLowerCase();
     if (platformLower === 'facebook') return <Facebook className={size} />;
-    if (platformLower === 'twitter') return <Twitter className={size} />;
-    if (platformLower === 'instagram') return <Instagram className={size} />;
-    if (platformLower === 'linkedin') return <Linkedin className={size} />;
     if (platformLower === 'telegram') return <SiTelegram className={size} />;
     if (platformLower === 'whatsapp') return <SiWhatsapp className={size} />;
     return <Globe className={size} />;
@@ -351,6 +329,53 @@ export default function AdminCMS() {
         </Card>
       </div>
 
+      <Card data-testid="card-office-location">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+            <MapPin className="w-5 h-5 flex-shrink-0" />
+            <span>Office Location</span>
+          </CardTitle>
+          <CardDescription className="text-sm">
+            Click on the map to set office coordinates. Displayed on the Contact Page map.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {settings && (() => {
+            const latSetting = settings.find(s => s.key === 'office_latitude');
+            const lngSetting = settings.find(s => s.key === 'office_longitude');
+            const currentLat = parseFloat(latSetting?.value || '23.8103');
+            const currentLng = parseFloat(lngSetting?.value || '90.4125');
+
+            return (
+              <>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg">
+                  <Info className="w-4 h-4 flex-shrink-0" />
+                  <p>Click anywhere on the map to update the office location coordinates</p>
+                </div>
+                <MapPicker
+                  latitude={currentLat}
+                  longitude={currentLng}
+                  onLocationChange={(lat, lng) => {
+                    updateSettingMutation.mutate({ key: 'office_latitude', value: lat.toFixed(7) });
+                    updateSettingMutation.mutate({ key: 'office_longitude', value: lng.toFixed(7) });
+                  }}
+                />
+                <div className="grid grid-cols-2 gap-4 p-3 bg-muted/30 rounded-lg">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Latitude</p>
+                    <p className="font-mono text-sm">{currentLat.toFixed(7)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Longitude</p>
+                    <p className="font-mono text-sm">{currentLng.toFixed(7)}</p>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
       <Card data-testid="card-navbar-dropdown">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
@@ -358,39 +383,151 @@ export default function AdminCMS() {
             <span>Navbar Contact Dropdown</span>
           </CardTitle>
           <CardDescription className="text-sm">
-            Control which contact options appear in the navbar dropdown menu
+            Manage links for the 5 contact options in the navbar dropdown menu
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 p-3 bg-muted/50 rounded-lg">
               <Info className="w-4 h-4 flex-shrink-0" />
-              <p>Toggle the visibility of social media links and phone number in the navbar Contact dropdown. The Contact Page link is always visible.</p>
+              <p>Update URLs for Facebook, Telegram, WhatsApp, Call (phone number), and Contact Page. These appear in the navbar Contact dropdown.</p>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {socialMedia?.map((item) => (
-                <div key={item.id} className="flex items-center justify-between p-3 border border-border rounded-lg bg-card/50">
-                  <div className="flex items-center gap-3">
-                    {getIcon(item.platform)}
-                    <span className="font-medium">{item.platform}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">
-                      {item.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                    </span>
-                    <Switch
-                      checked={item.isActive}
-                      onCheckedChange={(checked) => {
-                        toggleSocialVisibilityMutation.mutate({ 
-                          id: item.id, 
-                          isActive: checked 
-                        });
-                      }}
-                      data-testid={`switch-navbar-${item.platform.toLowerCase()}`}
-                    />
-                  </div>
-                </div>
-              ))}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {(() => {
+                const facebook = socialMedia?.find(s => s.platform.toLowerCase() === 'facebook');
+                const telegram = socialMedia?.find(s => s.platform.toLowerCase() === 'telegram');
+                const whatsapp = socialMedia?.find(s => s.platform.toLowerCase() === 'whatsapp');
+                const phoneNumber = settings?.find(s => s.key === 'phone')?.value || '';
+
+                return (
+                  <>
+                    {facebook && (
+                      <form key={facebook.id} onSubmit={handleSocialSubmit} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+                        <input type="hidden" name="id" value={facebook.id} />
+                        <Label htmlFor={`navbar-facebook`} className="flex items-center gap-2 font-semibold">
+                          <Facebook className="w-5 h-5" />
+                          Facebook
+                        </Label>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Input
+                            id={`navbar-facebook`}
+                            name="url"
+                            defaultValue={facebook.url}
+                            placeholder="https://facebook.com/yourpage"
+                            data-testid="input-navbar-facebook"
+                            className="flex-1"
+                          />
+                          <Button 
+                            type="submit" 
+                            disabled={updateSocialMutation.isPending}
+                            data-testid="button-update-navbar-facebook"
+                            className="sm:w-auto"
+                          >
+                            {updateSocialMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                          </Button>
+                        </div>
+                      </form>
+                    )}
+                    
+                    {telegram && (
+                      <form key={telegram.id} onSubmit={handleSocialSubmit} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+                        <input type="hidden" name="id" value={telegram.id} />
+                        <Label htmlFor={`navbar-telegram`} className="flex items-center gap-2 font-semibold">
+                          <SiTelegram className="w-5 h-5" />
+                          Telegram
+                        </Label>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Input
+                            id={`navbar-telegram`}
+                            name="url"
+                            defaultValue={telegram.url}
+                            placeholder="https://t.me/yourgroup"
+                            data-testid="input-navbar-telegram"
+                            className="flex-1"
+                          />
+                          <Button 
+                            type="submit" 
+                            disabled={updateSocialMutation.isPending}
+                            data-testid="button-update-navbar-telegram"
+                            className="sm:w-auto"
+                          >
+                            {updateSocialMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                          </Button>
+                        </div>
+                      </form>
+                    )}
+                    
+                    {whatsapp && (
+                      <form key={whatsapp.id} onSubmit={handleSocialSubmit} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+                        <input type="hidden" name="id" value={whatsapp.id} />
+                        <Label htmlFor={`navbar-whatsapp`} className="flex items-center gap-2 font-semibold">
+                          <SiWhatsapp className="w-5 h-5" />
+                          WhatsApp
+                        </Label>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Input
+                            id={`navbar-whatsapp`}
+                            name="url"
+                            defaultValue={whatsapp.url}
+                            placeholder="https://wa.me/1234567890"
+                            data-testid="input-navbar-whatsapp"
+                            className="flex-1"
+                          />
+                          <Button 
+                            type="submit" 
+                            disabled={updateSocialMutation.isPending}
+                            data-testid="button-update-navbar-whatsapp"
+                            className="sm:w-auto"
+                          >
+                            {updateSocialMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                          </Button>
+                        </div>
+                      </form>
+                    )}
+
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.currentTarget);
+                      const value = formData.get("value") as string;
+                      updateSettingMutation.mutate({ key: 'phone', value });
+                    }} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+                      <Label htmlFor="navbar-phone" className="flex items-center gap-2 font-semibold">
+                        <Phone className="w-5 h-5" />
+                        Call (Phone Number)
+                      </Label>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <Input
+                          id="navbar-phone"
+                          name="value"
+                          defaultValue={phoneNumber}
+                          placeholder="+880 1234 567890"
+                          data-testid="input-navbar-phone"
+                          className="flex-1"
+                        />
+                        <Button 
+                          type="submit" 
+                          disabled={updateSettingMutation.isPending}
+                          data-testid="button-update-navbar-phone"
+                          className="sm:w-auto"
+                        >
+                          {updateSettingMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                        </Button>
+                      </div>
+                    </form>
+
+                    <div className="p-4 border border-border rounded-lg bg-card/50 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MessageCircle className="w-5 h-5" />
+                        <div>
+                          <p className="font-semibold">Contact Page</p>
+                          <p className="text-xs text-muted-foreground">Always visible - links to /contact</p>
+                        </div>
+                      </div>
+                      <span className="text-xs text-muted-foreground">Fixed Link</span>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </CardContent>
