@@ -29,7 +29,7 @@ export function Navbar() {
               <img 
                 src="/logo.png" 
                 alt="Well Asset Logo" 
-                className="w-10 h-10 object-contain"
+                className="w-10 h-10 object-cover rounded-full"
               />
               <div>
                 <h1 className="font-display font-bold text-lg leading-tight">Well Asset</h1>
