@@ -42,12 +42,18 @@ The platform features a modern luxury aesthetic, utilizing a white/gold/dark gra
 - **Property Details**: Image gallery, specifications, description, features, interactive Leaflet map (uses property coordinates from database or falls back to location matching), inquiry form.
 - **About Page**: Company story, mission, values, statistics.
 - **Contact Page**: Contact information, form, office hours, interactive Leaflet map showing office location from CMS-editable coordinates.
+- **Navbar Contact Dropdown**: Displays exactly 5 contact options - Facebook, Telegram, WhatsApp, Call (phone), and Contact Page link.
 
 #### Admin Dashboard
 - **Login**: JWT-based authentication for secure access.
 - **Dashboard**: Overview statistics, recent inquiries feed.
 - **Management**: CRUD operations for Properties, Agents, and Inquiries. Property form includes latitude/longitude coordinate inputs for precise map positioning.
-- **CMS**: Admin interface for managing site settings and social media links. Includes office coordinate editing (office_latitude, office_longitude) in Contact Information section.
+- **CMS**: Comprehensive content management system with:
+  - **Contact Information**: Edit business contact details (address, phone, email, hours)
+  - **About Page Content**: Manage mission, vision, and values statements
+  - **Office Location**: Interactive map picker for setting office coordinates (click-to-select functionality)
+  - **Navbar Contact Dropdown**: Manage URLs for exactly 5 navbar contact options (Facebook, Telegram, WhatsApp, Call/Phone, Contact Page)
+  - **Social Media Links**: Manage all social media URLs for footer and other placements
 - **Profile**: Admin profile page with password update functionality (min 8 characters, validation, bcrypt hashing).
 
 ## Deployment & CI/CD
