@@ -263,7 +263,7 @@ export default function AdminCMS() {
   }
 
   const contactSettings = settings?.filter(s => 
-    s.key.startsWith('contact_') || s.key.startsWith('office_')
+    s.key.startsWith('contact_') && !s.key.includes('office')
   ) || [];
 
   const aboutSettings = settings?.filter(s => 
@@ -355,9 +355,14 @@ export default function AdminCMS() {
                 <MapPicker
                   latitude={currentLat}
                   longitude={currentLng}
-                  onLocationChange={(lat, lng) => {
-                    updateSettingMutation.mutate({ key: 'office_latitude', value: lat.toFixed(7) });
-                    updateSettingMutation.mutate({ key: 'office_longitude', value: lng.toFixed(7) });
+                  onLocationChange={async (lat, lng) => {
+                    try {
+                      await updateSettingMutation.mutateAsync({ key: 'office_latitude', value: lat.toFixed(7) });
+                      await updateSettingMutation.mutateAsync({ key: 'office_longitude', value: lng.toFixed(7) });
+                      queryClient.invalidateQueries({ queryKey: ["/api/cms/settings"] });
+                    } catch (error) {
+                      console.error('Failed to update coordinates:', error);
+                    }
                   }}
                 />
                 <div className="grid grid-cols-2 gap-4 p-3 bg-muted/30 rounded-lg">
