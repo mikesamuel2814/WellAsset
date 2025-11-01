@@ -1,15 +1,49 @@
 import { Link, useLocation } from "wouter";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone, Facebook, MessageCircle } from "lucide-react";
+import { SiWhatsapp, SiTelegram } from "react-icons/si";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useI18n } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
+
+type SocialMedia = {
+  id: string;
+  platform: string;
+  url: string;
+  icon: string;
+};
+
+type Settings = {
+  key: string;
+  value: string;
+  valueBn?: string | null;
+};
 
 export function Navbar() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t } = useI18n();
+
+  const { data: socialMedia } = useQuery<SocialMedia[]>({
+    queryKey: ["/api/cms/social-media"],
+  });
+
+  const { data: settings } = useQuery<Settings[]>({
+    queryKey: ["/api/cms/settings"],
+  });
+
+  const phoneNumber = settings?.find(s => s.key === 'phone')?.value;
+  const facebook = socialMedia?.find(s => s.platform.toLowerCase() === 'facebook')?.url;
+  const telegram = socialMedia?.find(s => s.platform.toLowerCase() === 'telegram')?.url;
+  const whatsapp = socialMedia?.find(s => s.platform.toLowerCase() === 'whatsapp')?.url;
 
   const isActive = (path: string) => location === path;
 
@@ -17,7 +51,6 @@ export function Navbar() {
     { path: "/", label: t("nav.home") },
     { path: "/properties", label: t("nav.properties") },
     { path: "/about", label: t("nav.about") },
-    { path: "/contact", label: t("nav.contact") },
   ];
 
   return (
@@ -51,6 +84,60 @@ export function Navbar() {
                   </Button>
                 </Link>
               ))}
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isActive("/contact") ? "secondary" : "ghost"}
+                    className="font-medium"
+                    data-testid="nav-link-contact"
+                  >
+                    {t("nav.contact")}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {facebook && (
+                    <DropdownMenuItem asChild>
+                      <a href={facebook} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-facebook">
+                        <Facebook className="w-4 h-4" />
+                        <span>Facebook</span>
+                      </a>
+                    </DropdownMenuItem>
+                  )}
+                  {telegram && (
+                    <DropdownMenuItem asChild>
+                      <a href={telegram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-telegram">
+                        <SiTelegram className="w-4 h-4" />
+                        <span>Telegram</span>
+                      </a>
+                    </DropdownMenuItem>
+                  )}
+                  {whatsapp && (
+                    <DropdownMenuItem asChild>
+                      <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer" data-testid="contact-whatsapp">
+                        <SiWhatsapp className="w-4 h-4" />
+                        <span>WhatsApp</span>
+                      </a>
+                    </DropdownMenuItem>
+                  )}
+                  {phoneNumber && (
+                    <DropdownMenuItem asChild>
+                      <a href={`tel:${phoneNumber}`} className="flex items-center gap-2 cursor-pointer" data-testid="contact-phone">
+                        <Phone className="w-4 h-4" />
+                        <span>Call {phoneNumber}</span>
+                      </a>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem asChild>
+                    <Link href="/contact">
+                      <div className="flex items-center gap-2 cursor-pointer w-full" data-testid="contact-page">
+                        <MessageCircle className="w-4 h-4" />
+                        <span>Contact Page</span>
+                      </div>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </nav>
             <ThemeToggle />
             <LanguageSwitcher />
@@ -80,6 +167,56 @@ export function Navbar() {
                 </Button>
               </Link>
             ))}
+            
+            <div className="space-y-1">
+              <div className="text-xs font-medium text-muted-foreground px-3 py-2">
+                {t("nav.contact")}
+              </div>
+              {facebook && (
+                <a href={facebook} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-facebook">
+                    <Facebook className="w-4 h-4" />
+                    Facebook
+                  </Button>
+                </a>
+              )}
+              {telegram && (
+                <a href={telegram} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-telegram">
+                    <SiTelegram className="w-4 h-4" />
+                    Telegram
+                  </Button>
+                </a>
+              )}
+              {whatsapp && (
+                <a href={whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-whatsapp">
+                    <SiWhatsapp className="w-4 h-4" />
+                    WhatsApp
+                  </Button>
+                </a>
+              )}
+              {phoneNumber && (
+                <a href={`tel:${phoneNumber}`} onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start font-medium gap-2" data-testid="mobile-contact-phone">
+                    <Phone className="w-4 h-4" />
+                    Call {phoneNumber}
+                  </Button>
+                </a>
+              )}
+              <Link href="/contact">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start font-medium gap-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                  data-testid="mobile-contact-page"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Contact Page
+                </Button>
+              </Link>
+            </div>
+
             <div className="pt-2 border-t flex justify-center gap-2">
               <ThemeToggle />
               <LanguageSwitcher />
