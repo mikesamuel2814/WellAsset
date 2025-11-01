@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Building2, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -26,9 +26,11 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer hover-elevate rounded-md px-2 py-1" data-testid="link-home">
-              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-primary-foreground" />
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Well Asset Logo" 
+                className="w-10 h-10 object-contain"
+              />
               <div>
                 <h1 className="font-display font-bold text-lg leading-tight">Well Asset</h1>
                 <p className="text-xs text-muted-foreground">Development Co., Ltd</p>
