@@ -1,4 +1,16 @@
-// Import config FIRST to ensure .env is loaded before any other imports
+// Load dotenv in development (only if not in production)
+// In production, environment variables are provided by systemd/system
+if (process.env.NODE_ENV !== "production") {
+  try {
+    // Dynamic import for dotenv - won't be bundled in production build
+    const dotenv = await import("dotenv");
+    dotenv.config();
+  } catch {
+    // dotenv not available - use system env vars (production)
+  }
+}
+
+// Import config AFTER environment variables are loaded
 import "./config";
 
 import express, { type Request, Response, NextFunction } from "express";

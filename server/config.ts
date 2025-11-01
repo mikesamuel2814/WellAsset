@@ -1,9 +1,7 @@
 // This file must be imported FIRST before any other imports that depend on environment variables
-// Load environment variables from .env file
-import { config } from "dotenv";
-
-// Load .env file (will not override existing environment variables)
-config();
+// NOTE: dotenv is loaded in server/index.ts before this file is imported
+// In production, environment variables are provided by systemd/system environment
+// This file just re-exports the environment variables that are already set
 
 // Re-export commonly used env vars for convenience
 export const DATABASE_URL = process.env.DATABASE_URL;
