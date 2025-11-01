@@ -1,12 +1,29 @@
-import { config } from "dotenv";
-config();
+// Load environment variables - works in both dev and production
+if (process.env.NODE_ENV !== "production") {
+  // Development: use dotenv
+  try {
+    const { config } = await import("dotenv");
+    config();
+  } catch {
+    // dotenv not available - use system env vars
+  }
+}
+// Production: environment variables come from systemd/.env.production
 
 import { db } from "./db";
 import { users, properties, agents, inquiries, siteSettings, socialMedia } from "@shared/schema";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { fileURLToPath } from "url";
 
-const jsonDir = join(import.meta.dirname, "wellasset_db_jsons");
+// Get directory name for both dev (source) and production (compiled)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = join(__filename, "..");
+// In production, compiled file is in dist/, need to go up to find server/wellasset_db_jsons
+// In development, source file is in server/, so wellasset_db_jsons is in the same dir
+const jsonDir = process.env.NODE_ENV === "production" 
+  ? join(__dirname, "..", "server", "wellasset_db_jsons")  // dist/ -> server/wellasset_db_jsons
+  : join(__dirname, "wellasset_db_jsons");                 // server/ -> server/wellasset_db_jsons
 
 // Helper function to convert snake_case to camelCase
 function toCamelCase(str: string): string {
