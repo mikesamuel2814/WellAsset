@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -9,7 +15,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { Loader2, Globe, Facebook, Phone, MapPin, Info, Menu, MessageCircle } from "lucide-react";
+import {
+  Loader2,
+  Globe,
+  Facebook,
+  Phone,
+  MapPin,
+  Info,
+  Menu,
+  MessageCircle,
+} from "lucide-react";
 import { SiWhatsapp, SiTelegram } from "react-icons/si";
 import { MapPicker } from "@/components/map-picker";
 
@@ -30,78 +45,87 @@ type SocialMedia = {
   order: number;
 };
 
-const FIELD_DESCRIPTIONS: Record<string, { description: string; location: string }> = {
+const FIELD_DESCRIPTIONS: Record<
+  string,
+  { description: string; location: string }
+> = {
   contact_address: {
     description: "Your business office address",
-    location: "Displayed in: Footer, Contact Page, Contact Form"
+    location: "Displayed in: Footer, Contact Page, Contact Form",
   },
   contact_hours: {
     description: "Business operating hours",
-    location: "Displayed in: Contact Page"
+    location: "Displayed in: Contact Page",
   },
   contact_email: {
     description: "Business email for inquiries",
-    location: "Displayed in: Footer, Contact Page"
+    location: "Displayed in: Footer, Contact Page",
   },
   contact_phone: {
     description: "Primary business phone number",
-    location: "Displayed in: Footer, Contact Page, Navbar Contact Dropdown"
+    location: "Displayed in: Footer, Contact Page, Navbar Contact Dropdown",
   },
   phone: {
     description: "Alternative phone number",
-    location: "Displayed in: Footer, Navbar Contact Dropdown"
+    location: "Displayed in: Footer, Navbar Contact Dropdown",
   },
   office_latitude: {
     description: "Office location latitude coordinate for map display",
-    location: "Displayed in: Contact Page Map"
+    location: "Displayed in: Contact Page Map",
   },
   office_longitude: {
     description: "Office location longitude coordinate for map display",
-    location: "Displayed in: Contact Page Map"
+    location: "Displayed in: Contact Page Map",
   },
   about_mission: {
     description: "Company mission statement",
-    location: "Displayed in: About Page (Mission Section)"
+    location: "Displayed in: About Page (Mission Section)",
   },
   about_vision: {
     description: "Company vision statement",
-    location: "Displayed in: About Page (Vision Section)"
+    location: "Displayed in: About Page (Vision Section)",
   },
   about_values: {
     description: "Company core values",
-    location: "Displayed in: About Page (Values Section)"
+    location: "Displayed in: About Page (Values Section)",
   },
 };
 
 // Separate component to handle individual setting with its own state
-function SettingItem({ 
-  setting, 
-  onUpdate, 
-  isPending 
-}: { 
-  setting: SiteSetting; 
+function SettingItem({
+  setting,
+  onUpdate,
+  isPending,
+}: {
+  setting: SiteSetting;
   onUpdate: (data: { key: string; value: string; valueBn?: string }) => void;
   isPending: boolean;
 }) {
   const [enValue, setEnValue] = useState(setting.value);
   const [bnValue, setBnValue] = useState(setting.valueBn || "");
   const fieldInfo = FIELD_DESCRIPTIONS[setting.key];
-  const isLongText = setting.key.includes('mission') || setting.key.includes('vision') || setting.key.includes('values') || setting.key.includes('address');
+  const isLongText =
+    setting.key.includes("mission") ||
+    setting.key.includes("vision") ||
+    setting.key.includes("values") ||
+    setting.key.includes("address");
 
   return (
-    <form 
+    <form
       onSubmit={(e) => {
         e.preventDefault();
-        onUpdate({ 
-          key: setting.key, 
-          value: enValue, 
-          valueBn: bnValue 
+        onUpdate({
+          key: setting.key,
+          value: enValue,
+          valueBn: bnValue,
         });
-      }} 
+      }}
       className="space-y-3 p-4 border border-border rounded-lg bg-card/50"
     >
       <div className="space-y-1">
-        <Label htmlFor={setting.key} className="text-base font-semibold">{setting.label}</Label>
+        <Label htmlFor={setting.key} className="text-base font-semibold">
+          {setting.label}
+        </Label>
         {fieldInfo && (
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground flex items-start gap-1.5">
@@ -116,8 +140,12 @@ function SettingItem({
       </div>
       <Tabs defaultValue="en" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>English</TabsTrigger>
-          <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>বাংলা</TabsTrigger>
+          <TabsTrigger value="en" data-testid={`tab-en-${setting.key}`}>
+            English
+          </TabsTrigger>
+          <TabsTrigger value="bn" data-testid={`tab-bn-${setting.key}`}>
+            বাংলা
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="en" className="space-y-2">
           {isLongText ? (
@@ -160,17 +188,13 @@ function SettingItem({
           )}
         </TabsContent>
       </Tabs>
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         disabled={isPending}
         data-testid={`button-update-${setting.key}`}
         className="w-full"
       >
-        {isPending ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          "Update"
-        )}
+        {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
       </Button>
     </form>
   );
@@ -180,17 +204,32 @@ export default function AdminCMS() {
   const { toast } = useToast();
   const { token } = useAuth();
 
-  const { data: settings, isLoading: settingsLoading } = useQuery<SiteSetting[]>({
+  const { data: settings, isLoading: settingsLoading } = useQuery<
+    SiteSetting[]
+  >({
     queryKey: ["/api/cms/settings"],
   });
 
-  const { data: socialMedia, isLoading: socialLoading } = useQuery<SocialMedia[]>({
+  const { data: socialMedia, isLoading: socialLoading } = useQuery<
+    SocialMedia[]
+  >({
     queryKey: ["/api/cms/social-media"],
   });
 
   const updateSettingMutation = useMutation({
-    mutationFn: async ({ key, value, valueBn }: { key: string; value: string; valueBn?: string }) => {
-      return await apiRequest("PUT", `/api/cms/settings/${key}`, { value, valueBn });
+    mutationFn: async ({
+      key,
+      value,
+      valueBn,
+    }: {
+      key: string;
+      value: string;
+      valueBn?: string;
+    }) => {
+      return await apiRequest("PUT", `/api/cms/settings/${key}`, {
+        value,
+        valueBn,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cms/settings"] });
@@ -228,7 +267,6 @@ export default function AdminCMS() {
     },
   });
 
-
   const handleSettingSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -248,9 +286,9 @@ export default function AdminCMS() {
 
   const getIcon = (platform: string, size = "w-5 h-5") => {
     const platformLower = platform.toLowerCase();
-    if (platformLower === 'facebook') return <Facebook className={size} />;
-    if (platformLower === 'telegram') return <SiTelegram className={size} />;
-    if (platformLower === 'whatsapp') return <SiWhatsapp className={size} />;
+    if (platformLower === "facebook") return <Facebook className={size} />;
+    if (platformLower === "telegram") return <SiTelegram className={size} />;
+    if (platformLower === "whatsapp") return <SiWhatsapp className={size} />;
     return <Globe className={size} />;
   };
 
@@ -262,22 +300,31 @@ export default function AdminCMS() {
     );
   }
 
-  const contactSettings = settings?.filter(s => 
-    s.key.startsWith('contact_') && !s.key.includes('office')
-  ) || [];
+  const contactSettings =
+    settings?.filter(
+      (s) => s.key.startsWith("contact_") && !s.key.includes("office"),
+    ) || [];
 
-  const aboutSettings = settings?.filter(s => 
-    s.key.startsWith('about_')
-  ) || [];
+  const aboutSettings =
+    settings?.filter((s) => s.key.startsWith("about_")) || [];
 
-  const otherSettings = settings?.filter(s => 
-    !s.key.startsWith('contact_') && !s.key.startsWith('about_') && !s.key.startsWith('office_')
-  ) || [];
+  const otherSettings =
+    settings?.filter(
+      (s) =>
+        !s.key.startsWith("contact_") &&
+        !s.key.startsWith("about_") &&
+        !s.key.startsWith("office_"),
+    ) || [];
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 p-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-display font-bold" data-testid="text-cms-title">CMS Settings</h1>
+        <h1
+          className="text-2xl md:text-3xl font-display font-bold"
+          data-testid="text-cms-title"
+        >
+          CMS Settings
+        </h1>
         <p className="text-muted-foreground mt-2 text-sm md:text-base">
           Manage website content, contact information, and social media links
         </p>
@@ -296,7 +343,7 @@ export default function AdminCMS() {
           </CardHeader>
           <CardContent className="space-y-4 flex-1">
             {contactSettings.map((setting) => (
-              <SettingItem 
+              <SettingItem
                 key={setting.id}
                 setting={setting}
                 onUpdate={(data) => updateSettingMutation.mutate(data)}
@@ -318,7 +365,7 @@ export default function AdminCMS() {
           </CardHeader>
           <CardContent className="space-y-4 flex-1">
             {aboutSettings.map((setting) => (
-              <SettingItem 
+              <SettingItem
                 key={setting.id}
                 setting={setting}
                 onUpdate={(data) => updateSettingMutation.mutate(data)}
@@ -336,48 +383,73 @@ export default function AdminCMS() {
             <span>Office Location</span>
           </CardTitle>
           <CardDescription className="text-sm">
-            Click on the map to set office coordinates. Displayed on the Contact Page map.
+            Click on the map to set office coordinates. Displayed on the Contact
+            Page map.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {settings && (() => {
-            const latSetting = settings.find(s => s.key === 'office_latitude');
-            const lngSetting = settings.find(s => s.key === 'office_longitude');
-            const currentLat = parseFloat(latSetting?.value || '23.8103');
-            const currentLng = parseFloat(lngSetting?.value || '90.4125');
+          {settings &&
+            (() => {
+              const latSetting = settings.find(
+                (s) => s.key === "office_latitude",
+              );
+              const lngSetting = settings.find(
+                (s) => s.key === "office_longitude",
+              );
+              const currentLat = parseFloat(latSetting?.value || "23.8103");
+              const currentLng = parseFloat(lngSetting?.value || "90.4125");
 
-            return (
-              <>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg">
-                  <Info className="w-4 h-4 flex-shrink-0" />
-                  <p>Click anywhere on the map to update the office location coordinates</p>
-                </div>
-                <MapPicker
-                  latitude={currentLat}
-                  longitude={currentLng}
-                  onLocationChange={async (lat, lng) => {
-                    try {
-                      await updateSettingMutation.mutateAsync({ key: 'office_latitude', value: lat.toFixed(7) });
-                      await updateSettingMutation.mutateAsync({ key: 'office_longitude', value: lng.toFixed(7) });
-                      queryClient.invalidateQueries({ queryKey: ["/api/cms/settings"] });
-                    } catch (error) {
-                      console.error('Failed to update coordinates:', error);
-                    }
-                  }}
-                />
-                <div className="grid grid-cols-2 gap-4 p-3 bg-muted/30 rounded-lg">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Latitude</p>
-                    <p className="font-mono text-sm">{currentLat.toFixed(7)}</p>
+              return (
+                <>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg">
+                    <Info className="w-4 h-4 flex-shrink-0" />
+                    <p>
+                      Click anywhere on the map to update the office location
+                      coordinates
+                    </p>
                   </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Longitude</p>
-                    <p className="font-mono text-sm">{currentLng.toFixed(7)}</p>
+                  <MapPicker
+                    latitude={currentLat}
+                    longitude={currentLng}
+                    onLocationChange={async (lat, lng) => {
+                      try {
+                        await updateSettingMutation.mutateAsync({
+                          key: "office_latitude",
+                          value: lat.toFixed(7),
+                        });
+                        await updateSettingMutation.mutateAsync({
+                          key: "office_longitude",
+                          value: lng.toFixed(7),
+                        });
+                        queryClient.invalidateQueries({
+                          queryKey: ["/api/cms/settings"],
+                        });
+                      } catch (error) {
+                        console.error("Failed to update coordinates:", error);
+                      }
+                    }}
+                  />
+                  <div className="grid grid-cols-2 gap-4 p-3 bg-muted/30 rounded-lg">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Latitude
+                      </p>
+                      <p className="font-mono text-sm">
+                        {currentLat.toFixed(7)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Longitude
+                      </p>
+                      <p className="font-mono text-sm">
+                        {currentLng.toFixed(7)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </>
-            );
-          })()}
+                </>
+              );
+            })()}
         </CardContent>
       </Card>
 
@@ -395,21 +467,39 @@ export default function AdminCMS() {
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 p-3 bg-muted/50 rounded-lg">
               <Info className="w-4 h-4 flex-shrink-0" />
-              <p>Update URLs for Facebook, Telegram, WhatsApp, Call (phone number), and Contact Page. These appear in the navbar Contact dropdown.</p>
+              <p>
+                Update URLs for Facebook, Telegram, WhatsApp, Call (phone
+                number), and Contact Page. These appear in the navbar Contact
+                dropdown.
+              </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {(() => {
-                const facebook = socialMedia?.find(s => s.platform.toLowerCase() === 'facebook');
-                const telegram = socialMedia?.find(s => s.platform.toLowerCase() === 'telegram');
-                const whatsapp = socialMedia?.find(s => s.platform.toLowerCase() === 'whatsapp');
-                const phoneNumber = settings?.find(s => s.key === 'phone')?.value || '';
+                const facebook = socialMedia?.find(
+                  (s) => s.platform.toLowerCase() === "facebook",
+                );
+                const telegram = socialMedia?.find(
+                  (s) => s.platform.toLowerCase() === "telegram",
+                );
+                const whatsapp = socialMedia?.find(
+                  (s) => s.platform.toLowerCase() === "whatsapp",
+                );
+                const phoneNumber =
+                  settings?.find((s) => s.key === "phone")?.value || "";
 
                 return (
                   <>
                     {facebook && (
-                      <form key={facebook.id} onSubmit={handleSocialSubmit} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+                      <form
+                        key={facebook.id}
+                        onSubmit={handleSocialSubmit}
+                        className="space-y-2 p-4 border border-border rounded-lg bg-card/50"
+                      >
                         <input type="hidden" name="id" value={facebook.id} />
-                        <Label htmlFor={`navbar-facebook`} className="flex items-center gap-2 font-semibold">
+                        <Label
+                          htmlFor={`navbar-facebook`}
+                          className="flex items-center gap-2 font-semibold"
+                        >
                           <Facebook className="w-5 h-5" />
                           Facebook
                         </Label>
@@ -422,22 +512,33 @@ export default function AdminCMS() {
                             data-testid="input-navbar-facebook"
                             className="flex-1"
                           />
-                          <Button 
-                            type="submit" 
+                          <Button
+                            type="submit"
                             disabled={updateSocialMutation.isPending}
                             data-testid="button-update-navbar-facebook"
                             className="sm:w-auto"
                           >
-                            {updateSocialMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                            {updateSocialMutation.isPending ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              "Update"
+                            )}
                           </Button>
                         </div>
                       </form>
                     )}
-                    
+
                     {telegram && (
-                      <form key={telegram.id} onSubmit={handleSocialSubmit} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+                      <form
+                        key={telegram.id}
+                        onSubmit={handleSocialSubmit}
+                        className="space-y-2 p-4 border border-border rounded-lg bg-card/50"
+                      >
                         <input type="hidden" name="id" value={telegram.id} />
-                        <Label htmlFor={`navbar-telegram`} className="flex items-center gap-2 font-semibold">
+                        <Label
+                          htmlFor={`navbar-telegram`}
+                          className="flex items-center gap-2 font-semibold"
+                        >
                           <SiTelegram className="w-5 h-5" />
                           Telegram
                         </Label>
@@ -450,22 +551,33 @@ export default function AdminCMS() {
                             data-testid="input-navbar-telegram"
                             className="flex-1"
                           />
-                          <Button 
-                            type="submit" 
+                          <Button
+                            type="submit"
                             disabled={updateSocialMutation.isPending}
                             data-testid="button-update-navbar-telegram"
                             className="sm:w-auto"
                           >
-                            {updateSocialMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                            {updateSocialMutation.isPending ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              "Update"
+                            )}
                           </Button>
                         </div>
                       </form>
                     )}
-                    
+
                     {whatsapp && (
-                      <form key={whatsapp.id} onSubmit={handleSocialSubmit} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+                      <form
+                        key={whatsapp.id}
+                        onSubmit={handleSocialSubmit}
+                        className="space-y-2 p-4 border border-border rounded-lg bg-card/50"
+                      >
                         <input type="hidden" name="id" value={whatsapp.id} />
-                        <Label htmlFor={`navbar-whatsapp`} className="flex items-center gap-2 font-semibold">
+                        <Label
+                          htmlFor={`navbar-whatsapp`}
+                          className="flex items-center gap-2 font-semibold"
+                        >
                           <SiWhatsapp className="w-5 h-5" />
                           WhatsApp
                         </Label>
@@ -478,25 +590,35 @@ export default function AdminCMS() {
                             data-testid="input-navbar-whatsapp"
                             className="flex-1"
                           />
-                          <Button 
-                            type="submit" 
+                          <Button
+                            type="submit"
                             disabled={updateSocialMutation.isPending}
                             data-testid="button-update-navbar-whatsapp"
                             className="sm:w-auto"
                           >
-                            {updateSocialMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                            {updateSocialMutation.isPending ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              "Update"
+                            )}
                           </Button>
                         </div>
                       </form>
                     )}
 
-                    <form onSubmit={(e) => {
-                      e.preventDefault();
-                      const formData = new FormData(e.currentTarget);
-                      const value = formData.get("value") as string;
-                      updateSettingMutation.mutate({ key: 'phone', value });
-                    }} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
-                      <Label htmlFor="navbar-phone" className="flex items-center gap-2 font-semibold">
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.currentTarget);
+                        const value = formData.get("value") as string;
+                        updateSettingMutation.mutate({ key: "phone", value });
+                      }}
+                      className="space-y-2 p-4 border border-border rounded-lg bg-card/50"
+                    >
+                      <Label
+                        htmlFor="navbar-phone"
+                        className="flex items-center gap-2 font-semibold"
+                      >
                         <Phone className="w-5 h-5" />
                         Call (Phone Number)
                       </Label>
@@ -509,13 +631,17 @@ export default function AdminCMS() {
                           data-testid="input-navbar-phone"
                           className="flex-1"
                         />
-                        <Button 
-                          type="submit" 
+                        <Button
+                          type="submit"
                           disabled={updateSettingMutation.isPending}
                           data-testid="button-update-navbar-phone"
                           className="sm:w-auto"
                         >
-                          {updateSettingMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Update"}
+                          {updateSettingMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "Update"
+                          )}
                         </Button>
                       </div>
                     </form>
@@ -525,10 +651,14 @@ export default function AdminCMS() {
                         <MessageCircle className="w-5 h-5" />
                         <div>
                           <p className="font-semibold">Contact Page</p>
-                          <p className="text-xs text-muted-foreground">Always visible - links to /contact</p>
+                          <p className="text-xs text-muted-foreground">
+                            Always visible - links to /contact
+                          </p>
                         </div>
                       </div>
-                      <span className="text-xs text-muted-foreground">Fixed Link</span>
+                      <span className="text-xs text-muted-foreground">
+                        Fixed Link
+                      </span>
                     </div>
                   </>
                 );
@@ -551,9 +681,16 @@ export default function AdminCMS() {
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2">
             {socialMedia?.map((item) => (
-              <form key={item.id} onSubmit={handleSocialSubmit} className="space-y-2 p-4 border border-border rounded-lg bg-card/50">
+              <form
+                key={item.id}
+                onSubmit={handleSocialSubmit}
+                className="space-y-2 p-4 border border-border rounded-lg bg-card/50"
+              >
                 <input type="hidden" name="id" value={item.id} />
-                <Label htmlFor={`social-${item.id}`} className="flex items-center gap-2 font-semibold">
+                <Label
+                  htmlFor={`social-${item.id}`}
+                  className="flex items-center gap-2 font-semibold"
+                >
                   {getIcon(item.platform)}
                   {item.platform}
                 </Label>
@@ -566,8 +703,8 @@ export default function AdminCMS() {
                     data-testid={`input-social-${item.platform.toLowerCase()}`}
                     className="flex-1"
                   />
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={updateSocialMutation.isPending}
                     data-testid={`button-update-social-${item.platform.toLowerCase()}`}
                     className="sm:w-auto"
@@ -589,13 +726,15 @@ export default function AdminCMS() {
         <Card data-testid="card-other-settings">
           <CardHeader>
             <CardTitle>Other Settings</CardTitle>
-            <CardDescription>
-              Additional website configuration
-            </CardDescription>
+            <CardDescription>Additional website configuration</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {otherSettings.map((setting) => (
-              <form key={setting.id} onSubmit={handleSettingSubmit} className="space-y-2">
+              <form
+                key={setting.id}
+                onSubmit={handleSettingSubmit}
+                className="space-y-2"
+              >
                 <input type="hidden" name="key" value={setting.key} />
                 <Label htmlFor={setting.key}>{setting.label}</Label>
                 <div className="flex gap-2">
@@ -606,8 +745,8 @@ export default function AdminCMS() {
                     placeholder={setting.label}
                     data-testid={`input-${setting.key}`}
                   />
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={updateSettingMutation.isPending}
                     data-testid={`button-update-${setting.key}`}
                   >
