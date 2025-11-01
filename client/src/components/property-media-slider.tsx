@@ -3,6 +3,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ImageViewer } from "@/components/image-viewer";
 
 interface PropertyMediaSliderProps {
   videos?: string[];
@@ -17,6 +18,8 @@ export function PropertyMediaSlider({ videos = [], images, title }: PropertyMedi
     [Autoplay({ delay: 5000, stopOnInteraction: true })]
   );
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -55,6 +58,16 @@ export function PropertyMediaSlider({ videos = [], images, title }: PropertyMedi
     return url.match(/\.(mp4|webm|ogg|mov)$/i) || videos.includes(url);
   };
 
+  const handleImageClick = (index: number) => {
+    if (!isVideo(allMedia[index])) {
+      const imageOnlyIndex = images.indexOf(allMedia[index]);
+      if (imageOnlyIndex !== -1) {
+        setViewerIndex(imageOnlyIndex);
+        setViewerOpen(true);
+      }
+    }
+  };
+
   return (
     <div className="mb-12">
       <div className="relative rounded-lg overflow-hidden bg-black" data-testid="property-media-slider">
@@ -82,7 +95,8 @@ export function PropertyMediaSlider({ videos = [], images, title }: PropertyMedi
                   <img
                     src={media}
                     alt={`${title} - ${index + 1}`}
-                    className="w-full h-[500px] object-cover"
+                    className="w-full h-[500px] object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                    onClick={() => handleImageClick(index)}
                     data-testid={`img-slide-${index}`}
                   />
                 )}
@@ -158,13 +172,24 @@ export function PropertyMediaSlider({ videos = [], images, title }: PropertyMedi
                 <img
                   src={media}
                   alt={`${title} thumbnail ${index + 1}`}
-                  className="w-full h-20 object-cover"
+                  className="w-full h-20 object-cover cursor-pointer"
+                  onClick={(e) => { 
+                    e.stopPropagation(); 
+                    handleImageClick(index); 
+                  }}
                 />
               )}
             </button>
           ))}
         </div>
       )}
+
+      <ImageViewer
+        images={images}
+        initialIndex={viewerIndex}
+        isOpen={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+      />
     </div>
   );
 }

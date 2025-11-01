@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, MessageCircle } from "lucide-react";
+import { SiWhatsapp, SiTelegram } from "react-icons/si";
 import { useI18n } from "@/lib/i18n";
 
 type SocialMedia = {
@@ -10,6 +11,12 @@ type SocialMedia = {
   icon: string;
 };
 
+type Settings = {
+  key: string;
+  value: string;
+  valueBn?: string | null;
+};
+
 export function Footer() {
   const { t } = useI18n();
   
@@ -17,20 +24,17 @@ export function Footer() {
     queryKey: ["/api/cms/social-media"],
   });
 
-  const getSocialIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'facebook':
-        return Facebook;
-      case 'twitter':
-        return Twitter;
-      case 'instagram':
-        return Instagram;
-      case 'linkedin':
-        return Linkedin;
-      default:
-        return Building2;
-    }
-  };
+  const { data: settings } = useQuery<Settings[]>({
+    queryKey: ["/api/cms/settings"],
+  });
+
+  const phoneNumber = settings?.find(s => s.key === 'phone')?.value;
+  const facebook = socialMedia?.find(s => s.platform.toLowerCase() === 'facebook')?.url;
+  const telegram = socialMedia?.find(s => s.platform.toLowerCase() === 'telegram')?.url;
+  const whatsapp = socialMedia?.find(s => s.platform.toLowerCase() === 'whatsapp')?.url;
+  const twitter = socialMedia?.find(s => s.platform.toLowerCase() === 'twitter')?.url;
+  const instagram = socialMedia?.find(s => s.platform.toLowerCase() === 'instagram')?.url;
+  const linkedin = socialMedia?.find(s => s.platform.toLowerCase() === 'linkedin')?.url;
   
   return (
     <footer className="bg-card border-t">
@@ -38,9 +42,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-primary-foreground" />
-              </div>
+              <img 
+                src="/logo.png" 
+                alt="Well Asset Logo" 
+                className="w-10 h-10 object-cover rounded-full"
+              />
               <div>
                 <h3 className="font-display font-bold text-lg leading-tight">Well Asset</h3>
                 <p className="text-xs text-muted-foreground">Development Co., Ltd</p>
@@ -109,23 +115,98 @@ export function Footer() {
 
           <div>
             <h4 className="font-display font-semibold mb-4">{t("footer.followUs")}</h4>
-            <div className="flex gap-3">
-              {socialMedia?.map((social) => {
-                const Icon = getSocialIcon(social.platform);
-                return (
-                  <a
-                    key={social.id}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
-                    aria-label={social.platform}
-                    data-testid={`link-social-${social.platform.toLowerCase()}`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </a>
-                );
-              })}
+            <div className="flex flex-wrap gap-3">
+              {facebook && (
+                <a
+                  href={facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="Facebook"
+                  data-testid="link-social-facebook"
+                >
+                  <Facebook className="w-5 h-5" />
+                </a>
+              )}
+              {telegram && (
+                <a
+                  href={telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="Telegram"
+                  data-testid="link-social-telegram"
+                >
+                  <SiTelegram className="w-5 h-5" />
+                </a>
+              )}
+              {whatsapp && (
+                <a
+                  href={whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="WhatsApp"
+                  data-testid="link-social-whatsapp"
+                >
+                  <SiWhatsapp className="w-5 h-5" />
+                </a>
+              )}
+              {twitter && (
+                <a
+                  href={twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="Twitter"
+                  data-testid="link-social-twitter"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+              )}
+              {instagram && (
+                <a
+                  href={instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="Instagram"
+                  data-testid="link-social-instagram"
+                >
+                  <Instagram className="w-5 h-5" />
+                </a>
+              )}
+              {linkedin && (
+                <a
+                  href={linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="LinkedIn"
+                  data-testid="link-social-linkedin"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              )}
+              {phoneNumber && (
+                <a
+                  href={`tel:${phoneNumber}`}
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="Phone"
+                  data-testid="link-social-phone"
+                >
+                  <Phone className="w-5 h-5" />
+                </a>
+              )}
+              <Link href="/contact">
+                <a
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover-elevate transition-all"
+                  aria-label="Contact"
+                  data-testid="link-social-contact"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                </a>
+              </Link>
             </div>
           </div>
         </div>
