@@ -63,6 +63,9 @@ sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npm ci"
 echo "Building application..."
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npx vite build"
 sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --minify --define:process.env.NODE_ENV='\"production\"' --outdir=dist"
+# Build import script for production use
+echo "Building import script..."
+sudo -u $DEPLOY_USER bash -c "cd $APP_DIR && npx esbuild server/import-json-data.ts --platform=node --packages=external --bundle --format=esm --define:process.env.NODE_ENV='\"production\"' --outdir=dist"
 
 # Run database migrations as nodejs user (with environment variables loaded)
 echo "Running database migrations..."
