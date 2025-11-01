@@ -1,14 +1,22 @@
 // Load environment variables - works in both dev and production
 if (process.env.NODE_ENV !== "production") {
-  // Development: use dotenv
+  // Development: use dotenv to load .env file
   try {
     const { config } = await import("dotenv");
     config();
   } catch {
     // dotenv not available - use system env vars
   }
+} else {
+  // Production: try to load .env.production file
+  try {
+    const { config } = await import("dotenv");
+    config({ path: ".env.production" });
+  } catch {
+    // If dotenv fails, environment variables should be set by systemd
+    // This is fine - just use what's already in process.env
+  }
 }
-// Production: environment variables come from systemd/.env.production
 
 import { db } from "./db";
 import { users, properties, agents, inquiries, siteSettings, socialMedia } from "@shared/schema";
