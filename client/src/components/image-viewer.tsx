@@ -200,7 +200,7 @@ export function ImageViewer({ images, initialIndex, isOpen, onClose }: ImageView
 
       {/* Image Container */}
       <div 
-        className="relative w-full h-full flex items-center justify-center overflow-hidden"
+        className="relative flex items-center justify-center max-w-[90vw] max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
